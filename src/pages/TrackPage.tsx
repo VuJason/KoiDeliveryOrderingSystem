@@ -2,26 +2,85 @@ import React, { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebookF, faTwitter, faInstagram, faLinkedinIn } from '@fortawesome/free-brands-svg-icons';
 import { faFilter, faSyncAlt, faChevronDown } from '@fortawesome/free-solid-svg-icons';
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons'; // Import icon mũi tên
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 function TrackPage() {
-  // State cho việc lọc dữ liệu
   const [filterPrice, setFilterPrice] = useState("");
   const [filterType, setFilterType] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 5;
 
-  // Hàm reset filter
+  const deliveries = [
+    { id: "00001", client: "Christine Books", address: "Phường Bến Nghé, Quận 1, TP.HCM", price: "100.000", type: "Foodstuff", status: "Deliveried" },
+    { id: "00002", client: "Emma Watson", address: "Nguyễn Thái Bình, Quận 1, TP.HCM", price: "200.000", type: "Electronics", status: "Deliveried" },
+    { id: "00003", client: "John Doe", address: "Lê Lai, Quận 1, TP.HCM", price: "150.000", type: "Clothing", status: "Pending" },
+    { id: "00004", client: "Alice Smith", address: "Trần Hưng Đạo, Quận 1, TP.HCM", price: "80.000", type: "Home Appliances", status: "Returned" },
+    { id: "00005", client: "Michael Brown", address: "Nguyễn Huệ, Quận 1, TP.HCM", price: "300.000", type: "Books", status: "Delivering" },
+    { id: "00006", client: "Sophia Johnson", address: "Lê Văn Sỹ, Quận 3, TP.HCM", price: "250.000", type: "Beauty Products", status: "Pending" },
+    { id: "00007", client: "Lucas Martin", address: "Ngô Đức Kế, Quận 1, TP.HCM", price: "175.000", type: "Toys", status: "Declined" },
+    { id: "00008", client: "Olivia Taylor", address: "Cầu Ông Lãnh, Quận 1, TP.HCM", price: "90.000", type: "Grocery", status: "Cancelled" },
+    { id: "00009", client: "James Anderson", address: "Tôn Thất Tùng, Quận 1, TP.HCM", price: "220.000", type: "Gardening Tools", status: "Delivering" },
+    { id: "00010", client: "James Anderson", address: "Nguyễn Xiển, Quận 9, TP.HCM", price: "300.000", type: "Gardening Tools", status: "Declined" }
+  ];
+
   const resetFilters = () => {
     setFilterPrice("");
     setFilterType("");
     setFilterStatus("");
   };
 
- return (
+  const filteredDeliveries = deliveries.filter((delivery) => {
+    return (
+      (filterPrice === "" || (filterPrice === "low" ? delivery.price <= 200000 : delivery.price > 200000)) &&
+      (filterType === "" || delivery.type.toLowerCase().includes(filterType.toLowerCase())) &&
+      (filterStatus === "" || delivery.status.toLowerCase() === filterStatus.toLowerCase())
+    );
+  });
+
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = filteredDeliveries.slice(indexOfFirstRow, indexOfLastRow);
+
+  const totalPages = Math.ceil(filteredDeliveries.length / rowsPerPage);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status.toLowerCase()) {
+      case "deliveried":
+        return "text-green-500 bg-green-100"; // Xanh lá cây cho trạng thái "Delivered"
+      case "delivering":
+        return "text-blue-500 bg-blue-100"; // Xanh dương cho trạng thái "Delivering"
+      case "pending":
+        return "text-yellow-500 bg-yellow-100"; // Vàng cho trạng thái "Pending"
+      case "returned":
+      case "returned":
+        return "text-orange-500 bg-orange-100"; // Cam cho trạng thái "Returned"
+      case "declined":
+        return "text-red-500 bg-red-100"; // Đỏ cho trạng thái "Declined"
+      case "cancelled":
+        return "text-gray-500 bg-gray-100"; // Xám cho trạng thái "Cancelled"
+      default:
+        return "text-gray-500 bg-gray-100"; // Mặc định xám cho các trạng thái khác
+    }
+  };
+
+  return (
     <div className="w-screen overflow-x-hidden">
       {/* Header */}
       <header className="flex justify-between items-center p-6 bg-white shadow-md">
-        {/* Logo bên trái */}
+        {/* Logo */}
         <div className="w-1/3 flex items-center">
           <svg
             width="86"
@@ -157,7 +216,7 @@ function TrackPage() {
                 <option value="delivering">Delivering</option>
                 <option value="deliveried">Deliveried</option>
                 <option value="pending">Pending</option>
-                <option value="return">Return</option>
+                <option value="returned">Returned</option>
                 <option value="declined">Declined</option>
                 <option value="cancelled">Cancelled</option>
 
@@ -189,101 +248,42 @@ function TrackPage() {
                 <th className="py-2 px-4 text-left font-medium text-gray-600">EDIT</th>
               </tr>
             </thead>
-            <tbody>
-              {/* Rows */}
-              <tr className="border-b">
-    <td className="py-3 px-4 text-sm text-gray-700">00001</td>
-    <td className="py-3 px-4 text-sm text-gray-700">Christine Books</td>
-    <td className="py-3 px-4 text-sm text-gray-700">Phường Bến Nghé, Quận 1, TP.HCM</td>
-    <td className="py-3 px-4 text-sm text-gray-700">100.000</td>
-    <td className="py-3 px-4 text-sm text-blue-600">Foodstuff</td>
-    <td className="py-3 px-4 text-sm text-green-500">Delivered</td>
-    <td className="py-3 px-4 text-sm text-gray-700">Cancel</td>
-  </tr>
-  <tr className="border-b">
-    <td className="py-3 px-4 text-sm text-gray-700">00002</td>
-    <td className="py-3 px-4 text-sm text-gray-700">Emma Watson</td>
-    <td className="py-3 px-4 text-sm text-gray-700">Nguyễn Thái Bình, Quận 1, TP.HCM</td>
-    <td className="py-3 px-4 text-sm text-gray-700">200.000</td>
-    <td className="py-3 px-4 text-sm text-blue-600">Electronics</td>
-    <td className="py-3 px-4 text-sm text-green-500">Delivered</td>
-    <td className="py-3 px-4 text-sm text-gray-700">Cancel</td>
-  </tr>
-  <tr className="border-b">
-    <td className="py-3 px-4 text-sm text-gray-700">00003</td>
-    <td className="py-3 px-4 text-sm text-gray-700">John Doe</td>
-    <td className="py-3 px-4 text-sm text-gray-700">Lê Lai, Quận 1, TP.HCM</td>
-    <td className="py-3 px-4 text-sm text-gray-700">150.000</td>
-    <td className="py-3 px-4 text-sm text-blue-600">Clothing</td>
-    <td className="py-3 px-4 text-sm text-pink-500">Pending</td>
-    <td className="py-3 px-4 text-sm text-gray-700">Cancel</td>
-  </tr>
-  <tr className="border-b">
-    <td className="py-3 px-4 text-sm text-gray-700">00004</td>
-    <td className="py-3 px-4 text-sm text-gray-700">Alice Smith</td>
-    <td className="py-3 px-4 text-sm text-gray-700">Trần Hưng Đạo, Quận 1, TP.HCM</td>
-    <td className="py-3 px-4 text-sm text-gray-700">80.000</td>
-    <td className="py-3 px-4 text-sm text-blue-600">Home Appliances</td>
-    <td className="py-3 px-4 text-sm text-orange-500">Return</td>
-    <td className="py-3 px-4 text-sm text-gray-700">Cancel</td>
-  </tr>
-  <tr className="border-b">
-    <td className="py-3 px-4 text-sm text-gray-700">00005</td>
-    <td className="py-3 px-4 text-sm text-gray-700">Michael Brown</td>
-    <td className="py-3 px-4 text-sm text-gray-700">Nguyễn Huệ, Quận 1, TP.HCM</td>
-    <td className="py-3 px-4 text-sm text-gray-700">300.000</td>
-    <td className="py-3 px-4 text-sm text-blue-600">Books</td>
-    <td className="py-3 px-4 text-sm text-yellow-500">Delivering</td>
-    <td className="py-3 px-4 text-sm text-gray-700">Cancel</td>
-  </tr>
-  <tr className="border-b">
-    <td className="py-3 px-4 text-sm text-gray-700">00006</td>
-    <td className="py-3 px-4 text-sm text-gray-700">Sophia Johnson</td>
-    <td className="py-3 px-4 text-sm text-gray-700">Lê Văn Sỹ, Quận 3, TP.HCM</td>
-    <td className="py-3 px-4 text-sm text-gray-700">250.000</td>
-    <td className="py-3 px-4 text-sm text-blue-600">Beauty Products</td>
-    <td className="py-3 px-4 text-sm text-pink-500">Pending</td>
-    <td className="py-3 px-4 text-sm text-gray-700">Cancel</td>
-  </tr>
-  <tr className="border-b">
-    <td className="py-3 px-4 text-sm text-gray-700">00007</td>
-    <td className="py-3 px-4 text-sm text-gray-700">Lucas Martin</td>
-    <td className="py-3 px-4 text-sm text-gray-700">Ngô Đức Kế, Quận 1, TP.HCM</td>
-    <td className="py-3 px-4 text-sm text-gray-700">175.000</td>
-    <td className="py-3 px-4 text-sm text-blue-600">Toys</td>
-    <td className="py-3 px-4 text-sm text-purple-500">Declined</td>
-    <td className="py-3 px-4 text-sm text-gray-700">Cancel</td>
-  </tr>
-  <tr className="border-b">
-    <td className="py-3 px-4 text-sm text-gray-700">00008</td>
-    <td className="py-3 px-4 text-sm text-gray-700">Olivia Taylor</td>
-    <td className="py-3 px-4 text-sm text-gray-700">Cầu Ông Lãnh, Quận 1, TP.HCM</td>
-    <td className="py-3 px-4 text-sm text-gray-700">90.000</td>
-    <td className="py-3 px-4 text-sm text-blue-600">Grocery</td>
-    <td className="py-3 px-4 text-sm text-red-500">Cancelled</td>
-    <td className="py-3 px-4 text-sm text-gray-700">Cancel</td>
-  </tr>
-  <tr className="border-b">
-    <td className="py-3 px-4 text-sm text-gray-700">00009</td>
-    <td className="py-3 px-4 text-sm text-gray-700">James Anderson</td>
-    <td className="py-3 px-4 text-sm text-gray-700">Tôn Thất Tùng, Quận 1, TP.HCM</td>
-    <td className="py-3 px-4 text-sm text-gray-700">220.000</td>
-    <td className="py-3 px-4 text-sm text-blue-600">Gardening Tools</td>
-    <td className="py-3 px-4 text-sm text-yellow-500">Delivering</td>
-    <td className="py-3 px-4 text-sm text-gray-700">Cancel</td>
-  </tr>
-  <tr className="border-b">
-    <td className="py-3 px-4 text-sm text-gray-700">00010</td>
-    <td className="py-3 px-4 text-sm text-gray-700">James Anderson</td>
-    <td className="py-3 px-4 text-sm text-gray-700">Nguyễn Xiển, Quận 9, TP.HCM</td>
-    <td className="py-3 px-4 text-sm text-gray-700">300.000</td>
-    <td className="py-3 px-4 text-sm text-blue-600">Gardening Tools</td>
-    <td className="py-3 px-4 text-sm text-purple-500">Declined</td>
-    <td className="py-3 px-4 text-sm text-gray-700">Cancel</td>
-  </tr>
-</tbody>
+   <tbody>
+            {currentRows.map((delivery) => (
+              <tr key={delivery.id} className="border-b">
+                <td className="py-3 px-4 text-sm text-gray-700">{delivery.id}</td>
+                <td className="py-3 px-4 text-sm text-gray-700">{delivery.client}</td>
+                <td className="py-3 px-4 text-sm text-gray-700">{delivery.address}</td>
+                <td className="py-3 px-4 text-sm text-gray-700">{delivery.price}</td>
+                <td className="py-3 px-4 text-sm text-blue-600">{delivery.type}</td>
+                <td className={`py-3 px-4 text-sm font-semibold rounded-full ${getStatusColor(delivery.status)}`}>
+                  {delivery.status}
+                </td>
+                <td className="py-3 px-4 text-sm text-gray-700">Cancel</td>
+              </tr>
+            ))}
+          </tbody>
 
           </table>
+        </div>
+
+        {/* Thanh điều hướng trang */}
+        <div className="flex justify-between items-center mt-4">
+          <button
+            onClick={handlePreviousPage}
+            className={`px-4 py-2 bg-blue-600 text-white font-semibold rounded-md ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"}`}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+          <p className="text-sm text-gray-500">Page {currentPage} of {totalPages}</p>
+          <button
+            onClick={handleNextPage}
+            className={`px-4 py-2 bg-blue-600 text-white font-semibold rounded-md ${currentPage === Math.ceil(deliveries.length / rowsPerPage) ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"}`}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
         </div>
       </section>
 
@@ -349,3 +349,4 @@ function TrackPage() {
 }
 
 export default TrackPage;
+
