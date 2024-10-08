@@ -10,8 +10,6 @@ import App from "./App.tsx";
 import TrackPage from "./pages/TrackPage.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 
-
-
 const router = createBrowserRouter([
   {
     path: "/login",
@@ -39,8 +37,9 @@ const router = createBrowserRouter([
   },
   {
     path: "/dashboard",
-    element: <Dashboard/>,
+    element: <Dashboard />,
   }
+
 ]);
 
 createRoot(document.getElementById("root")!).render(
