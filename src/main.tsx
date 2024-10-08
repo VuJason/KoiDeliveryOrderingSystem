@@ -7,6 +7,10 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage.tsx";
 import VerifyOTPPage from "./pages/VerifyOTPPage.tsx";
 import ChangPasswordPage from "./pages/ChangePasswrod.tsx";
 import App from "./App.tsx";
+import TrackPage from "./pages/TrackPage.tsx";
+import DashboardPage from  "./pages/DashboardPage.tsx";
+
+
 
 const router = createBrowserRouter([
   {
@@ -26,9 +30,17 @@ const router = createBrowserRouter([
     element: <ChangPasswordPage />,
   },
   {
+    path: "/track",
+    element: <TrackPage />,
+  },
+  {
     path: "/",
     element: <App />,
   },
+  {
+    path: "/dashboard",
+    element: <DashboardPage />,
+  }
 ]);
 
 createRoot(document.getElementById("root")!).render(
