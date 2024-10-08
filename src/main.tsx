@@ -8,7 +8,7 @@ import VerifyOTPPage from "./pages/VerifyOTPPage.tsx";
 import ChangPasswordPage from "./pages/ChangePasswrod.tsx";
 import App from "./App.tsx";
 import TrackPage from "./pages/TrackPage.tsx";
-import DashboardPage from  "./pages/DashboardPage.tsx";
+import Dashboard from "./pages/Dashboard.tsx";
 
 
 
@@ -39,7 +39,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/dashboard",
-    element: <DashboardPage />,
+    element: <Dashboard/>,
   }
 ]);
 
