@@ -23,13 +23,13 @@ function Dashboard() {
   const [search, setSearch] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-   // Thêm các state cho các trường tìm kiếm
+  // Thêm các state cho các trường tìm kiếm
   const [customerSearch, setCustomerSearch] = useState("");
   const [orderNumberSearch, setOrderNumberSearch] = useState("");
   const [startDateSearch, setStartDateSearch] = useState("");
   const [endDateSearch, setEndDateSearch] = useState("");
 
-  const [data, setData] = useState([
+  const [data, setData] = useState([  
     { orderNumber: "00001", date: "01/10/2024", customer: "Christine Books", time: "6:00 am", amount: "100.000", destination: "Phường Bến Nghé, Quận 1, TP.HCM" },
     { orderNumber: "00002", date: "02/10/2024", customer: "Emma Witton", time: "7:00 am", amount: "200.000", destination: "Nguyễn Thái Bình, Quận 1, TP.HCM" },
     { orderNumber: "00003", date: "03/10/2024", customer: "John Doe", time: "9:00 am", amount: "150.000", destination: "Lê Lai, Quận 1, TP.HCM" },
@@ -45,21 +45,23 @@ function Dashboard() {
   const handleSearch = (e) => {
     setSearch(e.target.value);
   };
+
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
-  
-    // Hàm chuyển đổi ngày từ DD/MM/YYYY sang YYYY-MM-DD để so sánh chính xác
+
+  // Hàm chuyển đổi ngày từ DD/MM/YYYY sang YYYY-MM-DD để so sánh chính xác
   const convertDate = (dateStr) => {
     const [day, month, year] = dateStr.split('/');
     return `${year}-${month}-${day}`; // Định dạng YYYY-MM-DD
   };
-    // Hàm lọc dữ liệu dựa trên các trường tìm kiếm
+
+  // Hàm lọc dữ liệu dựa trên các trường tìm kiếm
   const filteredData = data.filter((item) => {
     const isCustomerMatch = customerSearch === "" || item.customer.toLowerCase().includes(customerSearch.toLowerCase());
     const isOrderNumberMatch = orderNumberSearch === "" || item.orderNumber.includes(orderNumberSearch);
     const itemDate = new Date(convertDate(item.date));
-   const isStartDateMatch = startDateSearch === "" || itemDate >= new Date(startDateSearch);
+    const isStartDateMatch = startDateSearch === "" || itemDate >= new Date(startDateSearch);
     const isEndDateMatch = endDateSearch === "" || itemDate <= new Date(endDateSearch);
     return isCustomerMatch && isOrderNumberMatch && isStartDateMatch && isEndDateMatch;
   });
@@ -69,7 +71,7 @@ function Dashboard() {
       {/* Inner Flex for Sidebar and Main Content */}
       <div className="flex flex-1">
         {/* Sidebar */}
-        <aside className="w-64 bg-white flex flex-col px-6 py-8 shadow-md">
+        <aside className="w-60 bg-white flex flex-col px-6 py-8 shadow-md">
           {/* Logo */}
           <div className="text-2xl font-bold text-indigo-600 mb-8">BYKE</div>
 
@@ -115,7 +117,7 @@ function Dashboard() {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-8 ml-6">
           {/* Updated Header */}
           <header className="flex justify-between items-center mb-8">
             {/* Menu Icon */}
@@ -124,7 +126,7 @@ function Dashboard() {
             </div>
 
             {/* Search Bar */}
-            <div className="relative w-1/3 mx-8">
+            <div className="relative w-2/3 mx-8">
               <input
                 type="text"
                 value={search}
@@ -157,7 +159,7 @@ function Dashboard() {
                   </div>
                   <div className="text-sm">
                     <p className="font-semibold">John Doe</p>
-                    <p className="text-gray-500">Admin</p>
+                    <p className="text-gray-500">Staff</p>
                   </div>
                   <FontAwesomeIcon icon={faChevronDown} className="ml-1" />
                 </div>
@@ -308,6 +310,7 @@ function Dashboard() {
           </section>
         </main>
       </div>
+
       {/* Footer */}
       <Footer />
     </div>
