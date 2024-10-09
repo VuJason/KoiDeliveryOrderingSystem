@@ -27,9 +27,9 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody LoginDto user) {
-        Users newUser = userService.login(user);
-        return ResponseEntity.ok(newUser);
+    public ResponseEntity login(@RequestBody LoginDto login) {
+        Users checkuser = userService.login(login);
+        return ResponseEntity.ok(checkuser);
     }
 
     @PostMapping("/logout")
