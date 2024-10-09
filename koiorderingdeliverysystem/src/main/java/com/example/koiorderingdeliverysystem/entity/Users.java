@@ -40,6 +40,9 @@ public class Users {
     @Column(name = "created_at")
     private Timestamp createdAt;
 
+    @Column(name = "roles")
+    private String roles;
+
     @Column(name = "status")
     private boolean status;
 

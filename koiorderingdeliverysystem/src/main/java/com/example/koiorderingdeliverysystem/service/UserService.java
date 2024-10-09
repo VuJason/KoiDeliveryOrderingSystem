@@ -1,7 +1,9 @@
 package com.example.koiorderingdeliverysystem.service;
 
 import com.example.koiorderingdeliverysystem.dto.LoginDto;
+import com.example.koiorderingdeliverysystem.entity.Customers;
 import com.example.koiorderingdeliverysystem.entity.Users;
+import com.example.koiorderingdeliverysystem.repository.CustomerRepository;
 import com.example.koiorderingdeliverysystem.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,9 +14,19 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public Users register(Users user) {
+    @Autowired
+    private CustomerRepository customerRepository;
 
+    public Users register(Users user) {
+        user.setRoles("customer");
         Users newUser = userRepository.save(user);
+
+        Customers newCustomer = new Customers();
+        newCustomer.setEmail(user.getEmail());
+        newCustomer.setCustomerName(user.getName());
+
+        customerRepository.save(newCustomer);
+
         return newUser;
 
     }
