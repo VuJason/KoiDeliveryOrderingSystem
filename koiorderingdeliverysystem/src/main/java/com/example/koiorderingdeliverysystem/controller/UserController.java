@@ -1,44 +1,42 @@
 package com.example.koiorderingdeliverysystem.controller;
 
+
+
 import com.example.koiorderingdeliverysystem.dto.LoginDto;
-import com.example.koiorderingdeliverysystem.dto.RegistrationDto;
+import com.example.koiorderingdeliverysystem.entity.Users;
 import com.example.koiorderingdeliverysystem.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping
+@CrossOrigin("*")
+@RequestMapping("/api")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    @PostMapping("/api/register")
-    public String register(@RequestBody RegistrationDto registrationDTO) {
-        if (userService.register(
-                registrationDTO.getUserId(),
-                registrationDTO.getUsername(),
-                registrationDTO.getEmail(),
-                registrationDTO.getPassword(),
-                registrationDTO.getRole())) {
-            return "Register successful";
-        } else {
-            return "Username or email already exists";
-        }
+    @PostMapping("/register")
+    public ResponseEntity register(@Valid @RequestBody Users user) {
+            Users newUser = userService.register(user);
+            return ResponseEntity.ok(newUser);
+
     }
 
-    @PostMapping("/api/login")
-    public String login(@RequestBody LoginDto loginDTO) {
-        if (userService.login(loginDTO.getEmail(), loginDTO.getPassword())) {
-            return "Login successful";
-        } else {
-            return "Invalid email, password, or user is inactive";
-        }
+    @PostMapping("/login")
+    public ResponseEntity login(@RequestBody LoginDto user) {
+        Users newUser = userService.login(user);
+        return ResponseEntity.ok(newUser);
     }
 
-    @PostMapping("/api/logout")
+    @PostMapping("/logout")
     public String logout() {
         userService.logout();
         return "Logged out successfully";
     }
+
+
 }
