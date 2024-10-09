@@ -1,46 +1,37 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-faBell,
-faArrowRightFromBracket,
-faTachometerAlt,
-faUsers,
-faEnvelope,
-faTruck,
-faIdCard,
-faCog,
-faUser,
-faBox,
-faDollarSign,
-faClock,
-faBars,
-faMagnifyingGlass,
-faChevronDown,
+  faBell,
+  faArrowRightFromBracket,
+  faTachometerAlt,
+  faUsers,
+  faEnvelope,
+  faTruck,
+  faIdCard,
+  faCog,
+  faUser,
+  faBox,
+  faDollarSign,
+  faClock,
+  faBars,
+  faMagnifyingGlass,
+  faChevronDown,
 } from "@fortawesome/free-solid-svg-icons";
 import Footer from "../components/Footer";
 
 function Dashboard() {
   const [search, setSearch] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
+   // Thêm các state cho các trường tìm kiếm
   const [customerSearch, setCustomerSearch] = useState("");
   const [orderNumberSearch, setOrderNumberSearch] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [startDateSearch, setStartDateSearch] = useState("");
+  const [endDateSearch, setEndDateSearch] = useState("");
 
-  
-
-
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value);
-  };
-  const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
-  };
-
-    const orders = [
+  const [data, setData] = useState([
     { orderNumber: "00001", date: "01/10/2024", customer: "Christine Books", time: "6:00 am", amount: "100.000", destination: "Phường Bến Nghé, Quận 1, TP.HCM" },
-    { orderNumber: "00002", date: "02/10/2024", customer: "Emma Wishton", time: "7:00 am", amount: "200.000", destination: "Nguyễn Thái Bình, Quận 1, TP.HCM" },
+    { orderNumber: "00002", date: "02/10/2024", customer: "Emma Witton", time: "7:00 am", amount: "200.000", destination: "Nguyễn Thái Bình, Quận 1, TP.HCM" },
     { orderNumber: "00003", date: "03/10/2024", customer: "John Doe", time: "9:00 am", amount: "150.000", destination: "Lê Lai, Quận 1, TP.HCM" },
     { orderNumber: "00004", date: "04/10/2024", customer: "Alice Smith", time: "9:00 am", amount: "80.000", destination: "Trần Hưng Đạo, Quận 1, TP.HCM" },
     { orderNumber: "00005", date: "05/10/2024", customer: "Michael Brown", time: "10:00 am", amount: "300.000", destination: "Nguyễn Huệ, Quận 1, TP.HCM" },
@@ -49,20 +40,30 @@ function Dashboard() {
     { orderNumber: "00008", date: "08/10/2024", customer: "Olivia Taylor", time: "13:00 pm", amount: "90.000", destination: "Cầu Ông Lãnh, Quận 1, TP.HCM" },
     { orderNumber: "00009", date: "09/10/2024", customer: "James Anderson", time: "14:00 pm", amount: "220.000", destination: "Tôn Thất Tùng, Quận 1, TP.HCM" },
     { orderNumber: "00010", date: "10/10/2024", customer: "James Anderson", time: "15:00 pm", amount: "300.000", destination: "Nguyễn Xiển, Quận 9, TP.HCM" },
-  ];
+  ]);
 
-  const filteredOrders = orders.filter(order => {
-    const orderDate = new Date(order.date.split("/").reverse().join("-")); // Convert string date to Date object for comparison
-    const startDateObj = startDate ? new Date(startDate) : null;
-    const endDateObj = endDate ? new Date(endDate) : null;
-
-    return (
-      order.customer.toLowerCase().includes(customerSearch.toLowerCase()) &&
-      order.orderNumber.includes(orderNumberSearch) &&
-      (!startDateObj || orderDate >= startDateObj) &&
-      (!endDateObj || orderDate <= endDateObj)
-    );
+  const handleSearch = (e) => {
+    setSearch(e.target.value);
+  };
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+  
+    // Hàm chuyển đổi ngày từ DD/MM/YYYY sang YYYY-MM-DD để so sánh chính xác
+  const convertDate = (dateStr) => {
+    const [day, month, year] = dateStr.split('/');
+    return `${year}-${month}-${day}`; // Định dạng YYYY-MM-DD
+  };
+    // Hàm lọc dữ liệu dựa trên các trường tìm kiếm
+  const filteredData = data.filter((item) => {
+    const isCustomerMatch = customerSearch === "" || item.customer.toLowerCase().includes(customerSearch.toLowerCase());
+    const isOrderNumberMatch = orderNumberSearch === "" || item.orderNumber.includes(orderNumberSearch);
+    const itemDate = new Date(convertDate(item.date));
+   const isStartDateMatch = startDateSearch === "" || itemDate >= new Date(startDateSearch);
+    const isEndDateMatch = endDateSearch === "" || itemDate <= new Date(endDateSearch);
+    return isCustomerMatch && isOrderNumberMatch && isStartDateMatch && isEndDateMatch;
   });
+
   return (
     <div className="flex flex-col min-h-screen bg-blue-50">
       {/* Inner Flex for Sidebar and Main Content */}
@@ -113,7 +114,7 @@ function Dashboard() {
           </div>
         </aside>
 
-      {/* Main Content */}
+        {/* Main Content */}
         <main className="flex-1 p-8">
           {/* Updated Header */}
           <header className="flex justify-between items-center mb-8">
@@ -152,11 +153,11 @@ function Dashboard() {
                   onClick={toggleDropdown}
                 >
                   <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-300">
-                    <img src="/avt koi.png" alt="User Avatar" />
+                    <img src="/public/avt koi.png" alt="User Avatar" />
                   </div>
                   <div className="text-sm">
                     <p className="font-semibold">John Doe</p>
-                    <p className="text-gray-500">Staff</p>
+                    <p className="text-gray-500">Admin</p>
                   </div>
                   <FontAwesomeIcon icon={faChevronDown} className="ml-1" />
                 </div>
@@ -231,85 +232,82 @@ function Dashboard() {
           </section>
 
           {/* Delivery Information */}
-        <section className="bg-white p-6 rounded-md shadow-sm mb-8">
-          <h2 className="text-xl font-semibold mb-4">Delivery Information</h2>
+          <section className="bg-white p-6 rounded-md shadow-sm mb-8">
+            <h2 className="text-xl font-semibold mb-4">Delivery Information</h2>
 
-          <div className="grid grid-cols-4 gap-6 mb-6">
-            <div>
-              <label className="block text-gray-600 mb-2">Customer</label>
-              <input
-                type="text"
-                placeholder="Enter Customer Name"
-                value={customerSearch}
-                onChange={(e) => setCustomerSearch(e.target.value)}
-                className="px-4 py-2 w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500"
-              />
+            <div className="grid grid-cols-4 gap-6 mb-6">
+              <div>
+                <label className="block text-gray-600 mb-2">Customer</label>
+                <input
+                  type="text"
+                  value={customerSearch}
+                  onChange={(e) => setCustomerSearch(e.target.value)}
+                  placeholder="Enter Customer Name"
+                  className="px-4 py-2 w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-600 mb-2">Order number</label>
+                <input
+                  type="text"
+                  value={orderNumberSearch}
+                  onChange={(e) => setOrderNumberSearch(e.target.value)}
+                  placeholder="Enter order number"
+                  className="px-4 py-2 w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-600 mb-2">Start Date</label>
+                <input
+                  type="date"
+                  value={startDateSearch}
+                  onChange={(e) => setStartDateSearch(e.target.value)}
+                  placeholder="Start Date"
+                  className="px-4 py-2 w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-600 mb-2">End Date</label>
+                <input
+                  type="date"
+                  value={endDateSearch}
+                  onChange={(e) => setEndDateSearch(e.target.value)}
+                  placeholder="End Date"
+                  className="px-4 py-2 w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
             </div>
-            <div>
-              <label className="block text-gray-600 mb-2">Order number</label>
-              <input
-                type="text"
-                placeholder="Enter order number"
-                value={orderNumberSearch}
-                onChange={(e) => setOrderNumberSearch(e.target.value)}
-                className="px-4 py-2 w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500"
-              />
-            </div>
-            <div>
-              <label className="block text-gray-600 mb-2">Start Date</label>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="px-4 py-2 w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500"
-              />
-            </div>
-            <div>
-              <label className="block text-gray-600 mb-2">End Date</label>
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="px-4 py-2 w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500"
-              />
-            </div>
-          </div>
 
-          {/* Delivery Table */}
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white border border-gray-200">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="py-2 px-4 text-left font-medium text-gray-600">Order Number</th>
-                  <th className="py-2 px-4 text-left font-medium text-gray-600">Date</th>
-                  <th className="py-2 px-4 text-left font-medium text-gray-600">Customer</th>
-                  <th className="py-2 px-4 text-left font-medium text-gray-600">Time</th>
-                  <th className="py-2 px-4 text-left font-medium text-gray-600">Amount</th>
-                  <th className="py-2 px-4 text-left font-medium text-gray-600">Destination</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredOrders.length > 0 ? (
-                  filteredOrders.map((order) => (
-                    <tr key={order.orderNumber} className="border-b">
-                      <td className="py-3 px-4 text-blue-500">{order.orderNumber}</td>
-                      <td className="py-3 px-4">{order.date}</td>
-                      <td className="py-3 px-4">{order.customer}</td>
-                      <td className="py-3 px-4">{order.time}</td>
-                      <td className="py-3 px-4">{order.amount}</td>
-                      <td className="py-3 px-4">{order.destination}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={6} className="text-center py-4">No orders found</td>
+            {/* Delivery Table */}
+            <div className="overflow-x-auto">
+              <table className="min-w-full bg-white border border-gray-200">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="py-2 px-4 text-left font-medium text-gray-600">Order Number</th>
+                    <th className="py-2 px-4 text-left font-medium text-gray-600">Date</th>
+                    <th className="py-2 px-4 text-left font-medium text-gray-600">Customer</th>
+                    <th className="py-2 px-4 text-left font-medium text-gray-600">Time</th>
+                    <th className="py-2 px-4 text-left font-medium text-gray-600">Amount</th>
+                    <th className="py-2 px-4 text-left font-medium text-gray-600">Destination</th>
                   </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </section>
-      </main>
+                </thead>
+                <tbody>
+                  {filteredData.map((item) => (
+                    <tr key={item.orderNumber} className="border-b">
+                      <td className="py-3 px-4 text-blue-500">{item.orderNumber}</td>
+                      <td className="py-3 px-4">{item.date}</td>
+                      <td className="py-3 px-4">{item.customer}</td>
+                      <td className="py-3 px-4">{item.time}</td>
+                      <td className="py-3 px-4">{item.amount}</td>
+                      <td className="py-3 px-4">{item.destination}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </main>
+      </div>
       {/* Footer */}
       <Footer />
     </div>
