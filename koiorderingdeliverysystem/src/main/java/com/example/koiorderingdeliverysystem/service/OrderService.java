@@ -26,7 +26,7 @@ public class OrderService {
         orders.setOriginLocation(orderRequestDto.getOriginalLocation());
         orders.setDestinationLocation(orderRequestDto.getDestination());
 
-        
+
         orders.setStatus(OrderStatus.PENDING);
 
         String orderId = generateOrderId();
