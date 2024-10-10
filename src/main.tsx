@@ -9,6 +9,7 @@ import ChangPasswordPage from "./pages/ChangePasswrod.tsx";
 import App from "./App.tsx";
 import TrackPage from "./pages/TrackPage.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
+import BrowserTrack from  "./pages/BrowserTrack.tsx";
 
 const router = createBrowserRouter([
   {
@@ -38,7 +39,11 @@ const router = createBrowserRouter([
   {
     path: "/dashboard",
     element: <Dashboard />,
-  }
+  },
+  {
+    path: "/browser-track",
+    element: <BrowserTrack />,
+  },
 
 ]);
 

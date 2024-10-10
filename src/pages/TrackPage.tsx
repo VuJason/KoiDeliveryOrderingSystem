@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFacebookF, faTwitter, faInstagram, faLinkedinIn } from '@fortawesome/free-brands-svg-icons';
 import { faFilter, faSyncAlt, faChevronDown } from '@fortawesome/free-solid-svg-icons';
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import Footer from "../components/Footer";
 import  Header from "../components/Header";
 
 function TrackPage() {
+  const [orderNumber, setOrderNumber] = useState("");  // Biến mới cho tìm kiếm đơn hàng
   const [filterPrice, setFilterPrice] = useState("");
   const [filterType, setFilterType] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
@@ -15,40 +14,55 @@ function TrackPage() {
   const [searchError, setSearchError] = useState("");
 
   const handleSearch = () => {
-    if (!filterPrice.trim()) { // Kiểm tra ô tìm kiếm
+    if (!orderNumber.trim()) { // Kiểm tra ô tìm kiếm
       setSearchError("Tracking number required");
       return;
     }
     setSearchError(""); // Reset lỗi nếu có
     // Logic tìm kiếm ở đây...
   };
+   // Chuyển đổi giá từ định dạng chuỗi sang số
+  const parsePrice = (price) => {
+    return parseInt(price.replace(/\./g, ""),10);// Loại bỏ dấu chấm và chuyển về số
+  };
+
 
   const deliveries = [
-    { id: "00001", client: "Christine Books", address: "Phường Bến Nghé, Quận 1, TP.HCM", price: "100.000", type: "Foodstuff", status: "Deliveried" },
-    { id: "00002", client: "Emma Watson", address: "Nguyễn Thái Bình, Quận 1, TP.HCM", price: "200.000", type: "Electronics", status: "Deliveried" },
-    { id: "00003", client: "John Doe", address: "Lê Lai, Quận 1, TP.HCM", price: "150.000", type: "Clothing", status: "Pending" },
-    { id: "00004", client: "Alice Smith", address: "Trần Hưng Đạo, Quận 1, TP.HCM", price: "80.000", type: "Home Appliances", status: "Returned" },
-    { id: "00005", client: "Michael Brown", address: "Nguyễn Huệ, Quận 1, TP.HCM", price: "300.000", type: "Books", status: "Delivering" },
-    { id: "00006", client: "Sophia Johnson", address: "Lê Văn Sỹ, Quận 3, TP.HCM", price: "250.000", type: "Beauty Products", status: "Pending" },
-    { id: "00007", client: "Lucas Martin", address: "Ngô Đức Kế, Quận 1, TP.HCM", price: "175.000", type: "Toys", status: "Declined" },
-    { id: "00008", client: "Olivia Taylor", address: "Cầu Ông Lãnh, Quận 1, TP.HCM", price: "90.000", type: "Grocery", status: "Cancelled" },
-    { id: "00009", client: "James Anderson", address: "Tôn Thất Tùng, Quận 1, TP.HCM", price: "220.000", type: "Gardening Tools", status: "Delivering" },
-    { id: "00010", client: "James Anderson", address: "Nguyễn Xiển, Quận 9, TP.HCM", price: "300.000", type: "Gardening Tools", status: "Declined" }
+    { id: "00001", client: "Christine Books", address: "Phường Bến Nghé, Quận 1, TP.HCM", price: "100.000", type: "Foodstuff", status: "Confirmed" },
+    { id: "00002", client: "Emma Watson", address: "Nguyễn Thái Bình, Quận 1, TP.HCM", price: "200.000", type: "Electronics", status: "Confirmed" },
+    { id: "00003", client: "John Doe", address: "Lê Lai, Quận 1, TP.HCM", price: "150.000", type: "Clothing", status: "Rejected" },
+    { id: "00004", client: "Alice Smith", address: "Trần Hưng Đạo, Quận 1, TP.HCM", price: "80.000", type: "Home Appliances", status: "Rejected" },
+    { id: "00005", client: "Michael Brown", address: "Nguyễn Huệ, Quận 1, TP.HCM", price: "300.000", type: "Books", status: "Confirmed" },
+    { id: "00006", client: "Sophia Johnson", address: "Lê Văn Sỹ, Quận 3, TP.HCM", price: "250.000", type: "Beauty Products", status: "Rejected" },
+    { id: "00007", client: "Lucas Martin", address: "Ngô Đức Kế, Quận 1, TP.HCM", price: "175.000", type: "Toys", status: "Confirmed" },
+    { id: "00008", client: "Olivia Taylor", address: "Cầu Ông Lãnh, Quận 1, TP.HCM", price: "90.000", type: "Grocery", status: "Rejected" },
+    { id: "00009", client: "James Anderson", address: "Tôn Thất Tùng, Quận 1, TP.HCM", price: "220.000", type: "Gardening Tools", status: "Confirmed" },
+    { id: "00010", client: "James Anderson", address: "Nguyễn Xiển, Quận 9, TP.HCM", price: "300.000", type: "Gardening Tools", status: "Rejected" }
   ];
 
   const resetFilters = () => {
+    setOrderNumber("");  // Reset ô tìm kiếm đơn hàng
     setFilterPrice("");
     setFilterType("");
     setFilterStatus("");
+    setSearchError("");
   };
 
   const filteredDeliveries = deliveries.filter((delivery) => {
     return (
+      (orderNumber === "" || delivery.id.includes(orderNumber)) &&  // Lọc theo số đơn hàng
       (filterPrice === "" || (filterPrice === "low" ? delivery.price <= 200000 : delivery.price > 200000)) &&
       (filterType === "" || delivery.type.toLowerCase().includes(filterType.toLowerCase())) &&
       (filterStatus === "" || delivery.status.toLowerCase() === filterStatus.toLowerCase())
     );
   });
+   // Sắp xếp theo giá nếu có bộ lọc giá
+  if (filterPrice === "low") {
+    filteredDeliveries.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));  // Sắp xếp từ thấp đến cao
+  } else if (filterPrice === "high") {
+    filteredDeliveries.sort((a, b) => parsePrice(b.price) - parsePrice(a.price));  // Sắp xếp từ cao đến thấp
+  }
+
 
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
@@ -70,19 +84,10 @@ function TrackPage() {
 
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
-      case "deliveried":
-        return "text-green-500 bg-green-100"; // Xanh lá cây cho trạng thái "Delivered"
-      case "delivering":
-        return "text-blue-500 bg-blue-100"; // Xanh dương cho trạng thái "Delivering"
-      case "pending":
-        return "text-yellow-500 bg-yellow-100"; // Vàng cho trạng thái "Pending"
-      case "returned":
-      case "returned":
-        return "text-orange-500 bg-orange-100"; // Cam cho trạng thái "Returned"
-      case "declined":
-        return "text-red-500 bg-red-100"; // Đỏ cho trạng thái "Declined"
-      case "cancelled":
-        return "text-gray-500 bg-gray-100"; // Xám cho trạng thái "Cancelled"
+      case "confirmed":
+        return "text-green-500 bg-green-100"; // Xanh lá cây cho trạng thái "Confirmed"
+      case "rejected":
+        return "text-red-500 bg-red-100"; // Đỏ cho trạng thái "Rejected"
       default:
         return "text-gray-500 bg-gray-100"; // Mặc định xám cho các trạng thái khác
     }
@@ -113,9 +118,9 @@ function TrackPage() {
               type="text"
               placeholder="Enter order number"
               className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out ${searchError ? "border-red-500" : "border-gray-300"}`}
-              value={filterPrice}
+              value={orderNumber}
               onChange={(e) => {
-                setFilterPrice(e.target.value);
+                setOrderNumber(e.target.value);
                 setSearchError(""); // Reset lỗi khi người dùng nhập liệu
               }}
             />
@@ -144,19 +149,19 @@ function TrackPage() {
               Filter By
             </button>
 
-            {/* Dropdown Price */}
-            <div className="relative">
-              <select
-                value={filterPrice}
-                onChange={(e) => setFilterPrice(e.target.value)}
-                className="border border-gray-300 rounded-md px-4 py-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">Price</option>
-                <option value="low">Low to High</option>
-                <option value="high">High to Low</option>
-              </select>
-              <FontAwesomeIcon icon={faChevronDown} className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
-            </div>
+  {/* Dropdown Price */}
+          <div className="relative">
+            <select
+              value={filterPrice}
+              onChange={(e) => setFilterPrice(e.target.value)}
+              className="border border-gray-300 rounded-md px-4 py-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Price</option>
+              <option value="low">Low to High</option>
+              <option value="high">High to Low</option>
+            </select>
+            <FontAwesomeIcon icon={faChevronDown} className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
+          </div>
 
             {/* Dropdown Package Type */}
             <div className="relative">
@@ -182,12 +187,8 @@ function TrackPage() {
                 className="border border-gray-300 rounded-md px-4 py-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Delivery Status</option>
-                <option value="delivering">Delivering</option>
-                <option value="deliveried">Deliveried</option>
-                <option value="pending">Pending</option>
-                <option value="returned">Returned</option>
-                <option value="declined">Declined</option>
-                <option value="cancelled">Cancelled</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="rejected">Rejected</option>
 
               </select>
               <FontAwesomeIcon icon={faChevronDown} className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
