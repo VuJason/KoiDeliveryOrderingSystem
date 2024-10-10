@@ -23,11 +23,13 @@ function Dashboard() {
   const [search, setSearch] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  // Thêm các state cho các trường tìm kiếm
+  // Các state cho trường tìm kiếm
   const [customerSearch, setCustomerSearch] = useState("");
   const [orderNumberSearch, setOrderNumberSearch] = useState("");
   const [startDateSearch, setStartDateSearch] = useState("");
   const [endDateSearch, setEndDateSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 5; // Số lượng hàng trên mỗi trang
 
   const [data, setData] = useState([  
     { orderNumber: "00001", date: "01/10/2024", customer: "Christine Books", time: "6:00 am", amount: "100.000", destination: "Phường Bến Nghé, Quận 1, TP.HCM" },
@@ -66,16 +68,17 @@ function Dashboard() {
     return isCustomerMatch && isOrderNumberMatch && isStartDateMatch && isEndDateMatch;
   });
 
+  // Tính toán chỉ số hàng và phân trang
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = filteredData.slice(indexOfFirstRow, indexOfLastRow);
+  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+
   return (
     <div className="flex flex-col min-h-screen bg-blue-50">
-      {/* Inner Flex for Sidebar and Main Content */}
       <div className="flex flex-1">
-        {/* Sidebar */}
         <aside className="w-60 bg-white flex flex-col px-6 py-8 shadow-md">
-          {/* Logo */}
           <div className="text-2xl font-bold text-indigo-600 mb-8">BYKE</div>
-
-          {/* Navigation Items */}
           <nav className="flex-1">
             <ul className="space-y-6">
               <li className="flex items-center text-indigo-600 font-semibold">
@@ -100,8 +103,6 @@ function Dashboard() {
               </li>
             </ul>
           </nav>
-
-          {/* Settings and Log Out */}
           <div>
             <ul className="space-y-6">
               <li className="flex items-center text-gray-700">
@@ -116,16 +117,11 @@ function Dashboard() {
           </div>
         </aside>
 
-        {/* Main Content */}
         <main className="flex-1 p-8 ml-6">
-          {/* Updated Header */}
           <header className="flex justify-between items-center mb-8">
-            {/* Menu Icon */}
             <div className="flex items-center">
               <FontAwesomeIcon icon={faBars} className="text-2xl text-gray-700" />
             </div>
-
-            {/* Search Bar */}
             <div className="relative w-2/3 mx-8">
               <input
                 type="text"
@@ -139,16 +135,11 @@ function Dashboard() {
                 className="absolute top-1/2 transform -translate-y-1/2 left-3 text-gray-500"
               />
             </div>
-
-            {/* Notification and User Info */}
             <div className="flex items-center space-x-4">
-              {/* Notification Bell */}
               <div className="relative">
                 <FontAwesomeIcon icon={faBell} className="text-gray-500 text-xl" />
                 <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
               </div>
-
-              {/* User Info */}
               <div className="relative">
                 <div
                   className="flex items-center space-x-2 cursor-pointer"
@@ -163,12 +154,8 @@ function Dashboard() {
                   </div>
                   <FontAwesomeIcon icon={faChevronDown} className="ml-1" />
                 </div>
-
-                {/* Dropdown Menu */}
                 {dropdownOpen && (
-                  <div
-                    className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-50"
-                  >
+                  <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-50">
                     <ul className="py-2">
                       <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">View Profile</li>
                       <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Change Password</li>
@@ -228,11 +215,9 @@ function Dashboard() {
           <section className="bg-white p-6 rounded-md shadow-sm mb-8">
             <h2 className="text-xl font-semibold mb-4">Sales Details</h2>
             <div className="w-full h-64 bg-gray-200 rounded-md flex items-center justify-center">
-              {/* Placeholder for the chart */}
               <span className="text-gray-500">Chart goes here</span>
             </div>
           </section>
-
           {/* Delivery Information */}
           <section className="bg-white p-6 rounded-md shadow-sm mb-8">
             <h2 className="text-xl font-semibold mb-4">Delivery Information</h2>
@@ -294,7 +279,7 @@ function Dashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredData.map((item) => (
+                  {currentRows.map((item) => (
                     <tr key={item.orderNumber} className="border-b">
                       <td className="py-3 px-4 text-blue-500">{item.orderNumber}</td>
                       <td className="py-3 px-4">{item.date}</td>
@@ -307,9 +292,30 @@ function Dashboard() {
                 </tbody>
               </table>
             </div>
-          </section>
+</section>
+{/* Pagination Controls - moved outside the Delivery Information section */}
+<div className="flex justify-between items-center mt-4">
+  <button
+    onClick={() => setCurrentPage(currentPage - 1)}
+    disabled={currentPage === 1}
+    className={`px-4 py-2 bg-blue-600 text-white rounded-md ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""}`}
+  >
+    Previous
+  </button>
+  <span className="text-gray-600">
+    Page {currentPage} of {totalPages}
+  </span>
+  <button
+    onClick={() => setCurrentPage(currentPage + 1)}
+    disabled={currentPage === totalPages}
+    className={`px-4 py-2 bg-blue-600 text-white rounded-md ${currentPage === totalPages ? "opacity-50 cursor-not-allowed" : ""}`}
+  >
+    Next
+  </button>
+</div>
         </main>
       </div>
+    
 
       {/* Footer */}
       <Footer />
