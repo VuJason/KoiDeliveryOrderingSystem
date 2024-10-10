@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 
 function BrowserTrack() {
+  const [searchInput, setSearchInput] = useState("");  // Changed from orderNumber
   const [orderNumber, setOrderNumber] = useState("");  
   const [filterPrice, setFilterPrice] = useState("");
   const [filterType, setFilterType] = useState("");
@@ -12,20 +13,25 @@ function BrowserTrack() {
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 5;
   const [searchError, setSearchError] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
 
   const handleSearch = () => {
-    if (!orderNumber.trim()) {
+    if (!searchInput.trim()) {
       setSearchError("Tracking number required");
       return;
     }
     setSearchError("");
+    setOrderNumber(searchInput);  // Update orderNumber with searchInput
+
+    // Save search results
+    const results = deliveries.filter(delivery => delivery.id.includes(searchInput));
+    setSearchResults(results);
   };
 
   const parsePrice = (price) => {
     return parseInt(price.replace(/\./g, ""), 10); 
   };
 
-  // Danh sách đơn hàng mặc định với trạng thái "Pending"
   const [deliveries, setDeliveries] = useState([
     { id: "00001", client: "Christine Books", address: "Phường Bến Nghé, Quận 1, TP.HCM", price: "100.000", type: "Foodstuff", status: "Pending" },
     { id: "00002", client: "Emma Watson", address: "Nguyễn Thái Bình, Quận 1, TP.HCM", price: "200.000", type: "Electronics", status: "Pending" },
@@ -40,11 +46,13 @@ function BrowserTrack() {
   ]);
 
   const resetFilters = () => {
+    setSearchInput("");  // Reset search input
     setOrderNumber("");
     setFilterPrice("");
     setFilterType("");
     setFilterStatus("");
     setSearchError("");
+    setSearchResults([]); // Reset search results
   };
 
   const updateStatus = (id, newStatus) => {
@@ -70,7 +78,7 @@ function BrowserTrack() {
 
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentRows = filteredDeliveries.slice(indexOfFirstRow, indexOfLastRow);
+  const currentRows = searchResults.length > 0 ? searchResults.slice(indexOfFirstRow, indexOfLastRow) : filteredDeliveries.slice(indexOfFirstRow, indexOfLastRow);
 
   const totalPages = Math.ceil(filteredDeliveries.length / rowsPerPage);
 
@@ -121,9 +129,9 @@ function BrowserTrack() {
               type="text"
               placeholder="Enter order number"
               className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out ${searchError ? "border-red-500" : "border-gray-300"}`}
-              value={orderNumber}
+              value={searchInput}  // Use searchInput here
               onChange={(e) => {
-                setOrderNumber(e.target.value);
+                setSearchInput(e.target.value);
                 setSearchError("");
               }}
             />
@@ -137,7 +145,7 @@ function BrowserTrack() {
             onClick={handleSearch}
             className="w-40 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 ease-in-out"
           >
-            Search
+            Locate
           </button>
         </div>
       </div>

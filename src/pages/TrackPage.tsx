@@ -2,28 +2,34 @@ import React, { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter, faSyncAlt, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import Footer from "../components/Footer";
-import  Header from "../components/Header";
+import Header from "../components/Header";
 
 function TrackPage() {
-  const [orderNumber, setOrderNumber] = useState("");  // Biến mới cho tìm kiếm đơn hàng
+  const [searchInput, setSearchInput] = useState("");  // Changed from orderNumber
+  const [orderNumber, setOrderNumber] = useState("");  
   const [filterPrice, setFilterPrice] = useState("");
   const [filterType, setFilterType] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 5;
   const [searchError, setSearchError] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
 
   const handleSearch = () => {
-    if (!orderNumber.trim()) { // Kiểm tra ô tìm kiếm
+    if (!searchInput.trim()) {
       setSearchError("Tracking number required");
       return;
     }
-    setSearchError(""); // Reset lỗi nếu có
-    // Logic tìm kiếm ở đây...
+    setSearchError("");
+    setOrderNumber(searchInput);  // Update orderNumber with searchInput
+
+    // Save search results
+    const results = deliveries.filter(delivery => delivery.id.includes(searchInput));
+    setSearchResults(results);
   };
-   // Chuyển đổi giá từ định dạng chuỗi sang số
+
   const parsePrice = (price) => {
-    return parseInt(price.replace(/\./g, ""),10);// Loại bỏ dấu chấm và chuyển về số
+    return parseInt(price.replace(/\./g, ""), 10); 
   };
 
 
@@ -41,32 +47,39 @@ function TrackPage() {
   ];
 
   const resetFilters = () => {
-    setOrderNumber("");  // Reset ô tìm kiếm đơn hàng
+    setSearchInput("");  // Reset search input
+    setOrderNumber("");
     setFilterPrice("");
     setFilterType("");
     setFilterStatus("");
     setSearchError("");
+    setSearchResults([]); // Reset search results
+  };
+
+  const updateStatus = (id, newStatus) => {
+    const updatedDeliveries = deliveries.map((delivery) =>
+      delivery.id === id ? { ...delivery, status: newStatus } : delivery
+    );
+    setDeliveries(updatedDeliveries);
   };
 
   const filteredDeliveries = deliveries.filter((delivery) => {
     return (
-      (orderNumber === "" || delivery.id.includes(orderNumber)) &&  // Lọc theo số đơn hàng
-      (filterPrice === "" || (filterPrice === "low" ? delivery.price <= 200000 : delivery.price > 200000)) &&
+      (orderNumber === "" || delivery.id.includes(orderNumber)) && 
       (filterType === "" || delivery.type.toLowerCase().includes(filterType.toLowerCase())) &&
       (filterStatus === "" || delivery.status.toLowerCase() === filterStatus.toLowerCase())
     );
   });
-   // Sắp xếp theo giá nếu có bộ lọc giá
-  if (filterPrice === "low") {
-    filteredDeliveries.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));  // Sắp xếp từ thấp đến cao
-  } else if (filterPrice === "high") {
-    filteredDeliveries.sort((a, b) => parsePrice(b.price) - parsePrice(a.price));  // Sắp xếp từ cao đến thấp
-  }
 
+  if (filterPrice === "low") {
+    filteredDeliveries.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
+  } else if (filterPrice === "high") {
+    filteredDeliveries.sort((a, b) => parsePrice(b.price) - parsePrice(a.price));
+  }
 
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentRows = filteredDeliveries.slice(indexOfFirstRow, indexOfLastRow);
+  const currentRows = searchResults.length > 0 ? searchResults.slice(indexOfFirstRow, indexOfLastRow) : filteredDeliveries.slice(indexOfFirstRow, indexOfLastRow);
 
   const totalPages = Math.ceil(filteredDeliveries.length / rowsPerPage);
 
@@ -111,17 +124,17 @@ function TrackPage() {
       </section>
 
  {/* Search Section */}
-      <div className="relative z-10 mt-10 flex justify-center">
+       <div className="relative z-10 mt-10 flex justify-center">
         <div className="flex items-center space-x-2">
           <div className="relative w-96">
             <input
               type="text"
               placeholder="Enter order number"
               className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out ${searchError ? "border-red-500" : "border-gray-300"}`}
-              value={orderNumber}
+              value={searchInput}  // Use searchInput here
               onChange={(e) => {
-                setOrderNumber(e.target.value);
-                setSearchError(""); // Reset lỗi khi người dùng nhập liệu
+                setSearchInput(e.target.value);
+                setSearchError("");
               }}
             />
             {searchError && (
@@ -134,22 +147,18 @@ function TrackPage() {
             onClick={handleSearch}
             className="w-40 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 ease-in-out"
           >
-            Search
+            Locate
           </button>
         </div>
       </div>
 
-      {/* Filter Section */}
       <section className="mt-12 px-6 mb-20">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6">Available deliveries</h2>
+        <h2 className="text-2xl font-semibold text-gray-800 mb-6">Manage Deliveries</h2>
         <div className="flex justify-start items-center mb-6 space-x-4">
-          {/* Bộ lọc */}
-            <button className="flex items-center text-gray-600 font-medium">
-              <FontAwesomeIcon icon={faFilter} className="mr-2" />
-              Filter By
-            </button>
-
-  {/* Dropdown Price */}
+          <button className="flex items-center text-gray-600 font-medium">
+            <FontAwesomeIcon icon={faFilter} className="mr-2" />
+            Filter By
+          </button>
           <div className="relative">
             <select
               value={filterPrice}
@@ -162,30 +171,26 @@ function TrackPage() {
             </select>
             <FontAwesomeIcon icon={faChevronDown} className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
           </div>
-
-            {/* Dropdown Package Type */}
-            <div className="relative">
-              <select
-                value={filterType}
-                onChange={(e) => setFilterType(e.target.value)}
-                className="border border-gray-300 rounded-md px-4 py-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">Package Type</option>
-                <option value="foodstuff">Foodstuff</option>
-                <option value="electronics">Electronics</option>
-                <option value="clothing">Clothing</option>
-                <option value="home">Home Appliances</option>
-              </select>
-              <FontAwesomeIcon icon={faChevronDown} className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
-            </div>
-
-            {/* Dropdown Delivery Mode */}
-            <div className="relative">
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                className="border border-gray-300 rounded-md px-4 py-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
+          <div className="relative">
+            <select
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+              className="border border-gray-300 rounded-md px-4 py-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Package Type</option>
+              <option value="foodstuff">Foodstuff</option>
+              <option value="electronics">Electronics</option>
+              <option value="clothing">Clothing</option>
+              <option value="home">Home Appliances</option>
+            </select>
+            <FontAwesomeIcon icon={faChevronDown} className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
+          </div>
+          <div className="relative">
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="border border-gray-300 rounded-md px-4 py-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
                 <option value="">Delivery Status</option>
                 <option value="confirmed">Confirmed</option>
                 <option value="rejected">Rejected</option>
@@ -218,26 +223,24 @@ function TrackPage() {
                 <th className="py-2 px-4 text-left font-medium text-gray-600">EDIT</th>
               </tr>
             </thead>
-   <tbody>
-            {currentRows.map((delivery) => (
-              <tr key={delivery.id} className="border-b">
-                <td className="py-3 px-4 text-sm text-gray-700">{delivery.id}</td>
-                <td className="py-3 px-4 text-sm text-gray-700">{delivery.client}</td>
-                <td className="py-3 px-4 text-sm text-gray-700">{delivery.address}</td>
-                <td className="py-3 px-4 text-sm text-gray-700">{delivery.price}</td>
-                <td className="py-3 px-4 text-sm text-blue-600">{delivery.type}</td>
-                <td className={`py-3 px-4 text-sm font-semibold rounded-full ${getStatusColor(delivery.status)}`}>
-                  {delivery.status}
+            <tbody>
+              {currentRows.map((delivery) => (
+                <tr key={delivery.id} className="border-b">
+                  <td className="py-3 px-4 text-sm text-gray-700">{delivery.id}</td>
+                  <td className="py-3 px-4 text-sm text-gray-700">{delivery.client}</td>
+                  <td className="py-3 px-4 text-sm text-gray-700">{delivery.address}</td>
+                  <td className="py-3 px-4 text-sm text-gray-700">{delivery.price}</td>
+                  <td className="py-3 px-4 text-sm text-blue-600">{delivery.type}</td>
+                  <td className={`py-3 px-4 text-sm font-semibold rounded-full ${getStatusColor(delivery.status)}`}>
+           {delivery.status}
                 </td>
                 <td className="py-3 px-4 text-sm text-gray-700">Cancel</td>
               </tr>
             ))}
           </tbody>
-
           </table>
         </div>
 
-        {/* Thanh điều hướng trang */}
         <div className="flex justify-between items-center mt-4">
           <button
             onClick={handlePreviousPage}
@@ -249,7 +252,7 @@ function TrackPage() {
           <p className="text-sm text-gray-500">Page {currentPage} of {totalPages}</p>
           <button
             onClick={handleNextPage}
-            className={`px-4 py-2 bg-blue-600 text-white font-semibold rounded-md ${currentPage === Math.ceil(deliveries.length / rowsPerPage) ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"}`}
+            className={`px-4 py-2 bg-blue-600 text-white font-semibold rounded-md ${currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"}`}
             disabled={currentPage === totalPages}
           >
             Next
@@ -257,12 +260,9 @@ function TrackPage() {
         </div>
       </section>
 
-      {/* Footer */}
-            <Footer />
-
+      <Footer />
     </div>
   );
 }
 
 export default TrackPage;
-
