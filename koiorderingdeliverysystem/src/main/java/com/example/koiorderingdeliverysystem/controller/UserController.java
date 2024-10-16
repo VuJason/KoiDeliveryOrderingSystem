@@ -3,6 +3,8 @@ package com.example.koiorderingdeliverysystem.controller;
 
 
 import com.example.koiorderingdeliverysystem.dto.LoginDto;
+import com.example.koiorderingdeliverysystem.dto.RegistrationDto;
+import com.example.koiorderingdeliverysystem.dto.UserResponse;
 import com.example.koiorderingdeliverysystem.entity.Users;
 import com.example.koiorderingdeliverysystem.service.UserService;
 import jakarta.validation.Valid;
@@ -20,8 +22,8 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity register(@Valid @RequestBody Users user) {
-            Users newUser = userService.register(user);
+    public ResponseEntity register(@RequestBody RegistrationDto register) {
+            UserResponse newUser = userService.register(register);
             return ResponseEntity.ok(newUser);
 
     }

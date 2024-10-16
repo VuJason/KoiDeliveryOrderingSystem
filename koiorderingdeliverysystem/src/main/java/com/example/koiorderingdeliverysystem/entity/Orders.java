@@ -1,44 +1,41 @@
 package com.example.koiorderingdeliverysystem.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.mapping.Join;
 
 import java.util.Date;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @Entity
-@Table(name = "orders")
 public class Orders {
     @Id
-    @Column(name = "OrderID")
-    private String orderId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
     @ManyToOne
-    @JoinColumn(name = "CustomerID", nullable = false)
-    private Customers customer;
+    @JoinColumn(name = "customer_id")
+    private Users customerId;
 
-
-
-    @Column(name = "OrderDate")
-    private Date orderDate;
-    @Column(name = "Quantity")
+    private Date order_date;
+    private String original_location;
+    private String destination;
+    private String transport_method;
+    private String status;
+    private double fish_weight;
     private int quantity;
-    @Column(name="FishWeight")
-    private double fishWeight;
-    @Column(name = "OriginLocation")
-    private String originLocation;
-    @Column(name = "DestinationLocation")
-    private String destinationLocation;
-    @Column(name="TransportMethod")
-    private String transportMethod;
-    @Column(name = "Price")
-    private float price;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "Status")
-    private OrderStatus status; // Sử dụng enum cho trạng thái đơn hàng
+    @ManyToOne
+    @JoinColumn(name = "approved_by")
+    private Users approvedBy;
+
+    @ManyToOne
+    @JoinColumn(name = "assigned_to")
+    private Users assignedTo;
+
 
 
 
