@@ -2,104 +2,95 @@ package com.example.koiorderingdeliverysystem.entity;
 
 
 
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.sql.Timestamp;
+import java.sql.Date;
+import java.util.Collection;
+import java.util.List;
 
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Data
 @Entity
-@Table(name="users")
-public class Users {
+public class Users implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
-    @Column(name="name")
-    private String name;
-    @Column(name = "email")
-    @Email(message = "Email not valid!")
-    private String email;
-
-    @Column(name = "password_hash")
+    private int id;
+    private String username;
     @NotBlank(message = "Password can not blank!")
     @Size(min = 6, message = "Password must be at    least 6 characters!")
-    private String passwordHash;
+    private String password;
+    private String fullname;
+    private String phone;
+    private String email;
+    private String address;
+    private Date registration_date;
 
-    @Column(name = "created_at")
-    private Timestamp createdAt;
 
-    @Column(name = "roles")
-    private String roles;
 
-    @Column(name = "status")
-    private boolean status;
+    @ManyToOne
+    @JoinColumn(name = "delivery_id")
+    private Deliveries deliveries;
 
-    public long getId() {
-        return id;
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "role_id")
+    private Roles roles;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "customerId")
+    List<Orders> orders;
+
+    @OneToMany(mappedBy = "approvedBy")
+    List<Orders> staffOrders;
+
+    @OneToMany(mappedBy = "assignedTo")
+    List<Orders> assignedToOrders;
+
+
+    @Override
+    public String getUsername() {
+        return this.email;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
     }
 
-    public String getName() {
-        return name;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
     }
 
-    public @Email(message = "Email not valid!") String getEmail() {
-        return email;
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
     }
 
-    public void setEmail(@Email(message = "Email not valid!") String email) {
-        this.email = email;
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
-    public @NotBlank(message = "Password can not blank!") @Size(min = 6, message = "Password must be at    least 6 characters!") String getPasswordHash() {
-        return passwordHash;
+    public String getFullname() {
+        return fullname;
     }
 
-    public void setPasswordHash(@NotBlank(message = "Password can not blank!") @Size(min = 6, message = "Password must be at    least 6 characters!") String passwordHash) {
-        this.passwordHash = passwordHash;
-    }
-
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public String getRoles() {
-        return roles;
-    }
-
-    public void setRoles(String roles) {
-        this.roles = roles;
-    }
-
-    public boolean isStatus() {
-        return status;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
     }
 }
 

@@ -1,13 +1,11 @@
 package com.example.koiorderingdeliverysystem.dto;
 
-import com.example.koiorderingdeliverysystem.entity.OrderStatus;
-import lombok.*;
+import lombok.Data;
 
 import java.util.Date;
-
 @Data
-public class OrderRequestDto {
-
+public class CustomerOrderDto {
+    private int id;
     private int quantity;
     private double fish_weight;
     private String original_location;

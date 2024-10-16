@@ -1,75 +1,107 @@
 package com.example.koiorderingdeliverysystem.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.mapping.Join;
 
 import java.util.Date;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @Entity
-@Table(name = "orders")
-public class Orders {
+public class    Orders {
     @Id
-    @Column(name = "OrderID")
-    private String orderId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
     @ManyToOne
-    @JoinColumn(name = "CustomerID", nullable = false)
-    private Customers customer;
+    @JoinColumn(name = "customer_id")
+    @JsonIgnore
+    private Users customerId;
 
-
-
-    @Column(name = "OrderDate")
-    private Date orderDate;
-    @Column(name = "Quantity")
+    private Date order_date;
+    private String original_location;
+    private String destination;
+    private String transport_method;
+    private String status;
+    private double fish_weight;
     private int quantity;
-    @Column(name="FishWeight")
-    private double fishWeight;
-    @Column(name = "OriginLocation")
-    private String originLocation;
-    @Column(name = "DestinationLocation")
-    private String destinationLocation;
-    @Column(name="TransportMethod")
-    private String transportMethod;
-    @Column(name = "Price")
-    private float price;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "Status")
-    private OrderStatus status; // Sử dụng enum cho trạng thái đơn hàng
 
-    public String getOrderId() {
-        return orderId;
+    @ManyToOne
+    @JoinColumn(name = "approved_by")
+    private Users approvedBy;
+
+    @ManyToOne
+    @JoinColumn(name = "assigned_to")
+    private Users assignedTo;
+
+    public int getId() {
+        return id;
     }
 
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public Customers getCustomer() {
-        return customer;
+    public Users getCustomerId() {
+        return customerId;
     }
 
-    public void setCustomer(Customers customer) {
-        this.customer = customer;
+    public void setCustomerId(Users customerId) {
+        this.customerId = customerId;
     }
 
-    public Date getOrderDate() {
-        return orderDate;
+    public Date getOrder_date() {
+        return order_date;
     }
 
-    public void setOrderDate(Date orderDate) {
-        this.orderDate = orderDate;
+    public void setOrder_date(Date order_date) {
+        this.order_date = order_date;
     }
 
-    public double getFishWeight() {
-        return fishWeight;
+    public String getOriginal_location() {
+        return original_location;
     }
 
-    public void setFishWeight(double fishWeight) {
-        this.fishWeight = fishWeight;
+    public void setOriginal_location(String original_location) {
+        this.original_location = original_location;
+    }
+
+    public String getDestination() {
+        return destination;
+    }
+
+    public void setDestination(String destination) {
+        this.destination = destination;
+    }
+
+    public String getTransport_method() {
+        return transport_method;
+    }
+
+    public void setTransport_method(String transport_method) {
+        this.transport_method = transport_method;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public double getFish_weight() {
+        return fish_weight;
+    }
+
+    public void setFish_weight(double fish_weight) {
+        this.fish_weight = fish_weight;
     }
 
     public int getQuantity() {
@@ -80,43 +112,19 @@ public class Orders {
         this.quantity = quantity;
     }
 
-    public String getOriginLocation() {
-        return originLocation;
+    public Users getApprovedBy() {
+        return approvedBy;
     }
 
-    public void setOriginLocation(String originLocation) {
-        this.originLocation = originLocation;
+    public void setApprovedBy(Users approvedBy) {
+        this.approvedBy = approvedBy;
     }
 
-    public String getDestinationLocation() {
-        return destinationLocation;
+    public Users getAssignedTo() {
+        return assignedTo;
     }
 
-    public void setDestinationLocation(String destinationLocation) {
-        this.destinationLocation = destinationLocation;
-    }
-
-    public String getTransportMethod() {
-        return transportMethod;
-    }
-
-    public void setTransportMethod(String transportMethod) {
-        this.transportMethod = transportMethod;
-    }
-
-    public float getPrice() {
-        return price;
-    }
-
-    public void setPrice(float price) {
-        this.price = price;
-    }
-
-    public OrderStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(OrderStatus status) {
-        this.status = status;
+    public void setAssignedTo(Users assignedTo) {
+        this.assignedTo = assignedTo;
     }
 }

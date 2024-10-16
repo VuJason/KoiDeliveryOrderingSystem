@@ -1,12 +1,12 @@
 package com.example.koiorderingdeliverysystem.repository;
-
 import com.example.koiorderingdeliverysystem.entity.Orders;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
-public interface OrdersRepository extends JpaRepository<Orders, String> {
+import java.util.List;
 
-    @Query("SELECT MAX(o.orderId) FROM Orders o ")
-    String findMaxOrderId();
 
+public interface OrdersRepository extends JpaRepository<Orders, Integer> {
+//   Orders findByOrderId(int id);
+    List<Orders> findByStatus(String status);  // To find orders by status
 }
+

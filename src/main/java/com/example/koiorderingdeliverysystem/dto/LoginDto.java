@@ -3,15 +3,9 @@ package com.example.koiorderingdeliverysystem.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Data
 public class LoginDto {
 
     @Email(message = "Email not valid!")
@@ -19,19 +13,6 @@ public class LoginDto {
     @NotBlank(message = "Password can not blank!")
     private String password;
 
-    public @NotBlank(message = "Password can not blank!") String getPassword() {
-        return password;
-    }
+    // Getters and Setters
 
-    public void setPassword(@NotBlank(message = "Password can not blank!") String password) {
-        this.password = password;
-    }
-
-    public @Email(message = "Email not valid!") String getEmail() {
-        return email;
-    }
-
-    public void setEmail(@Email(message = "Email not valid!") String email) {
-        this.email = email;
-    }
 }
