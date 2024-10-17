@@ -10,6 +10,7 @@ import App from "./App.tsx";
 import TrackPage from "./pages/TrackPage.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import BrowserTrack from  "./pages/BrowserTrack.tsx";
+import DeliveryTrackPage from "./pages/DeliveryTrackPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -43,6 +44,10 @@ const router = createBrowserRouter([
   {
     path: "/browser-track",
     element: <BrowserTrack />,
+  },
+  {
+    path: "/delivery-track",
+    element: <DeliveryTrackPage />,
   },
 
 ]);

@@ -109,12 +109,12 @@ function BrowserTrack() {
 
   return (
     <div className="w-screen overflow-x-hidden">
-      <Header />
+      <Header currentPage={undefined} />
       <section className="w-screen h-screen bg-blue-200 relative">
         <div className="absolute inset-0 bg-cover bg-center opacity-50" style={{ backgroundImage: "url('./track-bg.png')" }}></div>
         <div className="relative z-10 flex items-start justify-start pl-16 h-full">
           <div className="max-w-lg">
-            <h1 className="mt-60 text-4xl font-bold text-gray-800 text-left">Browser Track</h1>
+            <h1 className="mt-60 text-4xl font-bold text-gray-800 text-left">Delieries Availible</h1>
             <p className="mt-30 text-lg text-gray-600 text-left">
               Manage and confirm or reject delivery orders. You can view the list of all pending deliveries and update their status.
             </p>
@@ -226,8 +226,8 @@ function BrowserTrack() {
                   <td className="py-3 px-4 text-sm text-gray-700">{delivery.client}</td>
                   <td className="py-3 px-4 text-sm text-gray-700">{delivery.address}</td>
                   <td className="py-3 px-4 text-sm text-gray-700">{delivery.price}</td>
-                  <td className="py-3 px-4 text-sm text-blue-600">{delivery.type}</td>
-                  <td className={`py-3 px-4 text-sm font-semibold rounded-full ${getStatusColor(delivery.status)}`}>
+                  <td className="py-3 px-4 text-sm text-gray-700">{delivery.type}</td>
+                  <td className={`py-3 px-4 text-sm font-semibold rounded-full ${getStatusColor(delivery.status)} inline-block`}>
                     {delivery.status}
                   </td>
                   <td className="py-3 px-4 text-sm text-gray-700">
