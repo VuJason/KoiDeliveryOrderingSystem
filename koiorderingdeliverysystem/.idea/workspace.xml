@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="358bfb0e-d6b0-4a63-a93a-9edc8a36e375" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/exception/AuthException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/repository/RoleRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/service/TokenService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/KoiorderingdeliverysystemApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/KoiorderingdeliverysystemApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/config/Filter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/config/Filter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/controller/BlogPostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/controller/BlogPostController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/controller/OrderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/controller/OrderController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/dto/RegistrationDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/dto/RegistrationDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/dto/UserResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/dto/UserResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/entity/Orders.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/entity/Orders.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/entity/Roles.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/entity/Roles.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/entity/Users.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/entity/Users.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/service/OrderService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/service/OrderService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/koiorderingdeliverysystem/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/koiorderingdeliverysystem/KoiorderingdeliverysystemApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/koiorderingdeliverysystem/KoiorderingdeliverysystemApplication.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/koiorderingdeliverysystem/config/Filter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/koiorderingdeliverysystem/config/Filter.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/koiorderingdeliverysystem/controller/BlogPostController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/koiorderingdeliverysystem/controller/BlogPostController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/koiorderingdeliverysystem/controller/OrderController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/koiorderingdeliverysystem/controller/OrderController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/koiorderingdeliverysystem/controller/UserController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/koiorderingdeliverysystem/controller/UserController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/koiorderingdeliverysystem/dto/RegistrationDto.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/koiorderingdeliverysystem/dto/RegistrationDto.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/koiorderingdeliverysystem/dto/UserResponse.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/koiorderingdeliverysystem/dto/UserResponse.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/koiorderingdeliverysystem/entity/Orders.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/koiorderingdeliverysystem/entity/Orders.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/koiorderingdeliverysystem/entity/Roles.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/koiorderingdeliverysystem/entity/Roles.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/koiorderingdeliverysystem/entity/Users.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/koiorderingdeliverysystem/entity/Users.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/koiorderingdeliverysystem/service/OrderService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/koiorderingdeliverysystem/service/OrderService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/koiorderingdeliverysystem/service/UserService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/koiorderingdeliverysystem/service/UserService.class" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Class" />
+        <option value="Enum" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="2n9a6GSSAUT2WrTyMoJqPcktxso" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Maven.koiorderingdeliverysystem [clean...].executor&quot;: &quot;Run&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;Spring Boot.KoiorderingdeliverysystemApplication.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;back-end&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/FPT/Sem5/SWP391/KoiDeliveryOrderingSystem/KoiDeliveryOrderingSystem-minh_anh&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql&quot;
+    ]
+  }
+}</component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="mvn clean spring-boot:run" />
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="KoiorderingdeliverysystemApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="koiorderingdeliverysystem" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.koiorderingdeliverysystem.KoiorderingdeliverysystemApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.18034.62" />
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-IU-241.18034.62" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="358bfb0e-d6b0-4a63-a93a-9edc8a36e375" name="Changes" comment="" />
+      <created>1728387569899</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1728387569899</updated>
+      <workItem from="1728387570774" duration="11445000" />
+      <workItem from="1728433020012" duration="2476000" />
+      <workItem from="1728435519626" duration="4150000" />
+      <workItem from="1728444073107" duration="111000" />
+      <workItem from="1728444205439" duration="1245000" />
+      <workItem from="1728450265644" duration="660000" />
+      <workItem from="1728459996334" duration="218000" />
+      <workItem from="1728460306328" duration="172000" />
+      <workItem from="1728460514151" duration="1842000" />
+      <workItem from="1728462670808" duration="115000" />
+      <workItem from="1728462806520" duration="30240000" />
+      <workItem from="1728528013498" duration="6140000" />
+      <workItem from="1728651224882" duration="105000" />
+      <workItem from="1728808096140" duration="10232000" />
+      <workItem from="1728862155973" duration="11944000" />
+      <workItem from="1728876836949" duration="648000" />
+      <workItem from="1728877848259" duration="3522000" />
+      <workItem from="1729046309763" duration="6848000" />
+      <workItem from="1729085938709" duration="16461000" />
+      <workItem from="1729180533976" duration="3994000" />
+      <workItem from="1729252340982" duration="30000" />
+      <workItem from="1729253485589" duration="85000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="OPEN_GENERIC_TABS">
+      <map>
+        <entry key="51f5547f-d7a4-4947-9733-b3bef0662cda" value="TOOL_WINDOW" />
+      </map>
+    </option>
+    <option name="TAB_STATES">
+      <map>
+        <entry key="51f5547f-d7a4-4947-9733-b3bef0662cda">
+          <value>
+            <State />
+          </value>
+        </entry>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="origin/back-end" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
