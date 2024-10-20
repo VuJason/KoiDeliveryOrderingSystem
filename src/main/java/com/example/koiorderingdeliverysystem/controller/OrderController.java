@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -65,14 +66,22 @@ public class OrderController {
         return ResponseEntity.ok(updatedOrder);
     }
 
-    @PostMapping("/approve/{orderId}")
-    public ResponseEntity approveOrder(@PathVariable long orderId) {
-        return null;
+    @GetMapping("/delivery/orders")
+    public List<OrderDto> getOrdersAssignedToDeliveryStaff(@RequestParam Integer deliveryStaffId) {
+        return orderService.getOrdersAssignedToDeliveryStaff(deliveryStaffId);
     }
 
-    @PostMapping("/assign/{orderId}")
-    public ResponseEntity assignOrder(@PathVariable long orderId) {
-        return null;
+    @PutMapping("/delivery/order/{orderId}/status")
+    public ResponseEntity<OrderDto>  updateOrderStatusByDeliveryStaff(
+            @PathVariable Integer orderId,
+            @RequestParam String status){
+
+        // Tạo OrderDTO từ các tham số
+        OrderDto orderDTO = new OrderDto(status, orderId);
+
+        // Gọi service để cập nhật đơn hàng
+        OrderDto updatedOrder = orderService.updateOrderStatus(orderDTO);
+        return ResponseEntity.ok(updatedOrder);
     }
 
     @PutMapping("/order/{orderId}")

@@ -1,9 +1,11 @@
 package com.example.koiorderingdeliverysystem.dto;
 
 import com.example.koiorderingdeliverysystem.entity.Users;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.Date;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrderDto {
     private int orderId;
     private String customerName;
@@ -42,6 +44,11 @@ public class OrderDto {
         this.customerName = customerName;
         this.orderId = orderId;
         this.assignedTo=assignedTo;
+    }
+
+
+
+    public OrderDto(String transportMethod, String destination, String originalLocation, Date orderDate, String status, String fullname, int id, String fullname1, String username, String fullname2) {
     }
 
 
