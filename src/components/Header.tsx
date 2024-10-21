@@ -52,13 +52,13 @@ const Header = ({ currentPage }) => {
           <nav className="">
             <ul className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6">
               <li>
-                <a
-                  href="#"
-                  className="hover:text-yellow-300 transition duration-300"
-                  aria-label="Home"
-                >
-                  Home
-                </a>
+                <Link
+                to="/"
+               className="hover:text-yellow-300 transition duration-300"
+               aria-label="Home"
+              >
+                Home
+               </Link>
               </li>
               <li>
                 <a
