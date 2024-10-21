@@ -42,6 +42,11 @@ function BrowserTrack() {
       { id: "00003", name: "Alan Koi", variety: "Butterfly", finType: "Long Fin", size: "Small", color: "Yellow and White", price: 150000 },
       { id: "00004", name: "Koi Murray", variety: "Standard", finType: "Short Fin", size: "Medium", color: "Blue and White", price: 80000 },
       { id: "00005", name: "Koi Sullivan", variety: "Butterfly", finType: "Long Fin", size: "Large", color: "Orange and Black", price: 300000 },
+      { id: "00006", name: "Koi Bird", variety: "Butterfly", finType: "Long Fin", size: "Medium", color: "Red and White", price: 100000 },
+      { id: "00007", name: "Gilbert Koi", variety: "Standard", finType: "Short Fin", size: "Large", color: "Black and Orange", price: 200000 },
+      { id: "00008", name: "Alan Koi", variety: "Butterfly", finType: "Long Fin", size: "Small", color: "Yellow and White", price: 150000 },
+      { id: "00009", name: "Koi Murray", variety: "Standard", finType: "Short Fin", size: "Medium", color: "Blue and White", price: 80000 },
+      { id: "00010", name: "Koi Sullivan", variety: "Butterfly", finType: "Long Fin", size: "Large", color: "Orange and Black", price: 300000 },
     ];
     
     // Tìm sản phẩm có id tương ứng
