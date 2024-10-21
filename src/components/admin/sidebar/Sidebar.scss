@@ -1,0 +1,41 @@
+.admin-layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 250px; /* Fixed width for sidebar */
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #f5f7fa;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #333;
+    margin: 20px 0;
+    text-align: center;
+  }
+}
+
+.main-content {
+  flex: 1;
+  margin-left: 250px; /* Ensure content is to the right of the sidebar */
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.page-content {
+  padding: 20px;
+  background-color: #f5f7fa;
+  min-height: 100vh;
+}

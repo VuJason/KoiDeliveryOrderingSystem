@@ -1,0 +1,47 @@
+.delivery-list {
+  width: 100%;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  position: relative;
+
+  .header-delivery,
+  .delivery-row {
+    display: flex;
+    padding: 8px 0;
+    border-bottom: 1px solid #e6f7ff;
+    font-size: 14px; /* Ensure consistent font size */
+    font-weight: 500; /* Set a consistent weight */
+    color: #333;
+
+    .cell {
+      flex: 1;
+      padding: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: left; /* Ensure proper alignment */
+    }
+
+    .order-number {
+      color: #1890ff;
+      cursor: pointer;
+    }
+  }
+
+  .header-delivery {
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .delivery-row {
+    &:hover {
+      background-color: #e6f7ff;
+    }
+
+    .cell {
+      font-size: 14px;
+      font-weight: 400; /* Lighter weight for row items */
+    }
+  }
+}

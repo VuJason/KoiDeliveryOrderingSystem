@@ -1,0 +1,70 @@
+.payments-card {
+  background-color: white;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  max-width: 300px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .title {
+      font-size: 16px;
+      color: #666;
+    }
+
+    .icon-container {
+      background-color: #e6f7f9;
+      border-radius: 50%;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .payments-icon {
+        width: 30px;
+        height: 30px;
+      }
+    }
+  }
+
+  .card-body {
+    margin-top: 20px;
+
+    .payments-amount {
+      font-size: 36px;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .percentage-decline {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+
+      .decline-icon {
+        font-size: 16px;
+        color: #ff4d4f;
+        margin-right: 5px;
+      }
+
+      .decline-text {
+        font-size: 14px;
+        color: #ff4d4f;
+      }
+    }
+  }
+}
