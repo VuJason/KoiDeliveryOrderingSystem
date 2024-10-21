@@ -25,13 +25,19 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @PreAuthorize("hasRole('Customer')")
+
     @PostMapping("/order")
-    public ResponseEntity placeOrder(@Valid @RequestBody OrderRequestDto orderRequest, LoginDto users) {
-        String email = users.getEmail();
-        OrderResponse placedOrder = orderService.placeOrder(orderRequest, email);
-        return ResponseEntity.ok(placedOrder);
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    public ResponseEntity placeOrder(@Valid @RequestBody OrderRequestDto orderRequest) {
+
+        OrderResponse order = orderService.placeOrder(orderRequest);
+        return ResponseEntity.ok(order);
     }
+//    public ResponseEntity placeOrder(@Valid @RequestBody OrderRequestDto orderRequest, LoginDto users) {
+//        String email = users.getEmail();
+//        OrderResponse placedOrder = orderService.placeOrder(orderRequest, email);
+//        return ResponseEntity.ok(placedOrder);
+//    }
 
     @GetMapping("/order")
     public ResponseEntity getAllOrders() {

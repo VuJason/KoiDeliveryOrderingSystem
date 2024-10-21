@@ -27,30 +27,44 @@ public class OrderService {
     private OrdersRepository ordersRepository;
 
     @Autowired
+    UserService userService;
+
+    @Autowired
     private UserRepository userRepository;
     @Autowired
     private ModelMapper modelMapper;
 
-    public OrderResponse placeOrder(OrderRequestDto orderRequestDto, String email) {
-        LoginDto login = new LoginDto();
-        Users customer =  modelMapper.map(login, Users.class);
-//        if (!customer.getRoles().getRole_name().equalsIgnoreCase("Customer")) {
-//            throw new RuntimeException("User is not authorized to place orders");
-//        }
+    public OrderResponse placeOrder(OrderRequestDto orderRequestDto) {
+       Users customer = userService.getCurrentAccount();
 
-        Orders orders = modelMapper.map(orderRequestDto, Orders.class);
-        try {
-            orders.setCustomerId(customer);
-            orders.setOrder_date(new Date());
-            orders.setStatus(String.valueOf(OrderStatus.PENDING));
-            orders.setApprovedBy(null);
-            orders.setAssignedTo(null);
-            Orders newOrder = ordersRepository.save(orders);
-            return modelMapper.map(newOrder, OrderResponse.class);
-        }catch (Exception e) {
-            throw new RuntimeException("Error creating user: " + e.getMessage());
-        }
+       Orders order = modelMapper.map(orderRequestDto, Orders.class);
+       order.setCustomer(customer);
+       order.setOrder_date(new Date());
+       Orders savedOrder = ordersRepository.save(order);
+       return modelMapper.map(savedOrder, OrderResponse.class);
+
     }
+
+//    public OrderResponse placeOrder(OrderRequestDto orderRequestDto, String email) {
+//        LoginDto login = new LoginDto();
+//        Users customer =  modelMapper.map(login, Users.class);
+////        if (!customer.getRoles().getRole_name().equalsIgnoreCase("Customer")) {
+////            throw new RuntimeException("User is not authorized to place orders");
+////        }
+//
+//        Orders orders = modelMapper.map(orderRequestDto, Orders.class);
+//        try {
+//            orders.setCustomerId(customer);
+//            orders.setOrder_date(new Date());
+//            orders.setStatus(String.valueOf(OrderStatus.PENDING));
+//            orders.setApprovedBy(null);
+//            orders.setAssignedTo(null);
+//            Orders newOrder = ordersRepository.save(orders);
+//            return modelMapper.map(newOrder, OrderResponse.class);
+//        }catch (Exception e) {
+//            throw new RuntimeException("Error creating user: " + e.getMessage());
+//        }
+//    }
 
     public Orders approveOrder(int orderId, int staffId) {
 //        Orders order = ordersRepository.findByOrderId(orderId);
@@ -80,7 +94,7 @@ public class OrderService {
         return orders.stream().map(order -> {
             OrderDto dto = new OrderDto();
             dto.setOrderId(order.getId());
-            dto.setCustomerName(order.getCustomerId().getFullname());
+            dto.setCustomerName(order.getCustomer().getFullname());
             dto.setOrder_date(order.getOrder_date());
             dto.setDestination(order.getDestination());
             dto.setOriginal_location(order.getOriginal_location());
@@ -103,7 +117,7 @@ public class OrderService {
                 order.getOriginal_location(), // original_location
                 order.getOrder_date(),        // order_date
                 order.getStatus(),           // orderStatus
-                order.getCustomerId().getFullname(),     // customerName
+                order.getCustomer().getFullname(),     // customerName
                 order.getId()           // orderId
         );
     }
@@ -134,7 +148,7 @@ public class OrderService {
                 order.getOriginal_location(), // original_location
                 order.getOrder_date(),        // order_date
                 order.getStatus(),           // orderStatus
-                order.getCustomerId().getFullname(),     // customerName
+                order.getCustomer().getFullname(),     // customerName
                 order.getId(),        // orderId
                 deliveryStaffId// Gán ID nhân viên giao hàng vào DTO
         );

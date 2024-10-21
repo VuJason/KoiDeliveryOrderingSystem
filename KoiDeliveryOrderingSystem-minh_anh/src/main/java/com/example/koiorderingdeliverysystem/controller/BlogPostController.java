@@ -1,6 +1,7 @@
 package com.example.koiorderingdeliverysystem.controller;
 
 
+import com.example.koiorderingdeliverysystem.dto.BlogPostDto;
 import com.example.koiorderingdeliverysystem.entity.BlogPosts;
 import com.example.koiorderingdeliverysystem.service.BlogPostService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -20,9 +21,9 @@ public class BlogPostController {
     private BlogPostService blogPostService;
 
     @PostMapping
-    public ResponseEntity createBlogPost(@RequestBody BlogPosts blogPosts) {
-//       return blogPostService.createBlogPost(blogPosts);
-        return null;
+    public ResponseEntity createBlogPost(@RequestBody BlogPostDto blogPosts) {
+        BlogPosts newBlogPost = blogPostService.createBlogPost(blogPosts);
+        return ResponseEntity.ok(newBlogPost);
     }
 
 
@@ -37,8 +38,9 @@ public class BlogPostController {
         return null;
     }
 
-    @DeleteMapping("/delete/{blog-post}")
-    public ResponseEntity deleteBlogPost(@PathVariable String blogPost) {
-        return null;
+    @DeleteMapping("/delete/{blog-post-id}")
+    public ResponseEntity deleteBlogPost(@PathVariable("blog-post-id") int blogPostId) {
+        BlogPosts blogPost = blogPostService.deleteBlogPost(blogPostId);
+        return ResponseEntity.ok(blogPost);
     }
 }

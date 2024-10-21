@@ -1,10 +1,8 @@
 package com.example.koiorderingdeliverysystem.entity;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.Date;
@@ -18,6 +16,13 @@ public class BlogPosts {
     private String title;
     private String content;
     private Date publish_date;
+
+    @ManyToOne
+    @JoinColumn(name = "staff_id")
+    @JsonIgnore
+    private Users staff;
+
+    boolean status = true;
 
 
 }

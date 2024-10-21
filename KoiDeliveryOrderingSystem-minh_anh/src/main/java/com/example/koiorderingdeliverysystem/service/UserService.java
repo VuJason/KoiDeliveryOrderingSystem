@@ -3,7 +3,9 @@ package com.example.koiorderingdeliverysystem.service;
 import com.example.koiorderingdeliverysystem.dto.LoginDto;
 //import com.example.koiorderingdeliverysystem.entity.Customers;
 import com.example.koiorderingdeliverysystem.dto.RegistrationDto;
+import com.example.koiorderingdeliverysystem.dto.UpdateProfile;
 import com.example.koiorderingdeliverysystem.dto.UserResponse;
+import com.example.koiorderingdeliverysystem.entity.Roles;
 import com.example.koiorderingdeliverysystem.entity.Users;
 //import com.example.koiorderingdeliverysystem.repository.CustomerRepository;
 import com.example.koiorderingdeliverysystem.exception.EntityNotFoundException;
@@ -14,13 +16,16 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -45,6 +50,19 @@ public class UserService implements UserDetailsService {
         try {
             String originalPassword = user.getPassword();
             user.setPassword(passwordEncoder.encode(originalPassword));
+
+            if (register.getRole() != null) {
+                try {
+                    Roles role = Roles.valueOf(register.getRole().toString().toUpperCase());
+                    user.setRoles(role);
+                } catch (IllegalArgumentException e) {
+                    throw new RuntimeException("Invalid role: " + register.getRole());
+                }
+            } else {
+                // Set default role if not provided
+                user.setRoles(Roles.CUSTOMER);
+            }
+
             Users newUser = userRepository.save(user);
             return modelMapper.map(newUser, UserResponse.class);
         } catch (Exception e) {
@@ -75,9 +93,60 @@ public class UserService implements UserDetailsService {
 
     }
 
+    public List<Users> getAllUser() {
+        return userRepository.findUsersByStatusTrue();
+    }
+
+    public UserResponse updateCustomerProfile(int id, UpdateProfile updateProfile) {
+        Users customer = getCurrentAccount();
+
+        if(customer == null) {
+            throw new EntityNotFoundException("Customer not found!");
+        }
+        customer = modelMapper.map(updateProfile, Users.class);
+//        customer.setFullname(updateProfile.getFullName());
+//        customer.setEmail(updateProfile.getEmail());
+//        customer.setPhone(updateProfile.getPhone());
+//        customer.setAddress(updateProfile.getAddress());
+        Users updatedUser = userRepository.save(customer);
+        return modelMapper.map(updatedUser, UserResponse.class);
+
+
+    }
+
+    public Users delete(int id) {
+        Users user = getStudentById(id);
+
+        user.setStatus(false);
+        return userRepository.save(user);
+    }
+
+    public Users getStudentById(int id) {
+        Users user = userRepository.findUsersById(id);
+
+        if(user == null) throw new EntityNotFoundException("User not found!");
+        return user;
+    }
+
+    public Users getCurrentAccount() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new RuntimeException("No authenticated user found");
+        }
+        String email = authentication.getName();
+        Users user = userRepository.findUsersByEmail(email);
+
+        if (user == null) {
+            throw new EntityNotFoundException("User not found with email: " + email);
+        }
+        return user;
+    }
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findUsersByEmail(email);
     }
+
+
 }
 

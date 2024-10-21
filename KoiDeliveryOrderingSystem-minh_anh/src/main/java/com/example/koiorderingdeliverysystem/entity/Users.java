@@ -44,7 +44,7 @@ public class Users implements UserDetails {
     private Roles roles;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "customerId")
+    @OneToMany(mappedBy = "customer")
     List<Orders> orders;
 
     @OneToMany(mappedBy = "approvedBy")
@@ -54,6 +54,11 @@ public class Users implements UserDetails {
     @OneToMany(mappedBy = "assignedTo")
     @JsonIgnore
     List<Orders> assignedToOrders;
+
+    boolean status = true;
+
+    @OneToMany(mappedBy = "staff")
+    List<BlogPosts> blogPosts;
 
 
     @Override
@@ -65,7 +70,7 @@ public class Users implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         if (this.roles != null) {
-            authorities.add(new SimpleGrantedAuthority(this.roles.toString()));
+            authorities.add(new SimpleGrantedAuthority(this.roles.name()));
         }
         return authorities;
     }
