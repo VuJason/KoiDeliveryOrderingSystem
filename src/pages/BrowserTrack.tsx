@@ -3,6 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter, faSyncAlt, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import ProductDetailsModal from '../ProductDetailsModal';
+
 
 function BrowserTrack() {
   const [searchInput, setSearchInput] = useState("");  // Changed from orderNumber
@@ -31,18 +33,33 @@ function BrowserTrack() {
   const parsePrice = (price) => {
     return parseInt(price.replace(/\./g, ""), 10); 
   };
+   // Thêm hàm giả getProductDetails ở đây
+  const getProductDetails = (id) => {
+    // Đây là một mảng giả các sản phẩm
+    const products = [
+      { id: "00001", name: "Koi Bird", variety: "Butterfly", finType: "Long Fin", size: "Medium", color: "Red and White", price: 100000 },
+      { id: "00002", name: "Gilbert Koi", variety: "Standard", finType: "Short Fin", size: "Large", color: "Black and Orange", price: 200000 },
+      { id: "00003", name: "Alan Koi", variety: "Butterfly", finType: "Long Fin", size: "Small", color: "Yellow and White", price: 150000 },
+      { id: "00004", name: "Koi Murray", variety: "Standard", finType: "Short Fin", size: "Medium", color: "Blue and White", price: 80000 },
+      { id: "00005", name: "Koi Sullivan", variety: "Butterfly", finType: "Long Fin", size: "Large", color: "Orange and Black", price: 300000 },
+    ];
+    
+    // Tìm sản phẩm có id tương ứng
+    return products.find(product => product.id === id) || null;
+  };
+  
 
   const [deliveries, setDeliveries] = useState([
-    { id: "00001", client: "Christine Books", address: "Phường Bến Nghé, Quận 1, TP.HCM", price: "100.000", type: "Foodstuff", status: "Pending" },
-    { id: "00002", client: "Emma Watson", address: "Nguyễn Thái Bình, Quận 1, TP.HCM", price: "200.000", type: "Electronics", status: "Pending" },
-    { id: "00003", client: "John Doe", address: "Lê Lai, Quận 1, TP.HCM", price: "150.000", type: "Clothing", status: "Pending" },
-    { id: "00004", client: "Alice Smith", address: "Trần Hưng Đạo, Quận 1, TP.HCM", price: "80.000", type: "Home Appliances", status: "Pending" },
-    { id: "00005", client: "Michael Brown", address: "Nguyễn Huệ, Quận 1, TP.HCM", price: "300.000", type: "Books", status: "Pending" },
-    { id: "00006", client: "Sophia Johnson", address: "Lê Văn Sỹ, Quận 3, TP.HCM", price: "250.000", type: "Beauty Products", status: "Pending" },
-    { id: "00007", client: "Lucas Martin", address: "Ngô Đức Kế, Quận 1, TP.HCM", price: "175.000", type: "Toys", status: "Pending" },
-    { id: "00008", client: "Olivia Taylor", address: "Cầu Ông Lãnh, Quận 1, TP.HCM", price: "90.000", type: "Grocery", status: "Pending" },
-    { id: "00009", client: "James Anderson", address: "Tôn Thất Tùng, Quận 1, TP.HCM", price: "220.000", type: "Gardening Tools", status: "Pending" },
-    { id: "00010", client: "James Anderson", address: "Nguyễn Xiển, Quận 9, TP.HCM", price: "300.000", type: "Gardening Tools", status: "Pending" }
+    { id: "00001", client: "Christine Books", address: "Phường Bến Nghé, Quận 1, TP.HCM", price: "100.000", type: "Butterfly", status: "Pending" },
+    { id: "00002", client: "Emma Watson", address: "Nguyễn Thái Bình, Quận 1, TP.HCM", price: "200.000", type: "Standard", status: "Pending" },
+    { id: "00003", client: "John Doe", address: "Lê Lai, Quận 1, TP.HCM", price: "150.000", type: "Butterfly", status: "Pending" },
+    { id: "00004", client: "Alice Smith", address: "Trần Hưng Đạo, Quận 1, TP.HCM", price: "80.000", type: "Standard", status: "Pending" },
+    { id: "00005", client: "Michael Brown", address: "Nguyễn Huệ, Quận 1, TP.HCM", price: "300.000", type: "Butterfly", status: "Pending" },
+    { id: "00006", client: "Sophia Johnson", address: "Lê Văn Sỹ, Quận 3, TP.HCM", price: "250.000", type: "Standard", status: "Pending" },
+    { id: "00007", client: "Lucas Martin", address: "Ngô Đức Kế, Quận 1, TP.HCM", price: "175.000", type: "Butterfly", status: "Pending" },
+    { id: "00008", client: "Olivia Taylor", address: "Cầu Ông Lãnh, Quận 1, TP.HCM", price: "90.000", type: "Standard", status: "Pending" },
+    { id: "00009", client: "James Anderson", address: "Tôn Thất Tùng, Quận 1, TP.HCM", price: "220.000", type: "Butterfly", status: "Pending" },
+    { id: "00010", client: "James Anderson", address: "Nguyễn Xiển, Quận 9, TP.HCM", price: "300.000", type: "Standard", status: "Pending" }
   ]);
 
   const resetFilters = () => {
@@ -55,12 +72,6 @@ function BrowserTrack() {
     setSearchResults([]); // Reset search results
   };
 
-  const updateStatus = (id, newStatus) => {
-    const updatedDeliveries = deliveries.map((delivery) =>
-      delivery.id === id ? { ...delivery, status: newStatus } : delivery
-    );
-    setDeliveries(updatedDeliveries);
-  };
 
   const filteredDeliveries = deliveries.filter((delivery) => {
     return (
@@ -106,6 +117,19 @@ function BrowserTrack() {
         return "text-gray-500 bg-gray-100";
     }
   };
+ const [selectedProduct, setSelectedProduct] = useState(null);
+const [isModalOpen, setIsModalOpen] = useState(false);
+
+const handleViewDetails = (id) => {
+  // Giả sử bạn có một hàm để lấy thông tin chi tiết sản phẩm dựa trên id
+  const productDetails = getProductDetails(id);
+  setSelectedProduct(productDetails);
+  setIsModalOpen(true);
+};
+const handleCloseModal = () => {
+  setIsModalOpen(false);
+  setSelectedProduct(null);
+};
 
   return (
     <div className="w-screen overflow-x-hidden">
@@ -143,7 +167,7 @@ function BrowserTrack() {
           </div>
           <button
             onClick={handleSearch}
-            className="w-40 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 ease-in-out"
+            className="w-40 px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 ease-in-out"
           >
             Locate
           </button>
@@ -176,10 +200,8 @@ function BrowserTrack() {
               className="border border-gray-300 rounded-md px-4 py-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Package Type</option>
-              <option value="foodstuff">Foodstuff</option>
-              <option value="electronics">Electronics</option>
-              <option value="clothing">Clothing</option>
-              <option value="home">Home Appliances</option>
+              <option value="butterfly">Butterfly</option>
+              <option value="standard">Standard</option>
             </select>
             <FontAwesomeIcon icon={faChevronDown} className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
           </div>
@@ -216,7 +238,7 @@ function BrowserTrack() {
                 <th className="py-2 px-4 text-left font-medium text-gray-600">PRICE</th>
                 <th className="py-2 px-4 text-left font-medium text-gray-600">TYPE</th>
                 <th className="py-2 px-4 text-left font-medium text-gray-600">STATUS</th>
-                <th className="py-2 px-4 text-left font-medium text-gray-600">EDIT</th>
+                <th className="py-2 px-4 text-left font-medium text-gray-600">ACTION</th>
               </tr>
             </thead>
             <tbody>
@@ -231,29 +253,33 @@ function BrowserTrack() {
                     {delivery.status}
                   </td>
                   <td className="py-3 px-4 text-sm text-gray-700">
-                    <button
-                      className="text-green-600 hover:underline mr-2"
-                      onClick={() => updateStatus(delivery.id, "Confirmed")}
+                  <button
+                  className="text-blue-600 hover:underline"
+                  onClick={() => handleViewDetails(delivery.id)}
                     >
-                      Confirm
+                   Details
                     </button>
-                    <button
-                      className="text-red-600 hover:underline"
-                      onClick={() => updateStatus(delivery.id, "Rejected")}
-                    >
-                      Reject
-                    </button>
-                  </td>
+                </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+         <ProductDetailsModal 
+      product={selectedProduct} 
+      onClose={() => setIsModalOpen(false)} 
+    />
+    {isModalOpen && (
+      <ProductDetailsModal 
+        product={selectedProduct} 
+        onClose={handleCloseModal}
+      />
+    )}
 
         <div className="flex justify-between items-center mt-4">
           <button
             onClick={handlePreviousPage}
-            className={`px-4 py-2 bg-blue-600 text-white font-semibold rounded-md ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"}`}
+            className={`px-4 py-2 bg-green-600 text-white font-semibold rounded-md ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-green-700"}`}
             disabled={currentPage === 1}
           >
             Previous
@@ -261,7 +287,7 @@ function BrowserTrack() {
           <p className="text-sm text-gray-500">Page {currentPage} of {totalPages}</p>
           <button
             onClick={handleNextPage}
-            className={`px-4 py-2 bg-blue-600 text-white font-semibold rounded-md ${currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"}`}
+            className={`px-4 py-2 bg-green-600 text-white font-semibold rounded-md ${currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-green-700"}`}
             disabled={currentPage === totalPages}
           >
             Next

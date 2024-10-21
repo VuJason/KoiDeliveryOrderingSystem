@@ -147,7 +147,7 @@ function DeliveryTrackPage() {
           </div>
           <button
             onClick={handleSearch}
-            className="w-40 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 ease-in-out"
+            className="w-40 px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 ease-in-out"
           >
             Find
           </button>
@@ -247,7 +247,7 @@ function DeliveryTrackPage() {
         <div className="flex justify-between items-center mt-4">
           <button
             onClick={handlePreviousPage}
-            className={`px-4 py-2 bg-blue-600 text-white font-semibold rounded-md ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"}`}
+            className={`px-4 py-2 bg-green-600 text-white font-semibold rounded-md ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-green-700"}`}
             disabled={currentPage === 1}
           >
             Previous
@@ -255,7 +255,7 @@ function DeliveryTrackPage() {
           <p className="text-sm text-gray-500">Page {currentPage} of {totalPages}</p>
           <button
             onClick={handleNextPage}
-            className={`px-4 py-2 bg-blue-600 text-white font-semibold rounded-md ${currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"}`}
+            className={`px-4 py-2 bg-green-600 text-white font-semibold rounded-md ${currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-green-700"}`}
             disabled={currentPage === totalPages}
           >
             Next
