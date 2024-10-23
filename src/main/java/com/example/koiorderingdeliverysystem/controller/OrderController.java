@@ -27,9 +27,10 @@ public class OrderController {
     @PreAuthorize("hasRole('Customer')")
     @PostMapping("/order")
     public ResponseEntity placeOrder(@Valid @RequestBody OrderRequestDto orderRequest, LoginDto users) {
-        String email = users.getEmail();
-        OrderResponse placedOrder = orderService.placeOrder(orderRequest, email);
-        return ResponseEntity.ok(placedOrder);
+//        String email = users.getEmail();
+//        OrderResponse placedOrder = orderService.placeOrder(orderRequest, email);
+//        return ResponseEntity.ok(placedOrder);
+        return null;
     }
 
     @GetMapping("/order")

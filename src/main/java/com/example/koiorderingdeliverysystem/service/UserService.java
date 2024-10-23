@@ -33,7 +33,7 @@ public class UserService implements UserDetailsService {
         Users user = modelMapper.map(register, Users.class);
         try {
             String originalPassword = user.getPassword();
-            user.setPassword(passwordEncoder.encode(originalPassword));
+//            user.setPassword(passwordEncoder.encode(originalPassword));
             Users newUser = userRepository.save(user);
             return modelMapper.map(newUser, UserResponse.class);
         } catch (Exception e) {
@@ -42,11 +42,12 @@ public class UserService implements UserDetailsService {
     }
 
     public Users login(LoginDto loginDto) {
-        Users newLoginDto = userRepository.findByEmail(loginDto.getEmail());
-        if (newLoginDto == null) {
-            return null;
-        }
-        return newLoginDto;
+//        Users newLoginDto = userRepository.findByEmail(loginDto.getEmail());
+//        if (newLoginDto == null) {
+//            return null;
+//        }
+//        return newLoginDto;
+        return null;
     }
 
     public void logout() {

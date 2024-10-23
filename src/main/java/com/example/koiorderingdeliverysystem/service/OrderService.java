@@ -35,9 +35,9 @@ public class OrderService {
     public OrderResponse placeOrder(OrderRequestDto orderRequestDto, String email) {
         LoginDto login = new LoginDto();
         Users customer =  modelMapper.map(login, Users.class);
-        if (!customer.getRoles().getRole_name().equalsIgnoreCase("Customer")) {
-            throw new RuntimeException("User is not authorized to place orders");
-        }
+//        if (!customer.getRoles().getRole_name().equalsIgnoreCase("Customer")) {
+//            throw new RuntimeException("User is not authorized to place orders");
+//        }
 
         Orders orders = modelMapper.map(orderRequestDto, Orders.class);
         try {

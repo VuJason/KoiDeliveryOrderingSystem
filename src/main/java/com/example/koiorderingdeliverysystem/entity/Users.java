@@ -66,6 +66,11 @@ public class Users implements UserDetails {
     }
 
     @Override
+    public String getPassword() {
+        return "";
+    }
+
+    @Override
     public boolean isAccountNonExpired() {
         return true;
     }
