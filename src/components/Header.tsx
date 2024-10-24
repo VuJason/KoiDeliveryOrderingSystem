@@ -53,35 +53,35 @@ const Header = () => {
           <nav className="">
             <ul className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6">
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/"
                   className="hover:text-yellow-300 transition duration-300"
                   aria-label="Home"
                 >
                   Home
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="#"
                   className="hover:text-yellow-300 transition duration-300"
                   aria-label="About"
                 >
                   Services
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/history"
                   className="hover:text-yellow-300 transition duration-300"
                   aria-label="Destinations"
                 >
                   Track
-                </a>
+                </Link>
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/account"
                   className="hover:text-yellow-300 transition duration-300"
                   aria-label="Destinations"
                 >
@@ -102,8 +102,8 @@ const Header = () => {
         </div>
 
         <div className="flex items-center space-x-10">
-          <a
-            href="#"
+          <Link
+            to="/order"
             className="flex gap-2 items-center  transition-all transform hover:scale-105"
           >
             <p>Make a delivery</p>
@@ -119,7 +119,7 @@ const Header = () => {
                 fill="#00D1FF"
               />
             </svg>
-          </a>
+          </Link>
           <div className="relative">
             <button
               onClick={toggleMenu}

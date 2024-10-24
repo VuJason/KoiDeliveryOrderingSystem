@@ -7,6 +7,9 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage.tsx";
 import VerifyOTPPage from "./pages/VerifyOTPPage.tsx";
 import ChangPasswordPage from "./pages/ChangePasswrod.tsx";
 import App from "./App.tsx";
+import DeliveryHistory from "./pages/DeliveryHistory.tsx";
+import Order from "./pages/Order.tsx";
+import Account from "./pages/Account.tsx";
 
 const router = createBrowserRouter([
   {
@@ -28,6 +31,18 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+  },
+  {
+    path: "/history",
+    element: <DeliveryHistory />,
+  },
+  {
+    path: "/order",
+    element: <Order />,
+  },
+  {
+    path: "/account",
+    element: <Account />,
   },
 ]);
 
