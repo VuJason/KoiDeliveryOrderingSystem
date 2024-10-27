@@ -5,6 +5,7 @@ import com.example.koiorderingdeliverysystem.dto.*;
 import com.example.koiorderingdeliverysystem.entity.Roles;
 import com.example.koiorderingdeliverysystem.entity.Users;
 //import com.example.koiorderingdeliverysystem.repository.CustomerRepository;
+import com.example.koiorderingdeliverysystem.exception.DuplicateUserException;
 import com.example.koiorderingdeliverysystem.exception.EntityNotFoundException;
 import com.example.koiorderingdeliverysystem.repository.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -19,10 +20,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PutMapping;
-
 import java.sql.Date;
-import java.sql.Timestamp;
 import java.util.List;
 
 @Service
@@ -44,6 +42,11 @@ public class UserService implements UserDetailsService {
     TokenService tokenService;
 
     public RegistrationResponse register(RegistrationDto register) {
+
+        Users existedUser = userRepository.findUsersByEmail(register.getEmail());
+        if (existedUser != null) {
+            throw new DuplicateUserException("User with this email already exists");
+        }
         Users user = modelMapper.map(register, Users.class);
         try {
             String originalPassword = user.getPassword();
