@@ -33,6 +33,13 @@ public class OrderService {
     @Autowired
     private ModelMapper modelMapper;
 
+    private final DistanceService distanceService;
+    @Autowired
+    public OrderService(DistanceService distanceService) {
+        this.distanceService = distanceService;
+    }
+
+
     public OrderResponse placeOrder(OrderRequestDto orderRequestDto, String email) {
         LoginDto login = new LoginDto();
         Users customer =  modelMapper.map(login, Users.class);
@@ -40,6 +47,10 @@ public class OrderService {
 //            throw new RuntimeException("User is not authorized to place orders");
 //        }
 
+        double distance = distanceService.calculateDistance(
+                orderRequestDto.getOriginal_location(),
+                orderRequestDto.getDestination()
+        );
         Orders orders = modelMapper.map(orderRequestDto, Orders.class);
         try {
             orders.setCustomerId(customer);
