@@ -22,7 +22,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-[#1e90ff] text-white">
+    <footer className="bg-[#01003d] text-white">
       <div className="container mx-auto px-10 py-12">
         <div className="flex flex-col md:flex-row items-center justify-between">
          <img src="/koilogo.png" alt="Koi Logo" width="60" height="29" />
