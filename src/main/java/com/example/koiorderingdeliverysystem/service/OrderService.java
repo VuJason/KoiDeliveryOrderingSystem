@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -170,5 +171,9 @@ public class OrderService {
                 order.getCustomerId().getFullname(),     // customerName
                 order.getId()           // orderId
         );
+    }
+
+    public Optional<Orders> getOrderById(int orderId) {
+        return ordersRepository.findById(orderId);
     }
 }

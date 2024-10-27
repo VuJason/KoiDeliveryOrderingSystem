@@ -30,6 +30,7 @@ public class    Orders {
     private String status;
     private double fish_weight;
     private int quantity;
+    private float total;
 
 
     @ManyToOne
