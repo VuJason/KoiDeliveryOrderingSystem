@@ -60,6 +60,7 @@ public class UserService implements UserDetailsService {
                 user.setRoles(Roles.CUSTOMER);
             }
 
+
             Users newUser = userRepository.save(user);
             return modelMapper.map(newUser, RegistrationResponse.class);
         } catch (Exception e) {
@@ -96,7 +97,7 @@ public class UserService implements UserDetailsService {
 
     public UserResponse updateCustomerProfile(int id, UpdateProfile updateProfile) {
         Users customer = getCurrentAccount();
-
+        customer.setId(id);
         if(customer == null) {
             throw new EntityNotFoundException("Customer not found!");
         }

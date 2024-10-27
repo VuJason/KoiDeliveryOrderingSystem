@@ -1,10 +1,7 @@
 package com.example.koiorderingdeliverysystem.service;
 
 
-import com.example.koiorderingdeliverysystem.dto.LoginDto;
-import com.example.koiorderingdeliverysystem.dto.OrderDto;
-import com.example.koiorderingdeliverysystem.dto.OrderRequestDto;
-import com.example.koiorderingdeliverysystem.dto.OrderResponse;
+import com.example.koiorderingdeliverysystem.dto.*;
 import com.example.koiorderingdeliverysystem.entity.OrderStatus;
 import com.example.koiorderingdeliverysystem.entity.Orders;
 import com.example.koiorderingdeliverysystem.entity.Users;
@@ -14,8 +11,10 @@ import com.example.koiorderingdeliverysystem.repository.UserRepository;
 import org.apache.catalina.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,10 +26,11 @@ public class OrderService {
     private OrdersRepository ordersRepository;
 
     @Autowired
-    UserService userService;
+    private UserRepository userRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    UserService userService;
+
     @Autowired
     private ModelMapper modelMapper;
 
@@ -40,6 +40,7 @@ public class OrderService {
        Orders order = modelMapper.map(orderRequestDto, Orders.class);
        order.setCustomer(customer);
        order.setOrder_date(new Date());
+       order.setStatus(OrderStatus.PENDING.toString().toUpperCase());
        Orders savedOrder = ordersRepository.save(order);
        return modelMapper.map(savedOrder, OrderResponse.class);
 
@@ -48,27 +49,35 @@ public class OrderService {
 
 
     public Orders approveOrder(int orderId, int staffId) {
-//        Orders order = ordersRepository.findByOrderId(orderId);
-//
-//
-//        Users staff = userRepository.findById(staffId);
-//
-//        // Kiểm tra vai trò của nhân viên
-//        if (!staff.getRoles().getRole_name().equals("Staff")) {
-//            throw new RuntimeException("User is not authorized to approve orders");
-//        }
-//
-//        order.setApprovedBy(staff);
-//        order.setStatus("Approved");  // Cập nhật trạng thái
-//        Orders newOrder = ordersRepository.save(order);
-//        return newOrder;
-        return null;
+        Orders order = ordersRepository.findOrdersById(orderId);
+
+
+        Users staff = userRepository.findUsersById(staffId);
+
+        // Kiểm tra vai trò của nhân viên
+        if (!staff.getRoles().equals("Staff")) {
+            throw new RuntimeException("User is not authorized to approve orders");
+        }
+
+        order.setApprovedBy(staff);
+        order.setStatus("Approved");  // Cập nhật trạng thái
+        Orders newOrder = ordersRepository.save(order);
+        return newOrder;
     }
 
 
-    public List<Orders> getAllOrders() {
+    public List<OrderHistory> getAllOrders() {
         List<Orders> orders = ordersRepository.findAll();
-        return orders;
+        return orders.stream().map(order -> {
+            OrderHistory history = new OrderHistory();
+            history.setId(order.getId());
+            history.setCustomerName(order.getCustomer().getFullname());
+            history.setDestination(order.getDestination());
+            history.setOrder_date(order.getOrder_date());
+            history.getPrice();
+            history.setStatus(order.getStatus());
+            return history;
+        }).collect(Collectors.toList());
     }
     public List<OrderDto> getOrders() {
         List<Orders> orders = ordersRepository.findAll();

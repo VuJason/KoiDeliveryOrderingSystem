@@ -1,10 +1,13 @@
 package com.example.koiorderingdeliverysystem.controller;
 
 import com.example.koiorderingdeliverysystem.service.DistanceService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/distance")
+@CrossOrigin(origins = "https://localhost:5173")
+@SecurityRequirement(name = "api")
 public class DistanceController {
 
     private final DistanceService distanceService;

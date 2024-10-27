@@ -32,4 +32,9 @@ public class ValidationHandler {
         return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(DuplicateUserException.class)
+    public ResponseEntity handleValidation(DuplicateUserException exception) {
+        return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
 }

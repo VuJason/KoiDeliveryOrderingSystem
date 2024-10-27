@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@CrossOrigin("*")
+@CrossOrigin(origins = "https://localhost:8080")
 @RequestMapping("/api/feedback")
 @SecurityRequirement(name = "api")
 public class FeedBackController {

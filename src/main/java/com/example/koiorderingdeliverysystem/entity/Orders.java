@@ -10,6 +10,7 @@ import org.hibernate.mapping.Join;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -39,4 +40,8 @@ public class Orders {
     @ManyToOne
     @JoinColumn(name = "assigned_to")
     private Users assignedTo;
+
+    @OneToMany(mappedBy = "orders")
+    private List<OrderServices> orderServices;
+
 }

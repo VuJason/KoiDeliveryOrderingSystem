@@ -1,15 +1,13 @@
 package com.example.koiorderingdeliverysystem.controller;
 
-import com.example.koiorderingdeliverysystem.dto.LoginDto;
-import com.example.koiorderingdeliverysystem.dto.OrderDto;
-import com.example.koiorderingdeliverysystem.dto.OrderRequestDto;
-import com.example.koiorderingdeliverysystem.dto.OrderResponse;
+import com.example.koiorderingdeliverysystem.dto.*;
 import com.example.koiorderingdeliverysystem.entity.Orders;
 import com.example.koiorderingdeliverysystem.entity.Users;
 import com.example.koiorderingdeliverysystem.service.OrderService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.hibernate.query.Order;
+import org.hibernate.query.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin("*")
+@CrossOrigin(origins = "https://localhost:8080")
 @SecurityRequirement(name = "api")
 public class OrderController {
     @Autowired
@@ -40,14 +38,15 @@ public class OrderController {
 //    }
 
     @GetMapping("/order")
-    public ResponseEntity getAllOrders() {
-        List<Orders> ordersList = orderService.getAllOrders();
-        return ResponseEntity.ok(ordersList);
+    public List<OrderHistory> getAllOrders() {
+        return orderService.getAllOrders();
+
     }
 
 
     @GetMapping("/order/staff/viewOrder")
     public List<OrderDto> getOrder() {
+
         return orderService.getOrders();
     }
 
@@ -73,20 +72,7 @@ public class OrderController {
         return ResponseEntity.ok(updatedOrder);
     }
 
-    @PostMapping("/approve/{orderId}")
-    public ResponseEntity approveOrder(@PathVariable long orderId) {
-        return null;
-    }
 
-    @PostMapping("/assign/{orderId}")
-    public ResponseEntity assignOrder(@PathVariable long orderId) {
-        return null;
-    }
-
-    @PutMapping("/order/{orderId}")
-    public ResponseEntity updateOrder(@PathVariable long orderId, @RequestBody OrderRequestDto orderRequest) {
-        return null;
-    }
 
     @DeleteMapping("/delete")
     public ResponseEntity deleteOrder(@PathVariable long orderId) {

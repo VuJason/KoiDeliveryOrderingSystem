@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin("*")
+@CrossOrigin(origins = "https://localhost:5173")
 @RequestMapping("/api")
 @SecurityRequirement(name = "api")
 public class UserController {
