@@ -7,10 +7,10 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage.tsx";
 import VerifyOTPPage from "./pages/VerifyOTPPage.tsx";
 import ChangPasswordPage from "./pages/ChangePasswrod.tsx";
 import App from "./App.tsx";
-import TrackPage from "./pages/TrackPage.tsx";
-import Dashboard from "./pages/Dashboard.tsx";
-import BrowserTrack from  "./pages/BrowserTrack.tsx";
-import DeliveryTrackPage from "./pages/DeliveryTrackPage.tsx";
+import DeliveryHistory from "./pages/DeliveryHistory.tsx";
+import Order from "./pages/Order.tsx";
+import Account from "./pages/Account.tsx";
+
 
 const router = createBrowserRouter([
   {
@@ -38,18 +38,18 @@ const router = createBrowserRouter([
     element: <App />,
   },
   {
-    path: "/dashboard",
-    element: <Dashboard />,
-  },
-  {
-    path: "/browser-track",
-    element: <BrowserTrack />,
-  },
-  {
-    path: "/delivery-track",
-    element: <DeliveryTrackPage />,
-  },
 
+    path: "/history",
+    element: <DeliveryHistory />,
+  },
+  {
+    path: "/order",
+    element: <Order />,
+  },
+  {
+    path: "/account",
+    element: <Account />,
+  },
 ]);
 
 createRoot(document.getElementById("root")!).render(

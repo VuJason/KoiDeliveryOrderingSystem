@@ -132,9 +132,11 @@ const ForgotPasswordPage = () => {
       </div>
       <div className="hidden lg:block relative w-[45%]">
         <div
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: "url('./forgotpassword-bg.png')",
+            backgroundPosition: "center center",
+            backgroundSize: "cover",
           }}
         />
       </div>

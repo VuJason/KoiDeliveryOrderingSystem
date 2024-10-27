@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
 import { CgSpinner } from "react-icons/cg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -10,23 +10,63 @@ const LoginPage = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      const newErrors = {};
-      if (!email) newErrors.email = "Email is required";
-      if (!password) newErrors.password = "Password is required";
-      setErrors(newErrors);
+
+    try {
+      const response = await fetch("http://103.67.197.66:8080/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          accept: "*/*",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Handle successful login
+        console.log("Login successful:", data);
+        // You can add navigation or store the token here
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            id: data.id,
+            username: data.username,
+            email: data.email,
+            phone: data.phone,
+          })
+        );
+
+        // Store token separately
+        localStorage.setItem("token", data.token);
+
+        // You can add navigation here
+        navigate("/");
+      } else {
+        // Handle error response
+        setErrors({
+          email: data.message || "Login failed",
+        });
+      }
+    } catch (error) {
+      setErrors({
+        email: "Network error occurred",
+      });
+    } finally {
       setIsLoading(false);
-    }, 2000);
+    }
   };
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <div className="w-full lg:w-[55%] flex flex-col justify-center px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
+      <div className="w-full lg:w-[65%] flex flex-col justify-center px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
         <div className="flex justify-evenly flex-col flex-1">
           <div className="w-full">
             <svg
@@ -224,9 +264,11 @@ const LoginPage = () => {
       </div>
       <div className="hidden lg:block relative w-[45%]">
         <div
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: "url('./login-bg.png')",
+            backgroundPosition: "center center",
+            backgroundSize: "cover",
           }}
         />
       </div>
