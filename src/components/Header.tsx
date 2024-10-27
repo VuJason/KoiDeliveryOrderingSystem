@@ -37,7 +37,7 @@ return (
           </li>
           <li>
             <Link
-              to="/history"
+              to="/track"
               className="hover:text-yellow-300 transition duration-300"
               aria-label="Track"
             >
@@ -64,7 +64,7 @@ return (
           </li>
         </ul>
       </nav>
-    </div>
+    </div>  
 
    <div className="flex items-center space-x-10">
           <Link
