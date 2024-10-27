@@ -11,6 +11,7 @@ import DeliveryHistory from "./pages/DeliveryHistory.tsx";
 import Order from "./pages/Order.tsx";
 import Account from "./pages/Account.tsx";
 
+
 const router = createBrowserRouter([
   {
     path: "/login",
@@ -29,10 +30,15 @@ const router = createBrowserRouter([
     element: <ChangPasswordPage />,
   },
   {
+    path: "/track",
+    element: <TrackPage />,
+  },
+  {
     path: "/",
     element: <App />,
   },
   {
+
     path: "/history",
     element: <DeliveryHistory />,
   },
