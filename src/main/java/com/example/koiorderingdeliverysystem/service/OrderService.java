@@ -2,19 +2,16 @@ package com.example.koiorderingdeliverysystem.service;
 
 
 import com.example.koiorderingdeliverysystem.dto.*;
-import com.example.koiorderingdeliverysystem.entity.OrderStatus;
-import com.example.koiorderingdeliverysystem.entity.Orders;
-import com.example.koiorderingdeliverysystem.entity.Users;
+import com.example.koiorderingdeliverysystem.entity.*;
 import com.example.koiorderingdeliverysystem.exception.ResourceNotFoundException;
+import com.example.koiorderingdeliverysystem.repository.KoiServiceRepository;
+import com.example.koiorderingdeliverysystem.repository.OrderServicesRepository;
 import com.example.koiorderingdeliverysystem.repository.OrdersRepository;
 import com.example.koiorderingdeliverysystem.repository.UserRepository;
-import org.apache.catalina.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,6 +31,12 @@ public class OrderService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private KoiServiceRepository serviceRepository;
+
+    @Autowired
+    private OrderServicesRepository orderServicesRepository;
+
     public OrderResponse placeOrder(OrderRequestDto orderRequestDto) {
        Users customer = userService.getCurrentAccount();
 
@@ -42,7 +45,30 @@ public class OrderService {
        order.setOrder_date(new Date());
        order.setStatus(OrderStatus.PENDING.toString().toUpperCase());
        Orders savedOrder = ordersRepository.save(order);
-       return modelMapper.map(savedOrder, OrderResponse.class);
+
+        if (orderRequestDto.getAdditional_services() != null && !orderRequestDto.getAdditional_services().isEmpty()) {
+            String[] additionalServices = orderRequestDto.getAdditional_services().split(",");
+
+            for (String serviceName : additionalServices) {
+
+                serviceName = serviceName.trim();
+
+
+                KoiService service = serviceRepository.findKoiServiceByServiceName(serviceName);
+                if (service != null) {
+
+                    OrderServices orderService = new OrderServices();
+                    orderService.setOrders(savedOrder);
+                    orderService.setServices(service);
+
+
+                    orderServicesRepository.save(orderService);
+                }
+            }
+        }
+
+
+        return modelMapper.map(savedOrder, OrderResponse.class);
 
     }
 

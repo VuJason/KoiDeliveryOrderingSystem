@@ -20,7 +20,7 @@ public class AdminService {
 
 
     public Map<String, Objects> getDashboardStats() {
-
+        return null;
     }
 
     //đếm số đơn hàng trong hệ thống

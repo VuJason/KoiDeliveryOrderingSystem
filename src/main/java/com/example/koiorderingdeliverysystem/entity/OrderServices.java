@@ -17,5 +17,5 @@ public class OrderServices {
 
     @ManyToOne
     @JoinColumn(name = "service_id")
-    private Services services;
+    private KoiService services;
 }

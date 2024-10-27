@@ -21,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PutMapping;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -47,6 +48,7 @@ public class UserService implements UserDetailsService {
         try {
             String originalPassword = user.getPassword();
             user.setPassword(passwordEncoder.encode(originalPassword));
+            user.setRegistration_date(new Date(System.currentTimeMillis()));
 
             if (register.getRole() != null) {
                 try {
@@ -95,18 +97,16 @@ public class UserService implements UserDetailsService {
         return userRepository.findUsersByStatusTrue();
     }
 
-    public UserResponse updateCustomerProfile(int id, UpdateProfile updateProfile) {
-        Users customer = getCurrentAccount();
-        customer.setId(id);
-        if(customer == null) {
+    public UserResponse updateCustomerProfile(UpdateProfile updateProfile) {
+        Users currentUser = getCurrentAccount();
+        if(currentUser == null) {
             throw new EntityNotFoundException("Customer not found!");
         }
-        customer = modelMapper.map(updateProfile, Users.class);
-//        customer.setFullname(updateProfile.getFullName());
-//        customer.setEmail(updateProfile.getEmail());
-//        customer.setPhone(updateProfile.getPhone());
-//        customer.setAddress(updateProfile.getAddress());
-        Users updatedUser = userRepository.save(customer);
+        currentUser.setFullname(updateProfile.getFullName());
+        currentUser.setEmail(updateProfile.getEmail());
+        currentUser.setPhone(updateProfile.getPhone());
+        currentUser.setAddress(updateProfile.getAddress());
+        Users updatedUser = userRepository.save(currentUser);
         return modelMapper.map(updatedUser, UserResponse.class);
 
 

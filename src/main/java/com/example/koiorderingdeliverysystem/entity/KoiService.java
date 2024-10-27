@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -35,6 +36,9 @@ public class KoiService {
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
+
+    @OneToMany(mappedBy = "services")
+    private List<OrderServices> servicesOrder;
 
     // Default constructor
     public KoiService() {}

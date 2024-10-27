@@ -56,8 +56,8 @@ public class UserController {
     }
 
     @PutMapping("/customer/{customerId}")
-    public ResponseEntity updateCustomer(@PathVariable("customerId") int customerId, UpdateProfile updateProfile) {
-        UserResponse update = userService.updateCustomerProfile(customerId, updateProfile);
+    public ResponseEntity<UserResponse> updateCustomer(UpdateProfile updateProfile) {
+        UserResponse update = userService.updateCustomerProfile(updateProfile);
         return ResponseEntity.ok(update);
     }
 
