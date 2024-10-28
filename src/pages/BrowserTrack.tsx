@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter, faSyncAlt, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import ProductDetailsModal from "../ProductDetailsModal";
 import DeliveryPagination from "../components/admin/delivery/pagination/DeliveryPagination";
 
 function BrowserTrack() {
@@ -14,6 +15,8 @@ function BrowserTrack() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchError, setSearchError] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedDeliveryId, setSelectedDeliveryId] = useState(null);
 
   const [deliveries, setDeliveries] = useState([
     { id: "00001", client: "Christine Books", address: "Phường Bến Nghé, Quận 1, TP.HCM", price: "100.000", type: "Foodstuff", status: "Pending" },
@@ -95,12 +98,7 @@ function BrowserTrack() {
     setSearchResults([]); // Reset search results
   };
 
-  const updateStatus = (id, newStatus) => {
-    const updatedDeliveries = deliveries.map((delivery) =>
-      delivery.id === id ? { ...delivery, status: newStatus } : delivery
-    );
-    setDeliveries(updatedDeliveries);
-  };
+
 
 
   const getStatusColor = (status) => {
@@ -115,6 +113,27 @@ function BrowserTrack() {
         return "text-gray-500 bg-gray-100";
     }
   };
+
+  function handleViewDetails(id: string): void {
+     setSelectedDeliveryId(id);
+  setIsModalOpen(true);
+
+  document.body.style.overflow = 'hidden';
+  }
+
+  function handleCloseModal(): void {
+  setIsModalOpen(false);
+  setSelectedDeliveryId(null);
+
+  document.body.style.overflow ='unset'
+}
+function updateDeliveryStatus(id: string, newStatus: string): void {
+    setDeliveries(prevDeliveries =>
+      prevDeliveries.map(delivery =>
+        delivery.id === id ? { ...delivery, status: newStatus } : delivery
+      )
+    );
+  }
 
   return (
     <div className="w-screen overflow-x-hidden bg-light-blue">
@@ -241,16 +260,10 @@ function BrowserTrack() {
                   </td>
                   <td className="py-3 px-4 text-sm text-gray-700">
                     <button
-                      className="text-green-600 hover:underline mr-2"
-                      onClick={() => updateStatus(delivery.id, "Confirmed")}
+                  className="text-blue-600 hover:underline"
+                  onClick={() => handleViewDetails(delivery.id)}
                     >
-                      Confirm
-                    </button>
-                    <button
-                      className="text-red-600 hover:underline"
-                      onClick={() => updateStatus(delivery.id, "Rejected")}
-                    >
-                      Reject
+                   Details
                     </button>
                   </td>
                 </tr>
@@ -270,6 +283,18 @@ function BrowserTrack() {
       </section>
 
       <Footer />
+      {isModalOpen &&  (
+        <div className="modal-overlay">
+          <div className="modal-content">
+  <ProductDetailsModal
+    isOpen={isModalOpen}
+    onClose={handleCloseModal}
+    deliveryId={selectedDeliveryId}
+    updateStatus={updateDeliveryStatus}
+  />
+  </div>
+  </div>
+)}
     </div>
   );
 }
