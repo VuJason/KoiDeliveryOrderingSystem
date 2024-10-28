@@ -11,6 +11,8 @@ import TrackPage from "./pages/TrackPage.tsx";
 import BrowserTrack from  "./pages/BrowserTrack.tsx";
 import DeliveryTrackPage from "./pages/DeliveryTrackPage.tsx";
 import Account from "./pages/Account.tsx";
+import { adminRoutes } from "./routes/AdminRoutes.tsx";
+
 
 const router = createBrowserRouter([
   {
@@ -49,7 +51,7 @@ const router = createBrowserRouter([
     path: "/account",
     element: <Account />
   }
-
+...adminRoutes,
 ]);
 
 createRoot(document.getElementById("root")!).render(
