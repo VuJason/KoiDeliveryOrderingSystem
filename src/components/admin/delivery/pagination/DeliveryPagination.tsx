@@ -2,22 +2,28 @@ import { Pagination } from "antd";
 import React, { useState } from "react";
 import "./DeliveryPagination.scss";
 
-const DeliveryPagination: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState(1);
+interface DeliveryPaginationProps {
+  current?: number;
+  onChange?: (page: number) => void;
+  total?: number;
+  pageSize?: number;
+}
 
-  const onChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
+const DeliveryPagination: React.FC<DeliveryPaginationProps> = ({
+  current = 1,
+  onChange,
+  total = 50,
+  pageSize = 5
+}) => {
   return (
     <div className="pagination-container">
       <span className="pagination-info">
-        Showing {currentPage * 5 - 4} to {currentPage * 5} of 50 entries
+        Showing {current * pageSize - pageSize + 1} to {Math.min(current * pageSize, total)} of {total} entries
       </span>
       <Pagination
-        current={currentPage}
-        pageSize={5}
-        total={50}
+        current={current}
+        pageSize={pageSize}
+        total={total}
         onChange={onChange}
         showSizeChanger={false}
         className="pagination"

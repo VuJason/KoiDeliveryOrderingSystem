@@ -58,7 +58,7 @@ const Sidebar: React.FC = () => {
   return (
     <div className="sidebar">
       <div className="sidebar-logo">
-        <h1>BYKE</h1>
+        <img src="/koilogo.png" alt="Icon Background" width="60" height="29" />
       </div>
       <Menu mode="vertical" selectedKeys={[selectedKey()]} className="menu">
         <Menu.Item key="1" icon={<DashboardOutlined />}>

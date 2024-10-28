@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter, faSyncAlt, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import DeliveryPagination from "../components/admin/delivery/pagination/DeliveryPagination";
 
 function BrowserTrack() {
   const [searchInput, setSearchInput] = useState("");  // Changed from orderNumber
@@ -11,9 +12,62 @@ function BrowserTrack() {
   const [filterType, setFilterType] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 5;
   const [searchError, setSearchError] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+
+  const [deliveries, setDeliveries] = useState([
+    { id: "00001", client: "Christine Books", address: "Phường Bến Nghé, Quận 1, TP.HCM", price: "100.000", type: "Foodstuff", status: "Pending" },
+    { id: "00002", client: "Emma Watson", address: "Nguyễn Thái Bình, Quận 1, TP.HCM", price: "200.000", type: "Electronics", status: "Pending" },
+    { id: "00003", client: "John Doe", address: "Lê Lai, Quận 1, TP.HCM", price: "150.000", type: "Clothing", status: "Pending" },
+    { id: "00004", client: "Alice Smith", address: "Trần Hưng Đạo, Quận 1, TP.HCM", price: "80.000", type: "Home Appliances", status: "Pending" },
+    { id: "00005", client: "Michael Brown", address: "Nguyễn Huệ, Quận 1, TP.HCM", price: "300.000", type: "Books", status: "Pending" },
+    { id: "00006", client: "Sophia Johnson", address: "Lê Văn Sỹ, Quận 3, TP.HCM", price: "250.000", type: "Beauty Products", status: "Pending" },
+    { id: "00007", client: "Lucas Martin", address: "Ngô Đức Kế, Quận 1, TP.HCM", price: "175.000", type: "Toys", status: "Pending" },
+    { id: "00008", client: "Olivia Taylor", address: "Cầu Ông Lãnh, Quận 1, TP.HCM", price: "90.000", type: "Grocery", status: "Pending" },
+    { id: "00009", client: "James Anderson", address: "Tôn Thất Tùng, Quận 1, TP.HCM", price: "220.000", type: "Gardening Tools", status: "Pending" },
+    { id: "00010", client: "James Anderson", address: "Nguyễn Xiển, Quận 9, TP.HCM", price: "300.000", type: "Gardening Tools", status: "Pending" }
+  ]);
+
+    const pageSize = 5;
+
+    const parsePrice = (price: string) => {
+    return parseInt(price.replace(/\./g, ""), 10); 
+  };
+ // Tính toán dữ liệu cho trang hiện tại
+  const getFilteredData = () => {
+    let filteredDeliveries = deliveries.filter((delivery) => {
+      return (
+        (orderNumber === "" || delivery.id.includes(orderNumber)) && 
+        (filterType === "" || delivery.type.toLowerCase().includes(filterType.toLowerCase())) &&
+        (filterStatus === "" || delivery.status.toLowerCase() === filterStatus.toLowerCase())
+      );
+    });
+
+    // Thêm logic sắp xếp theo giá
+    if (filterPrice === "low") {
+    filteredDeliveries.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
+  } else if (filterPrice === "high") {
+    filteredDeliveries.sort((a, b) => parsePrice(b.price) - parsePrice(a.price));
+  }
+
+  return filteredDeliveries;
+  };
+
+  // Lấy dữ liệu đã được lọc
+  const filteredData = getFilteredData();
+  
+  // Tính toán dữ liệu cho trang hiện tại
+  const getCurrentPageData = () => {
+  const dataToUse = searchResults.length > 0 ? searchResults : filteredData;
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  return dataToUse.slice(startIndex, endIndex);
+};
+
+  // Xử lý khi thay đổi trang
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   const handleSearch = () => {
     if (!searchInput.trim()) {
@@ -28,22 +82,8 @@ function BrowserTrack() {
     setSearchResults(results);
   };
 
-  const parsePrice = (price) => {
-    return parseInt(price.replace(/\./g, ""), 10); 
-  };
+  
 
-  const [deliveries, setDeliveries] = useState([
-    { id: "00001", client: "Christine Books", address: "Phường Bến Nghé, Quận 1, TP.HCM", price: "100.000", type: "Foodstuff", status: "Pending" },
-    { id: "00002", client: "Emma Watson", address: "Nguyễn Thái Bình, Quận 1, TP.HCM", price: "200.000", type: "Electronics", status: "Pending" },
-    { id: "00003", client: "John Doe", address: "Lê Lai, Quận 1, TP.HCM", price: "150.000", type: "Clothing", status: "Pending" },
-    { id: "00004", client: "Alice Smith", address: "Trần Hưng Đạo, Quận 1, TP.HCM", price: "80.000", type: "Home Appliances", status: "Pending" },
-    { id: "00005", client: "Michael Brown", address: "Nguyễn Huệ, Quận 1, TP.HCM", price: "300.000", type: "Books", status: "Pending" },
-    { id: "00006", client: "Sophia Johnson", address: "Lê Văn Sỹ, Quận 3, TP.HCM", price: "250.000", type: "Beauty Products", status: "Pending" },
-    { id: "00007", client: "Lucas Martin", address: "Ngô Đức Kế, Quận 1, TP.HCM", price: "175.000", type: "Toys", status: "Pending" },
-    { id: "00008", client: "Olivia Taylor", address: "Cầu Ông Lãnh, Quận 1, TP.HCM", price: "90.000", type: "Grocery", status: "Pending" },
-    { id: "00009", client: "James Anderson", address: "Tôn Thất Tùng, Quận 1, TP.HCM", price: "220.000", type: "Gardening Tools", status: "Pending" },
-    { id: "00010", client: "James Anderson", address: "Nguyễn Xiển, Quận 9, TP.HCM", price: "300.000", type: "Gardening Tools", status: "Pending" }
-  ]);
 
   const resetFilters = () => {
     setSearchInput("");  // Reset search input
@@ -62,37 +102,6 @@ function BrowserTrack() {
     setDeliveries(updatedDeliveries);
   };
 
-  const filteredDeliveries = deliveries.filter((delivery) => {
-    return (
-      (orderNumber === "" || delivery.id.includes(orderNumber)) && 
-      (filterType === "" || delivery.type.toLowerCase().includes(filterType.toLowerCase())) &&
-      (filterStatus === "" || delivery.status.toLowerCase() === filterStatus.toLowerCase())
-    );
-  });
-
-  if (filterPrice === "low") {
-    filteredDeliveries.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
-  } else if (filterPrice === "high") {
-    filteredDeliveries.sort((a, b) => parsePrice(b.price) - parsePrice(a.price));
-  }
-
-  const indexOfLastRow = currentPage * rowsPerPage;
-  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentRows = searchResults.length > 0 ? searchResults.slice(indexOfFirstRow, indexOfLastRow) : filteredDeliveries.slice(indexOfFirstRow, indexOfLastRow);
-
-  const totalPages = Math.ceil(filteredDeliveries.length / rowsPerPage);
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
 
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
@@ -108,7 +117,7 @@ function BrowserTrack() {
   };
 
   return (
-    <div className="w-screen overflow-x-hidden">
+    <div className="w-screen overflow-x-hidden bg-light-blue">
       <Header currentPage={undefined} />
       <section className="w-screen h-screen bg-blue-200 relative">
         <div className="absolute inset-0 bg-cover bg-center opacity-50" style={{ backgroundImage: "url('./track-bg.png')" }}></div>
@@ -220,7 +229,7 @@ function BrowserTrack() {
               </tr>
             </thead>
             <tbody>
-              {currentRows.map((delivery) => (
+              {getCurrentPageData().map((delivery) => (
                 <tr key={delivery.id} className="border-b">
                   <td className="py-3 px-4 text-sm text-gray-700">{delivery.id}</td>
                   <td className="py-3 px-4 text-sm text-gray-700">{delivery.client}</td>
@@ -250,22 +259,13 @@ function BrowserTrack() {
           </table>
         </div>
 
-        <div className="flex justify-between items-center mt-4">
-          <button
-            onClick={handlePreviousPage}
-            className={`px-4 py-2 bg-blue-600 text-white font-semibold rounded-md ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"}`}
-            disabled={currentPage === 1}
-          >
-            Previous
-          </button>
-          <p className="text-sm text-gray-500">Page {currentPage} of {totalPages}</p>
-          <button
-            onClick={handleNextPage}
-            className={`px-4 py-2 bg-blue-600 text-white font-semibold rounded-md ${currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"}`}
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </button>
+  <div className="mt-4">
+          <DeliveryPagination
+          current={currentPage}
+          onChange={handlePageChange}
+          total={searchResults.length > 0 ? searchResults.length : filteredData.length}
+          pageSize={pageSize}
+         />
         </div>
       </section>
 

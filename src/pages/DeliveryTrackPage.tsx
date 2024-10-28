@@ -3,6 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter, faSyncAlt, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import DeliveryPagination from "../components/admin/delivery/pagination/DeliveryPagination";
+
 
 function DeliveryTrackPage() {
   const [searchInput, setSearchInput] = useState("");  // Changed from orderNumber
@@ -11,9 +13,62 @@ function DeliveryTrackPage() {
   const [filterProduct, setFilterProduct] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 5;
   const [searchError, setSearchError] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+
+  const deliveries = [
+    { id: "00001",  product: "Koi Bird", address: "Phường Bến Nghé, Quận 1, TP.HCM", price: "100.000", customer: "Doanh", status: "Confirmed" },
+    { id: "00002",  product: "Koi Bird", address: "Nguyễn Thái Bình, Quận 1, TP.HCM", price: "200.000", customer: "Doanh", status: "Confirmed" },
+    { id: "00003",  product: "Koi Bird", address: "Lê Lai, Quận 1, TP.HCM", price: "150.000", customer: "Doanh", status: "Canceled" },
+    { id: "00004",  product: "Gilbert Koi", address: "Trần Hưng Đạo, Quận 1, TP.HCM", price: "80.000", customer: "Doanh", status: "Canceled" },
+    { id: "00005",  product: "Alan Koi", address: "Nguyễn Huệ, Quận 1, TP.HCM", price: "300.000", customer: "Doanh", status: "In Transit" },
+    { id: "00006",  product: "Koi Murray", address: "Lê Văn Sỹ, Quận 3, TP.HCM", price: "250.000", customer: "Doanh", status: "Confirmed" },
+    { id: "00007",  product: "Koi Sullivan", address: "Ngô Đức Kế, Quận 1, TP.HCM", price: "175.000", customer: "Doanh", status: "Confirmed" },
+    { id: "00008",  product: "Gilbert Koi", address: "Cầu Ông Lãnh, Quận 1, TP.HCM", price: "90.000", customer: "Doanh", status: "In Transit" },
+    { id: "00009",  product: "Alan Koi", address: "Tôn Thất Tùng, Quận 1, TP.HCM", price: "220.000", customer: "Doanh", status: "Confirmed" },
+    { id: "00010",  product: "Koi Murray", address: "Nguyễn Xiển, Quận 9, TP.HCM", price: "300.000", customer: "Doanh", status: "Canceled" }
+  ];
+
+  const pageSize = 5;
+
+  const parsePrice = (price: string) => {
+    return parseInt(price.replace(/\./g, ""), 10); 
+  };
+ // Tính toán dữ liệu cho trang hiện tại
+  const getFilteredData = () => {
+    let filteredDeliveries = deliveries.filter((delivery) => {
+      return (
+        (orderNumber === "" || delivery.id.includes(orderNumber)) && 
+        (filterProduct === "" || delivery.product.toLowerCase().includes(filterProduct.toLowerCase())) &&
+        (filterStatus === "" || delivery.status.toLowerCase() === filterStatus.toLowerCase())
+      );
+    });
+
+    // Thêm logic sắp xếp theo giá
+    if (filterPrice === "low") {
+    filteredDeliveries.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
+  } else if (filterPrice === "high") {
+    filteredDeliveries.sort((a, b) => parsePrice(b.price) - parsePrice(a.price));
+  }
+
+  return filteredDeliveries;
+  };
+
+  // Lấy dữ liệu đã được lọc
+  const filteredData = getFilteredData();
+  
+  // Tính toán dữ liệu cho trang hiện tại
+  const getCurrentPageData = () => {
+  const dataToUse = searchResults.length > 0 ? searchResults : filteredData;
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  return dataToUse.slice(startIndex, endIndex);
+};
+
+  // Xử lý khi thay đổi trang
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   const handleSearch = () => {
     if (!searchInput.trim()) {
@@ -28,23 +83,7 @@ function DeliveryTrackPage() {
     setSearchResults(results);
   };
 
-  const parsePrice = (price) => {
-    return parseInt(price.replace(/\./g, ""), 10); 
-  };
-
-
-  const deliveries = [
-    { id: "00001",  product: "Koi Bird", address: "Phường Bến Nghé, Quận 1, TP.HCM", price: "100.000", customer: "Doanh", status: "Confirmed" },
-    { id: "00002",  product: "Koi Bird", address: "Nguyễn Thái Bình, Quận 1, TP.HCM", price: "200.000", customer: "Doanh", status: "Confirmed" },
-    { id: "00003",  product: "Koi Bird", address: "Lê Lai, Quận 1, TP.HCM", price: "150.000", customer: "Doanh", status: "Canceled" },
-    { id: "00004",  product: "Gilbert Koi", address: "Trần Hưng Đạo, Quận 1, TP.HCM", price: "80.000", customer: "Doanh", status: "Canceled" },
-    { id: "00005",  product: "Alan Koi", address: "Nguyễn Huệ, Quận 1, TP.HCM", price: "300.000", customer: "Doanh", status: "In Transit" },
-    { id: "00006",  product: "Koi Murray", address: "Lê Văn Sỹ, Quận 3, TP.HCM", price: "250.000", customer: "Doanh", status: "Confirmed" },
-    { id: "00007",  product: "Koi Sullivan", address: "Ngô Đức Kế, Quận 1, TP.HCM", price: "175.000", customer: "Doanh", status: "Confirmed" },
-    { id: "00008",  product: "Gilbert Koi", address: "Cầu Ông Lãnh, Quận 1, TP.HCM", price: "90.000", customer: "Doanh", status: "In Transit" },
-    { id: "00009",  product: "Alan Koi", address: "Tôn Thất Tùng, Quận 1, TP.HCM", price: "220.000", customer: "Doanh", status: "Confirmed" },
-    { id: "00010",  product: "Koi Murray", address: "Nguyễn Xiển, Quận 9, TP.HCM", price: "300.000", customer: "Doanh", status: "Canceled" }
-  ];
+  
 
   const resetFilters = () => {
     setSearchInput("");  // Reset search input
@@ -63,37 +102,6 @@ function DeliveryTrackPage() {
     setDeliveries(updatedDeliveries);
   };
 
-  const filteredDeliveries = deliveries.filter((delivery) => {
-    return (
-      (orderNumber === "" || delivery.id.includes(orderNumber)) && 
-      (filterProduct === "" || delivery.product.toLowerCase().includes(filterProduct.toLowerCase())) &&
-      (filterStatus === "" || delivery.status.toLowerCase() === filterStatus.toLowerCase())
-    );
-  });
-
-  if (filterPrice === "low") {
-    filteredDeliveries.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
-  } else if (filterPrice === "high") {
-    filteredDeliveries.sort((a, b) => parsePrice(b.price) - parsePrice(a.price));
-  }
-
-  const indexOfLastRow = currentPage * rowsPerPage;
-  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentRows = searchResults.length > 0 ? searchResults.slice(indexOfFirstRow, indexOfLastRow) : filteredDeliveries.slice(indexOfFirstRow, indexOfLastRow);
-
-  const totalPages = Math.ceil(filteredDeliveries.length / rowsPerPage);
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
 
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
@@ -109,7 +117,7 @@ function DeliveryTrackPage() {
   };
 
   return (
-    <div className="w-screen overflow-x-hidden">
+    <div className="w-screen overflow-x-hidden bg-light-blue">
       {/* Sử dụng Header mới từ components/Header */}
       <Header currentPage={undefined} />
       {/* Hero Section */}
@@ -228,7 +236,7 @@ function DeliveryTrackPage() {
               </tr>
             </thead>
             <tbody>
-              {currentRows.map((delivery) => (
+              {getCurrentPageData().map((delivery) => (
                 <tr key={delivery.id} className="border-b">
                   <td className="py-3 px-4 text-sm text-gray-700">{delivery.id}</td>
                   <td className="py-3 px-4 text-sm text-gray-700">{delivery.product}</td>
@@ -244,22 +252,13 @@ function DeliveryTrackPage() {
           </table>
         </div>
 
-        <div className="flex justify-between items-center mt-4">
-          <button
-            onClick={handlePreviousPage}
-            className={`px-4 py-2 bg-blue-600 text-white font-semibold rounded-md ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"}`}
-            disabled={currentPage === 1}
-          >
-            Previous
-          </button>
-          <p className="text-sm text-gray-500">Page {currentPage} of {totalPages}</p>
-          <button
-            onClick={handleNextPage}
-            className={`px-4 py-2 bg-blue-600 text-white font-semibold rounded-md ${currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"}`}
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </button>
+ <div className="mt-4">
+          <DeliveryPagination
+          current={currentPage}
+          onChange={handlePageChange}
+          total={searchResults.length > 0 ? searchResults.length : filteredData.length}
+          pageSize={pageSize}
+         />
         </div>
       </section>
 

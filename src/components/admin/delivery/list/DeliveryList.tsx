@@ -2,7 +2,7 @@ import React from "react";
 import DeliveryRow from "../row/DeliveryRow";
 import "./DeliveryList.scss";
 
-const data = [
+ export const data = [
   {
     orderNumber: "#AHGA68",
     date: "23/09/2022",
@@ -101,7 +101,18 @@ const data = [
   },
 ];
 
-const DeliveryList: React.FC = () => {
+interface DeliveryListProps {
+  data: Array<{
+    orderNumber: string;
+    date: string;
+    customer: string;
+    time: string;
+    amount: string;
+    destination: string;
+  }>;
+}
+
+const DeliveryList: React.FC<DeliveryListProps> = ({ data}) => {
   return (
     <div className="delivery-list">
       <div className="header-delivery">
