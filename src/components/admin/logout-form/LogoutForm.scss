@@ -1,0 +1,45 @@
+.logout-modal {
+  .ant-modal-content {
+    border-radius: 12px;
+    text-align: center;
+    padding: 24px;
+  }
+
+  .logout-content {
+    h2 {
+      font-size: 18px;
+      font-weight: 500;
+      margin-bottom: 24px;
+    }
+
+    .logout-actions {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+
+      .no-button {
+        background-color: #e0e0e0;
+        color: black;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 16px;
+        &:hover {
+          background-color: #d5d5d5;
+        }
+      }
+
+      .yes-button {
+        background-color: #ff4d4f;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 16px;
+        &:hover {
+          background-color: #e63946;
+        }
+      }
+    }
+  }
+}

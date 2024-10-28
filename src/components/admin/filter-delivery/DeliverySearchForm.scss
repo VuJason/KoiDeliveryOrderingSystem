@@ -1,0 +1,31 @@
+.delivery-search-form {
+  background-color: #e6f7ff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+  h3 {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 20px;
+  }
+
+  .search-form {
+    .ant-form-item-label > label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .ant-input,
+    .ant-picker {
+      border-radius: 6px;
+      height: 40px;
+    }
+
+    .ant-input::placeholder,
+    .ant-picker-input input::placeholder {
+      color: #ccc;
+    }
+  }
+}
