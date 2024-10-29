@@ -243,7 +243,7 @@ function DeliveryTrackPage() {
                   <td className="py-3 px-4 text-sm text-gray-700">{delivery.address}</td>
                   <td className="py-3 px-4 text-sm text-gray-700">{delivery.price}</td>
                   <td className="py-3 px-4 text-sm text-gray-700">{delivery.customer}</td>
-                  <td className={`py-3 px-4 text-sm font-semibold rounded-full ${getStatusColor(delivery.status)} inline-block`}>
+                  <td className={`py-3 px-4 text-sm  ${getStatusColor(delivery.status)}`}>
            {delivery.status}
                 </td>
               </tr>
