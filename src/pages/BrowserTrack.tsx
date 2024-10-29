@@ -19,16 +19,16 @@ function BrowserTrack() {
   const [selectedDeliveryId, setSelectedDeliveryId] = useState(null);
 
   const [deliveries, setDeliveries] = useState([
-    { id: "00001", client: "Christine Books", address: "Phường Bến Nghé, Quận 1, TP.HCM", price: "100.000", type: "Butterfly", status: "Pending" },
-    { id: "00002", client: "Emma Watson", address: "Nguyễn Thái Bình, Quận 1, TP.HCM", price: "200.000", type: "Standard", status: "Pending" },
-    { id: "00003", client: "John Doe", address: "Lê Lai, Quận 1, TP.HCM", price: "150.000", type: "Butterfly", status: "Pending" },
-    { id: "00004", client: "Alice Smith", address: "Trần Hưng Đạo, Quận 1, TP.HCM", price: "80.000", type: "Standard", status: "Pending" },
-    { id: "00005", client: "Michael Brown", address: "Nguyễn Huệ, Quận 1, TP.HCM", price: "300.000", type: "Butterfly", status: "Pending" },
-    { id: "00006", client: "Sophia Johnson", address: "Lê Văn Sỹ, Quận 3, TP.HCM", price: "250.000", type: "Standard", status: "Pending" },
-    { id: "00007", client: "Lucas Martin", address: "Ngô Đức Kế, Quận 1, TP.HCM", price: "175.000", type: "Butterfly", status: "Pending" },
-    { id: "00008", client: "Olivia Taylor", address: "Cầu Ông Lãnh, Quận 1, TP.HCM", price: "90.000", type: "Standard", status: "Pending" },
-    { id: "00009", client: "James Anderson", address: "Tôn Thất Tùng, Quận 1, TP.HCM", price: "220.000", type: "Butterfly", status: "Pending" },
-    { id: "00010", client: "James Anderson", address: "Nguyễn Xiển, Quận 9, TP.HCM", price: "300.000", type: "Standard", status: "Pending" }
+    { id: "00001", client: "Christine Books", address: "Phường Bến Nghé, Quận 1, TP.HCM", price: "100.000", type: "Foodstuff", status: "Pending" },
+    { id: "00002", client: "Emma Watson", address: "Nguyễn Thái Bình, Quận 1, TP.HCM", price: "200.000", type: "Electronics", status: "Pending" },
+    { id: "00003", client: "John Doe", address: "Lê Lai, Quận 1, TP.HCM", price: "150.000", type: "Clothing", status: "Pending" },
+    { id: "00004", client: "Alice Smith", address: "Trần Hưng Đạo, Quận 1, TP.HCM", price: "80.000", type: "Home Appliances", status: "Pending" },
+    { id: "00005", client: "Michael Brown", address: "Nguyễn Huệ, Quận 1, TP.HCM", price: "300.000", type: "Books", status: "Pending" },
+    { id: "00006", client: "Sophia Johnson", address: "Lê Văn Sỹ, Quận 3, TP.HCM", price: "250.000", type: "Beauty Products", status: "Pending" },
+    { id: "00007", client: "Lucas Martin", address: "Ngô Đức Kế, Quận 1, TP.HCM", price: "175.000", type: "Toys", status: "Pending" },
+    { id: "00008", client: "Olivia Taylor", address: "Cầu Ông Lãnh, Quận 1, TP.HCM", price: "90.000", type: "Grocery", status: "Pending" },
+    { id: "00009", client: "James Anderson", address: "Tôn Thất Tùng, Quận 1, TP.HCM", price: "220.000", type: "Gardening Tools", status: "Pending" },
+    { id: "00010", client: "James Anderson", address: "Nguyễn Xiển, Quận 9, TP.HCM", price: "300.000", type: "Gardening Tools", status: "Pending" }
   ]);
 
     const pageSize = 5;
@@ -113,19 +113,6 @@ function BrowserTrack() {
         return "text-gray-500 bg-gray-100";
     }
   };
- const [selectedProduct, setSelectedProduct] = useState(null);
-const [isModalOpen, setIsModalOpen] = useState(false);
-
-const handleViewDetails = (id) => {
-  // Giả sử bạn có một hàm để lấy thông tin chi tiết sản phẩm dựa trên id
-  const productDetails = getProductDetails(id);
-  setSelectedProduct(productDetails);
-  setIsModalOpen(true);
-};
-const handleCloseModal = () => {
-  setIsModalOpen(false);
-  setSelectedProduct(null);
-};
 
   function handleViewDetails(id: string): void {
      setSelectedDeliveryId(id);
@@ -184,7 +171,7 @@ function updateDeliveryStatus(id: string, newStatus: string): void {
           </div>
           <button
             onClick={handleSearch}
-            className="w-40 px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 ease-in-out"
+            className="w-40 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 ease-in-out"
           >
             Locate
           </button>
@@ -217,8 +204,10 @@ function updateDeliveryStatus(id: string, newStatus: string): void {
               className="border border-gray-300 rounded-md px-4 py-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Package Type</option>
-              <option value="butterfly">Butterfly</option>
-              <option value="standard">Standard</option>
+              <option value="foodstuff">Foodstuff</option>
+              <option value="electronics">Electronics</option>
+              <option value="clothing">Clothing</option>
+              <option value="home">Home Appliances</option>
             </select>
             <FontAwesomeIcon icon={faChevronDown} className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
           </div>
@@ -255,7 +244,7 @@ function updateDeliveryStatus(id: string, newStatus: string): void {
                 <th className="py-2 px-4 text-left font-medium text-gray-600">PRICE</th>
                 <th className="py-2 px-4 text-left font-medium text-gray-600">TYPE</th>
                 <th className="py-2 px-4 text-left font-medium text-gray-600">STATUS</th>
-                <th className="py-2 px-4 text-left font-medium text-gray-600">ACTION</th>
+                <th className="py-2 px-4 text-left font-medium text-gray-600">EDIT</th>
               </tr>
             </thead>
             <tbody>
@@ -282,16 +271,6 @@ function updateDeliveryStatus(id: string, newStatus: string): void {
             </tbody>
           </table>
         </div>
-         <ProductDetailsModal 
-      product={selectedProduct} 
-      onClose={() => setIsModalOpen(false)} 
-    />
-    {isModalOpen && (
-      <ProductDetailsModal 
-        product={selectedProduct} 
-        onClose={handleCloseModal}
-      />
-    )}
 
   <div className="mt-4">
           <DeliveryPagination

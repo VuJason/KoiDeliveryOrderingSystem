@@ -5,10 +5,6 @@ import App from "./App.tsx";
 import DeliveryHistory from "./pages/DeliveryHistory.tsx";
 import Order from "./pages/Order.tsx";
 import Account from "./pages/Account.tsx";
-import TrackPage from "./pages/TrackPage.tsx";
-import DeliveryTrackPage from "./pages/DeliveryTrackPage.tsx";
-import BrowserTrack from "./pages/BrowserTrack.tsx";
-
 import "./index.css";
 import BrowserTrack from "./pages/BrowserTrack.tsx";
 import ChangPasswordPage from "./pages/ChangePasswrod.tsx";
