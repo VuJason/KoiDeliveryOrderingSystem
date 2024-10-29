@@ -399,6 +399,67 @@
         ]
       }
     },
+    "/api/feedback": {
+      "get": {
+        "tags": [
+          "feed-back-controller"
+        ],
+        "operationId": "getAllFeedback",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FeedBack"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "feed-back-controller"
+        ],
+        "operationId": "create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeedBackRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedBackResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api": []
+          }
+        ]
+      }
+    },
     "/api/blog-post": {
       "get": {
         "tags": [
@@ -569,34 +630,6 @@
         ]
       }
     },
-    "/api/feedback": {
-      "get": {
-        "tags": [
-          "feed-back-controller"
-        ],
-        "operationId": "getAllFeedback",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FeedBack"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "api": []
-          }
-        ]
-      }
-    },
     "/api/distance": {
       "get": {
         "tags": [
@@ -641,12 +674,12 @@
         ]
       }
     },
-    "/api/admin": {
+    "/api/admin/stats": {
       "get": {
         "tags": [
           "admin-controller"
         ],
-        "operationId": "getAdmin",
+        "operationId": "getDashboardStats",
         "responses": {
           "200": {
             "description": "OK",
@@ -839,6 +872,25 @@
           }
         }
       },
+      "FeedBack": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "string"
+          },
+          "rating": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/Users"
+          }
+        }
+      },
       "GrantedAuthority": {
         "type": "object",
         "properties": {
@@ -991,6 +1043,12 @@
               "$ref": "#/components/schemas/BlogPosts"
             }
           },
+          "customer_feedBacks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FeedBack"
+            }
+          },
           "enabled": {
             "type": "boolean"
           },
@@ -1000,13 +1058,13 @@
               "$ref": "#/components/schemas/GrantedAuthority"
             }
           },
+          "accountNonLocked": {
+            "type": "boolean"
+          },
           "accountNonExpired": {
             "type": "boolean"
           },
           "credentialsNonExpired": {
-            "type": "boolean"
-          },
-          "accountNonLocked": {
             "type": "boolean"
           }
         }
@@ -1209,6 +1267,26 @@
           }
         }
       },
+      "FeedBackRequest": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "rating": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "FeedBackResponse": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string"
+          }
+        }
+      },
       "BlogPostDto": {
         "type": "object",
         "properties": {
@@ -1249,9 +1327,6 @@
             "type": "string"
           }
         }
-      },
-      "FeedBack": {
-        "type": "object"
       }
     },
     "securitySchemes": {
