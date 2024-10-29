@@ -122,11 +122,11 @@ function DeliveryTrackPage() {
       <Header currentPage={undefined} />
       {/* Hero Section */}
       <section className="w-screen h-screen bg-blue-200 relative">
-        <div className="absolute inset-0 bg-cover bg-center opacity-50" style={{ backgroundImage: "url('./track-bg.png')" }}></div>
+        <div className="absolute inset-0 bg-cover bg-center " style={{ backgroundImage: "url('./koikoi.png')" }}></div>
         <div className="relative z-10 flex items-start justify-start pl-16 h-full">
           <div className="max-w-lg">
-            <h1 className="mt-60 text-4xl font-bold text-gray-800 text-left">Deliveries Available</h1>
-            <p className="mt-30 text-lg text-gray-600 text-left">
+            <h1 className="mt-60 text-4xl font-bold text-black-800 text-left">Deliveries Available</h1>
+            <p className="mt-30 text-lg text-black-600 text-left">
               Enter your order number below to track your delivery. We provide an integrated logistics solution built on Express Parcel, Cross Border, Warehousing, Freight and Software value added services that helps brands deliver faster and provide a superior experience.
             </p>
           </div>
@@ -155,7 +155,7 @@ function DeliveryTrackPage() {
           </div>
           <button
             onClick={handleSearch}
-            className="w-40 px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 ease-in-out"
+            className="w-40 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 ease-in-out"
           >
             Find
           </button>

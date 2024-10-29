@@ -139,11 +139,11 @@ function updateDeliveryStatus(id: string, newStatus: string): void {
     <div className="w-screen overflow-x-hidden bg-light-blue">
       <Header currentPage={undefined} />
       <section className="w-screen h-screen bg-blue-200 relative">
-        <div className="absolute inset-0 bg-cover bg-center opacity-50" style={{ backgroundImage: "url('./track-bg.png')" }}></div>
+        <div className="absolute inset-0 bg-cover bg-center " style={{ backgroundImage: "url('./koikoikoi.png')" }}></div>
         <div className="relative z-10 flex items-start justify-start pl-16 h-full">
           <div className="max-w-lg">
-            <h1 className="mt-60 text-4xl font-bold text-gray-800 text-left">Delieries Availible</h1>
-            <p className="mt-30 text-lg text-gray-600 text-left">
+            <h1 className="mt-60 text-4xl font-bold text-black-800 text-left">Delieries Availible</h1>
+            <p className="mt-30 text-lg text-black-600 text-left">
               Manage and confirm or reject delivery orders. You can view the list of all pending deliveries and update their status.
             </p>
           </div>
