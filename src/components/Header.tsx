@@ -65,9 +65,9 @@ return (
           </li>
         </ul>
       </nav>
-      </div>
+    </div>  
 
-        <div className="flex items-center space-x-10">
+   <div className="flex items-center space-x-10">
           <Link
             to="/order"
             className="flex gap-2 items-center  transition-all transform hover:scale-105"

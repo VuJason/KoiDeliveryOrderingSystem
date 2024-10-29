@@ -1,0 +1,51 @@
+.notification-dropdown {
+  width: 300px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 10px; // Add padding around the whole dropdown
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  font-weight: bold;
+}
+
+.clear-all {
+  color: red;
+}
+
+.notification-icon {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.ant-list-item-meta {
+  padding: 10px 0; // Add padding between the items
+  display: flex;
+  align-items: center;
+
+  .ant-list-item-meta-avatar {
+    margin-right: 10px; // Space between avatar and content
+  }
+
+  .ant-list-item-meta-title {
+    font-weight: bold; // Make title bold for all
+    margin-bottom: 5px;
+  }
+
+  .ant-list-item-meta-description {
+    font-size: 12px;
+    color: #999;
+  }
+}
+
+.notification-item-read {
+  background-color: #f5f5f5; // Darken the background for read notifications
+  .ant-list-item-meta-title {
+    font-weight: normal; // Reduce font-weight for read items
+    color: #666;
+  }
+}

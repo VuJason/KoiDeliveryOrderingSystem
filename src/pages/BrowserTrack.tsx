@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter, faSyncAlt, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import Footer from "../components/Footer";
 import Header from "../components/Header";
-import ProductDetailsModal from '../ProductDetailsModal';
-
+import ProductDetailsModal from "../ProductDetailsModal";
+import DeliveryPagination from "../components/admin/delivery/pagination/DeliveryPagination";
 
 function BrowserTrack() {
   const [searchInput, setSearchInput] = useState("");  // Changed from orderNumber
@@ -13,46 +13,10 @@ function BrowserTrack() {
   const [filterType, setFilterType] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 5;
   const [searchError, setSearchError] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-
-  const handleSearch = () => {
-    if (!searchInput.trim()) {
-      setSearchError("Tracking number required");
-      return;
-    }
-    setSearchError("");
-    setOrderNumber(searchInput);  // Update orderNumber with searchInput
-
-    // Save search results
-    const results = deliveries.filter(delivery => delivery.id.includes(searchInput));
-    setSearchResults(results);
-  };
-
-  const parsePrice = (price) => {
-    return parseInt(price.replace(/\./g, ""), 10); 
-  };
-   // Thêm hàm giả getProductDetails ở đây
-  const getProductDetails = (id) => {
-    // Đây là một mảng giả các sản phẩm
-    const products = [
-      { id: "00001", name: "Koi Bird", variety: "Butterfly", finType: "Long Fin", size: "Medium", color: "Red and White", price: 100000 },
-      { id: "00002", name: "Gilbert Koi", variety: "Standard", finType: "Short Fin", size: "Large", color: "Black and Orange", price: 200000 },
-      { id: "00003", name: "Alan Koi", variety: "Butterfly", finType: "Long Fin", size: "Small", color: "Yellow and White", price: 150000 },
-      { id: "00004", name: "Koi Murray", variety: "Standard", finType: "Short Fin", size: "Medium", color: "Blue and White", price: 80000 },
-      { id: "00005", name: "Koi Sullivan", variety: "Butterfly", finType: "Long Fin", size: "Large", color: "Orange and Black", price: 300000 },
-      { id: "00006", name: "Koi Bird", variety: "Butterfly", finType: "Long Fin", size: "Medium", color: "Red and White", price: 100000 },
-      { id: "00007", name: "Gilbert Koi", variety: "Standard", finType: "Short Fin", size: "Large", color: "Black and Orange", price: 200000 },
-      { id: "00008", name: "Alan Koi", variety: "Butterfly", finType: "Long Fin", size: "Small", color: "Yellow and White", price: 150000 },
-      { id: "00009", name: "Koi Murray", variety: "Standard", finType: "Short Fin", size: "Medium", color: "Blue and White", price: 80000 },
-      { id: "00010", name: "Koi Sullivan", variety: "Butterfly", finType: "Long Fin", size: "Large", color: "Orange and Black", price: 300000 },
-    ];
-    
-    // Tìm sản phẩm có id tương ứng
-    return products.find(product => product.id === id) || null;
-  };
-  
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedDeliveryId, setSelectedDeliveryId] = useState(null);
 
   const [deliveries, setDeliveries] = useState([
     { id: "00001", client: "Christine Books", address: "Phường Bến Nghé, Quận 1, TP.HCM", price: "100.000", type: "Butterfly", status: "Pending" },
@@ -67,6 +31,63 @@ function BrowserTrack() {
     { id: "00010", client: "James Anderson", address: "Nguyễn Xiển, Quận 9, TP.HCM", price: "300.000", type: "Standard", status: "Pending" }
   ]);
 
+    const pageSize = 5;
+
+    const parsePrice = (price: string) => {
+    return parseInt(price.replace(/\./g, ""), 10); 
+  };
+ // Tính toán dữ liệu cho trang hiện tại
+  const getFilteredData = () => {
+    let filteredDeliveries = deliveries.filter((delivery) => {
+      return (
+        (orderNumber === "" || delivery.id.includes(orderNumber)) && 
+        (filterType === "" || delivery.type.toLowerCase().includes(filterType.toLowerCase())) &&
+        (filterStatus === "" || delivery.status.toLowerCase() === filterStatus.toLowerCase())
+      );
+    });
+
+    // Thêm logic sắp xếp theo giá
+    if (filterPrice === "low") {
+    filteredDeliveries.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
+  } else if (filterPrice === "high") {
+    filteredDeliveries.sort((a, b) => parsePrice(b.price) - parsePrice(a.price));
+  }
+
+  return filteredDeliveries;
+  };
+
+  // Lấy dữ liệu đã được lọc
+  const filteredData = getFilteredData();
+  
+  // Tính toán dữ liệu cho trang hiện tại
+  const getCurrentPageData = () => {
+  const dataToUse = searchResults.length > 0 ? searchResults : filteredData;
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  return dataToUse.slice(startIndex, endIndex);
+};
+
+  // Xử lý khi thay đổi trang
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleSearch = () => {
+    if (!searchInput.trim()) {
+      setSearchError("Tracking number required");
+      return;
+    }
+    setSearchError("");
+    setOrderNumber(searchInput);  // Update orderNumber with searchInput
+
+    // Save search results
+    const results = deliveries.filter(delivery => delivery.id.includes(searchInput));
+    setSearchResults(results);
+  };
+
+  
+
+
   const resetFilters = () => {
     setSearchInput("");  // Reset search input
     setOrderNumber("");
@@ -78,37 +99,7 @@ function BrowserTrack() {
   };
 
 
-  const filteredDeliveries = deliveries.filter((delivery) => {
-    return (
-      (orderNumber === "" || delivery.id.includes(orderNumber)) && 
-      (filterType === "" || delivery.type.toLowerCase().includes(filterType.toLowerCase())) &&
-      (filterStatus === "" || delivery.status.toLowerCase() === filterStatus.toLowerCase())
-    );
-  });
 
-  if (filterPrice === "low") {
-    filteredDeliveries.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
-  } else if (filterPrice === "high") {
-    filteredDeliveries.sort((a, b) => parsePrice(b.price) - parsePrice(a.price));
-  }
-
-  const indexOfLastRow = currentPage * rowsPerPage;
-  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentRows = searchResults.length > 0 ? searchResults.slice(indexOfFirstRow, indexOfLastRow) : filteredDeliveries.slice(indexOfFirstRow, indexOfLastRow);
-
-  const totalPages = Math.ceil(filteredDeliveries.length / rowsPerPage);
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
 
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
@@ -136,8 +127,29 @@ const handleCloseModal = () => {
   setSelectedProduct(null);
 };
 
+  function handleViewDetails(id: string): void {
+     setSelectedDeliveryId(id);
+  setIsModalOpen(true);
+
+  document.body.style.overflow = 'hidden';
+  }
+
+  function handleCloseModal(): void {
+  setIsModalOpen(false);
+  setSelectedDeliveryId(null);
+
+  document.body.style.overflow ='unset'
+}
+function updateDeliveryStatus(id: string, newStatus: string): void {
+    setDeliveries(prevDeliveries =>
+      prevDeliveries.map(delivery =>
+        delivery.id === id ? { ...delivery, status: newStatus } : delivery
+      )
+    );
+  }
+
   return (
-    <div className="w-screen overflow-x-hidden">
+    <div className="w-screen overflow-x-hidden bg-light-blue">
       <Header currentPage={undefined} />
       <section className="w-screen h-screen bg-blue-200 relative">
         <div className="absolute inset-0 bg-cover bg-center opacity-50" style={{ backgroundImage: "url('./track-bg.png')" }}></div>
@@ -247,24 +259,24 @@ const handleCloseModal = () => {
               </tr>
             </thead>
             <tbody>
-              {currentRows.map((delivery) => (
+              {getCurrentPageData().map((delivery) => (
                 <tr key={delivery.id} className="border-b">
                   <td className="py-3 px-4 text-sm text-gray-700">{delivery.id}</td>
                   <td className="py-3 px-4 text-sm text-gray-700">{delivery.client}</td>
                   <td className="py-3 px-4 text-sm text-gray-700">{delivery.address}</td>
                   <td className="py-3 px-4 text-sm text-gray-700">{delivery.price}</td>
                   <td className="py-3 px-4 text-sm text-gray-700">{delivery.type}</td>
-                  <td className={`py-3 px-4 text-sm font-semibold rounded-full ${getStatusColor(delivery.status)} inline-block`}>
+                  <td className={`py-3 px-4 text-sm ${getStatusColor(delivery.status)} `}>
                     {delivery.status}
                   </td>
                   <td className="py-3 px-4 text-sm text-gray-700">
-                  <button
+                    <button
                   className="text-blue-600 hover:underline"
                   onClick={() => handleViewDetails(delivery.id)}
                     >
                    Details
                     </button>
-                </td>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -281,26 +293,29 @@ const handleCloseModal = () => {
       />
     )}
 
-        <div className="flex justify-between items-center mt-4">
-          <button
-            onClick={handlePreviousPage}
-            className={`px-4 py-2 bg-green-600 text-white font-semibold rounded-md ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-green-700"}`}
-            disabled={currentPage === 1}
-          >
-            Previous
-          </button>
-          <p className="text-sm text-gray-500">Page {currentPage} of {totalPages}</p>
-          <button
-            onClick={handleNextPage}
-            className={`px-4 py-2 bg-green-600 text-white font-semibold rounded-md ${currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-green-700"}`}
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </button>
+  <div className="mt-4">
+          <DeliveryPagination
+          current={currentPage}
+          onChange={handlePageChange}
+          total={searchResults.length > 0 ? searchResults.length : filteredData.length}
+          pageSize={pageSize}
+         />
         </div>
       </section>
 
       <Footer />
+      {isModalOpen &&  (
+        <div className="modal-overlay">
+          <div className="modal-content">
+  <ProductDetailsModal
+    isOpen={isModalOpen}
+    onClose={handleCloseModal}
+    deliveryId={selectedDeliveryId}
+    updateStatus={updateDeliveryStatus}
+  />
+  </div>
+  </div>
+)}
     </div>
   );
 }

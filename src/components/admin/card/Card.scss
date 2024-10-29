@@ -1,0 +1,15 @@
+.card-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 50px; // Adjust spacing between the cards
+  padding: 20px;
+  background-color: #e6f7ff;
+
+  @media (max-width: 1200px) {
+    flex-wrap: wrap; // Cards will wrap on smaller screens
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column; // Cards will stack vertically on mobile
+  }
+}
