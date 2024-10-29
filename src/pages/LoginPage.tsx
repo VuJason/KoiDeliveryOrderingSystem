@@ -21,7 +21,7 @@ const LoginPage = () => {
         headers: {
           "Content-Type": "application/json",
           accept: "*/*",
-        },
+        },  
         body: JSON.stringify({
           email: email,
           password: password,
