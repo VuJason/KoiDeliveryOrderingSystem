@@ -10,7 +10,7 @@ import java.util.List;
 public interface OrdersRepository extends JpaRepository<Orders, Integer> {
 
     Orders findOrdersById(int id);
-    List<Orders> findByStatus(String status);  // To find orders by status
+    List<Orders> findAllByStatus(String status);  // To find orders by status
 
     Page<Orders> findAll(Pageable pageable);
 }

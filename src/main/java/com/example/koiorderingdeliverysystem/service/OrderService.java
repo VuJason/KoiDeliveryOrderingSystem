@@ -12,10 +12,12 @@ import com.example.koiorderingdeliverysystem.repository.OrdersRepository;
 import com.example.koiorderingdeliverysystem.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,21 +36,34 @@ public class OrderService {
     private ModelMapper modelMapper;
 
     @Autowired
+    private DistanceService distanceService;
+
+    @Autowired
     private KoiServiceRepository serviceRepository;
 
     @Autowired
     private OrderServicesRepository orderServicesRepository;
 
     public OrderResponse placeOrder(OrderRequestDto orderRequestDto) {
-        
 
-       Users customer = userService.getCurrentAccount();
 
-       Orders order = modelMapper.map(orderRequestDto, Orders.class);
-       order.setCustomer(customer);
-       order.setOrder_date(new Date());
-       order.setStatus(OrderStatus.PENDING.toString().toUpperCase());
-       Orders savedOrder = ordersRepository.save(order);
+        Users customer = userService.getCurrentAccount();
+
+        Orders order = modelMapper.map(orderRequestDto, Orders.class);
+        order.setCustomer(customer);
+        order.setOrder_date(new Date());
+        order.setStatus(OrderStatus.PENDING.toString().toUpperCase());
+        Date paymentDeadline = new Date(System.currentTimeMillis() + 5 * 60 * 1000); // 5 phút sau
+        order.setPaymentDeadline(paymentDeadline); // Thiết lập thời gian thanh toán
+        order.setPaid(false);
+        Orders savedOrder = ordersRepository.save(order);
+
+        double distance = distanceService.calculateDistance(
+                orderRequestDto.getOriginal_location(),
+                orderRequestDto.getDestination()
+        );
+
+        double totalServiceCost = 0;
 
         if (orderRequestDto.getAdditional_services() != null && !orderRequestDto.getAdditional_services().isEmpty()) {
             String[] additionalServices = orderRequestDto.getAdditional_services().split(",");
@@ -64,16 +79,35 @@ public class OrderService {
                     OrderServices orderService = new OrderServices();
                     orderService.setOrders(savedOrder);
                     orderService.setServices(service);
-
-
                     orderServicesRepository.save(orderService);
+                    totalServiceCost += service.getPrice();
                 }
             }
         }
+        double fees = 100 * distance * orderRequestDto.getQuantity();
+        double totalCost = fees + totalServiceCost;
 
+        OrderResponse response = modelMapper.map(savedOrder, OrderResponse.class);
+        response.setTotalCost(totalCost);  // Set total cost in the response
+        return response;
 
-        return modelMapper.map(savedOrder, OrderResponse.class);
+    }
 
+    @Scheduled(fixedRate = 60000) // Kiểm tra mỗi phút
+    public void checkAndCancelExpiredOrders() {
+        cancelExpiredOrders();
+    }
+
+    public void cancelExpiredOrders() {
+        List<Orders> expiredOrders = ordersRepository.findAllByStatus(String.valueOf(OrderStatus.PENDING))
+                .stream()
+                .filter(order -> order.getPaymentDeadline() != null && order.getPaymentDeadline().before(new Date()))
+                .collect(Collectors.toList());
+
+        for (Orders order : expiredOrders) {
+            order.setStatus(String.valueOf(OrderStatus.CANCELED));
+            ordersRepository.save(order);
+        }
     }
 
 
@@ -81,18 +115,21 @@ public class OrderService {
     public Orders approveOrder(int orderId, int staffId) {
         Orders order = ordersRepository.findOrdersById(orderId);
 
+        // Kiểm tra xem đơn hàng đã được thanh toán chưa
+        if (!order.isPaid()) {
+            throw new RuntimeException("Order has not been paid yet. Cannot approve.");
+        }
 
         Users staff = userRepository.findUsersById(staffId);
 
         // Kiểm tra vai trò của nhân viên
-        if (!staff.getRoles().equals("Staff")) {
+        if (!staff.getRoles().equals(Roles.STAFF)) {
             throw new RuntimeException("User is not authorized to approve orders");
         }
 
         order.setApprovedBy(staff);
-        order.setStatus("Approved");  // Cập nhật trạng thái
-        Orders newOrder = ordersRepository.save(order);
-        return newOrder;
+        order.setStatus(String.valueOf(OrderStatus.APPROVED));  // Cập nhật trạng thái
+        return ordersRepository.save(order);
     }
 
 
@@ -174,20 +211,25 @@ public class OrderService {
         );
     }
 
-    private String generateOrderId() {
+    public Orders deleteOrder(int orderId) {
+        Optional<Orders> optionalOrder = getOrderById(orderId);
 
-//        String lastOrderId = ordersRepository.findMaxOrderId();
-//        if (lastOrderId == null) {
-//            return "U001";
-//        }
-//
-//
-//        int numberPart = Integer.parseInt(lastOrderId.substring(1));
-//        int newOrderNumber = numberPart + 1;
-//
-//
-//        return String.format("U%03d", newOrderNumber);
-        return null;
+        // Kiểm tra xem đơn hàng có tồn tại không
+        if (optionalOrder.isPresent()) {
+            Orders order = optionalOrder.get();
+            order.setStatus(String.valueOf(OrderStatus.CANCELED)); // Cập nhật trạng thái thành CANCELLED
+            ordersRepository.save(order); // Lưu thay đổi vào cơ sở dữ liệu
+            return order; // Trả về đơn hàng đã cập nhật
+        } else {
+            throw new ResourceNotFoundException("Order not found"); // Ném ngoại lệ nếu không tìm thấy đơn hàng
+        }
+    }
+
+
+
+
+    public Optional<Orders> getOrderById(int orderId) {
+        return ordersRepository.findById(orderId);
     }
 
 }

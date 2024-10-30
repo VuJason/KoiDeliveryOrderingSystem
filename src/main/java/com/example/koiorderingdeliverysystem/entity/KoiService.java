@@ -37,6 +37,8 @@ public class KoiService {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
+    private double price;
+
     @OneToMany(mappedBy = "services")
     private List<OrderServices> servicesOrder;
 

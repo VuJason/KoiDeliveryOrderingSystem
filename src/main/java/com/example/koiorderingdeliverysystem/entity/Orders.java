@@ -3,6 +3,7 @@ package com.example.koiorderingdeliverysystem.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,12 +26,17 @@ public class Orders {
     private Users customer;
 
     private Date order_date;
+    @NotBlank
     private String original_location;
+    @NotBlank
     private String destination;
     private String transport_method;
     private String status;
     private double fish_weight;
     private int quantity;
+    private double total;
+    private Date paymentDeadline; // Thời gian thanh toán
+    private boolean isPaid;
 
 
     @ManyToOne

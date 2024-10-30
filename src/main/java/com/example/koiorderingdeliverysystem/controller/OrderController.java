@@ -3,9 +3,11 @@ package com.example.koiorderingdeliverysystem.controller;
 import com.example.koiorderingdeliverysystem.dto.*;
 import com.example.koiorderingdeliverysystem.dto.request.OrderRequestDto;
 import com.example.koiorderingdeliverysystem.dto.response.OrderResponse;
+import com.example.koiorderingdeliverysystem.entity.Orders;
 import com.example.koiorderingdeliverysystem.service.OrderService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,6 +23,8 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private ModelMapper modelMapper;
 
     @PostMapping("/order")
     @PreAuthorize("hasAuthority('CUSTOMER')")
@@ -29,11 +33,6 @@ public class OrderController {
         OrderResponse order = orderService.placeOrder(orderRequest);
         return ResponseEntity.ok(order);
     }
-//    public ResponseEntity placeOrder(@Valid @RequestBody OrderRequestDto orderRequest, LoginDto users) {
-//        String email = users.getEmail();
-//        OrderResponse placedOrder = orderService.placeOrder(orderRequest, email);
-//        return ResponseEntity.ok(placedOrder);
-//    }
 
     @GetMapping("/order")
     public List<OrderHistory> getAllOrders() {
@@ -72,8 +71,25 @@ public class OrderController {
 
 
 
-    @DeleteMapping("/delete")
-    public ResponseEntity deleteOrder(@PathVariable long orderId) {
-        return null;
+    @DeleteMapping("/delete/{orderId}")
+    public ResponseEntity deleteOrder(@PathVariable int orderId) {
+        Orders deletedOrders = orderService.deleteOrder(orderId);
+        return ResponseEntity.ok(deletedOrders);
+
+    }
+
+    @DeleteMapping("/order/cancel-expired")
+    public ResponseEntity<String> cancelExpiredOrders() {
+        orderService.cancelExpiredOrders();
+        return ResponseEntity.ok("Expired orders have been cancelled.");
+    }
+
+    @PutMapping("/order/staff/{orderId}/approve")
+    @PreAuthorize("hasAuthority('STAFF')")
+    public ResponseEntity<OrderDto> approveOrder(
+            @PathVariable Integer orderId,
+            @RequestParam Integer staffId) {
+        Orders approvedOrder = orderService.approveOrder(orderId, staffId);
+        return ResponseEntity.ok(modelMapper.map(approvedOrder, OrderDto.class));
     }
 }

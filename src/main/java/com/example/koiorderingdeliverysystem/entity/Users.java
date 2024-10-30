@@ -35,7 +35,7 @@ public class Users implements UserDetails {
     @Email(message = "Invalid Email!")
     @NotBlank(message = "Email can not blank!")
     private String email;
-    @
+    @Pattern(regexp = "^[\\\\p{L}0-9\\\\s\\\\,\\\\.\\\\-\\\\/]+$", message = "Invalid Address")
     private String address;
     private Date registration_date;
 
