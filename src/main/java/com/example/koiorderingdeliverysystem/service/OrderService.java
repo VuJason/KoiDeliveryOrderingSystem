@@ -63,24 +63,7 @@ public class OrderService {
         }catch (Exception e) {
             throw new RuntimeException("Error creating user: " + e.getMessage());
         }
-    }
 
-    public Orders approveOrder(int orderId, int staffId) {
-//        Orders order = ordersRepository.findByOrderId(orderId);
-//
-//
-//        Users staff = userRepository.findById(staffId);
-//
-//        // Kiểm tra vai trò của nhân viên
-//        if (!staff.getRoles().getRole_name().equals("Staff")) {
-//            throw new RuntimeException("User is not authorized to approve orders");
-//        }
-//
-//        order.setApprovedBy(staff);
-//        order.setStatus("Approved");  // Cập nhật trạng thái
-//        Orders newOrder = ordersRepository.save(order);
-//        return newOrder;
-        return null;
     }
 
 
