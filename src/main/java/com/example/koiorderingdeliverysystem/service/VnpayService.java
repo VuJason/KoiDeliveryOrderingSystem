@@ -38,7 +38,7 @@ public class VnpayService {
             vnpParams.put("vnp_OrderInfo", "Payment for order " + orderId);
             vnpParams.put("vnp_OrderType", "order");
             vnpParams.put("vnp_Amount", String.valueOf((int) (totalAmount * 100))); // Convert to VND in cents
-            vnpParams.put("vnp_ReturnUrl", "https://ezbuy.jp/vi"); // Replace with your return URL
+            vnpParams.put("vnp_ReturnUrl", "http://103.67.197.66:8080/swagger-ui/index.html"); // Replace with your return URL
             vnpParams.put("vnp_IpAddr", ipAddress);
             vnpParams.put("vnp_CreateDate", getCurrentDate("yyyyMMddHHmmss"));
 

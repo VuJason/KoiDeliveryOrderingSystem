@@ -10,6 +10,7 @@ import com.example.koiorderingdeliverysystem.repository.KoiServiceRepository;
 import com.example.koiorderingdeliverysystem.repository.OrderServicesRepository;
 import com.example.koiorderingdeliverysystem.repository.OrdersRepository;
 import com.example.koiorderingdeliverysystem.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -53,7 +54,7 @@ public class OrderService {
         order.setCustomer(customer);
         order.setOrder_date(new Date());
         order.setStatus(OrderStatus.PENDING.toString().toUpperCase());
-        Date paymentDeadline = new Date(System.currentTimeMillis() + 5 * 60 * 1000); // 5 phút sau
+        Date paymentDeadline = new Date(System.currentTimeMillis() + 5*1000*60); // 5 phút sau
         order.setPaymentDeadline(paymentDeadline); // Thiết lập thời gian thanh toán
         order.setPaid(false);
         Orders savedOrder = ordersRepository.save(order);
@@ -94,10 +95,12 @@ public class OrderService {
     }
 
     @Scheduled(fixedRate = 60000) // Kiểm tra mỗi phút
+    @Transactional
     public void checkAndCancelExpiredOrders() {
         cancelExpiredOrders();
     }
 
+    @Transactional
     public void cancelExpiredOrders() {
         List<Orders> expiredOrders = ordersRepository.findAllByStatus(String.valueOf(OrderStatus.PENDING))
                 .stream()
