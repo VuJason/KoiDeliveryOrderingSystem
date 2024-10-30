@@ -1,4 +1,4 @@
-package com.example.koiorderingdeliverysystem.dto;
+package com.example.koiorderingdeliverysystem.dto.request;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;

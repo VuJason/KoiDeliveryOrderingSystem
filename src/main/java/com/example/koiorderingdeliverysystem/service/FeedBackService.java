@@ -1,7 +1,7 @@
 package com.example.koiorderingdeliverysystem.service;
 
-import com.example.koiorderingdeliverysystem.dto.FeedBackRequest;
-import com.example.koiorderingdeliverysystem.dto.FeedBackResponse;
+import com.example.koiorderingdeliverysystem.dto.request.FeedBackRequest;
+import com.example.koiorderingdeliverysystem.dto.response.FeedBackResponse;
 import com.example.koiorderingdeliverysystem.dto.response.CreatedFeedbackResponse;
 import com.example.koiorderingdeliverysystem.entity.FeedBack;
 import com.example.koiorderingdeliverysystem.entity.Users;

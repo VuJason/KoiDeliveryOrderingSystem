@@ -1,12 +1,9 @@
-package com.example.koiorderingdeliverysystem.dto;
+package com.example.koiorderingdeliverysystem.dto.request;
 
-import com.example.koiorderingdeliverysystem.entity.OrderStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Data
 public class OrderRequestDto {

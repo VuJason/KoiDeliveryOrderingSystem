@@ -1,7 +1,6 @@
-package com.example.koiorderingdeliverysystem.dto;
+package com.example.koiorderingdeliverysystem.dto.request;
 
 
-import com.example.koiorderingdeliverysystem.entity.Roles;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 

@@ -1,7 +1,6 @@
-package com.example.koiorderingdeliverysystem.dto;
+package com.example.koiorderingdeliverysystem.dto.response;
 
 
-import com.example.koiorderingdeliverysystem.entity.Roles;
 import lombok.Data;
 
 @Data

@@ -1,4 +1,4 @@
-package com.example.koiorderingdeliverysystem.dto;
+package com.example.koiorderingdeliverysystem.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

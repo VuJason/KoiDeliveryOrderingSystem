@@ -1,7 +1,6 @@
-package com.example.koiorderingdeliverysystem.dto;
+package com.example.koiorderingdeliverysystem.dto.request;
 
 
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data

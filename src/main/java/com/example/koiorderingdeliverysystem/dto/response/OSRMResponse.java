@@ -1,4 +1,4 @@
-package com.example.koiorderingdeliverysystem.dto;
+package com.example.koiorderingdeliverysystem.dto.response;
 
 public class OSRMResponse {
     private Route[] routes;

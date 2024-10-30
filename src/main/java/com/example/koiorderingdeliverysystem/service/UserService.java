@@ -2,6 +2,10 @@ package com.example.koiorderingdeliverysystem.service;
 
 import com.example.koiorderingdeliverysystem.dto.*;
 //import com.example.koiorderingdeliverysystem.entity.Customers;
+import com.example.koiorderingdeliverysystem.dto.request.LoginDto;
+import com.example.koiorderingdeliverysystem.dto.request.RegistrationDto;
+import com.example.koiorderingdeliverysystem.dto.response.RegistrationResponse;
+import com.example.koiorderingdeliverysystem.dto.response.UserResponse;
 import com.example.koiorderingdeliverysystem.entity.Roles;
 import com.example.koiorderingdeliverysystem.entity.Users;
 //import com.example.koiorderingdeliverysystem.repository.CustomerRepository;
@@ -11,7 +15,6 @@ import com.example.koiorderingdeliverysystem.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,6 +43,8 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     TokenService tokenService;
+    @Autowired
+    private EmailService emailService;
 
     public RegistrationResponse register(RegistrationDto register) {
 
@@ -53,20 +58,28 @@ public class UserService implements UserDetailsService {
             user.setPassword(passwordEncoder.encode(originalPassword));
             user.setRegistration_date(new Date(System.currentTimeMillis()));
 
-            if (register.getRole() != null && !register.getRole().isEmpty()) {
+
+            if (register.getRole() == null || register.getRole().isEmpty()) {
+                user.setRoles(Roles.CUSTOMER);
+            } else {
                 try {
+
                     Roles role = Roles.valueOf(register.getRole().toString().toUpperCase().replace(" ", "_"));
                     user.setRoles(role);
                 } catch (IllegalArgumentException e) {
                     throw new RuntimeException("Invalid role: " + register.getRole());
                 }
-            } else {
-                // Set default role if not provided
-                user.setRoles(Roles.CUSTOMER);
             }
 
-
             Users newUser = userRepository.save(user);
+
+            //gửi email về người dùng
+            EmailDetail emailDetail = new EmailDetail();
+            emailDetail.setReceiver(newUser);
+            emailDetail.setSubject("welcome to koi delivery");
+            emailDetail.setLink("https://www.google.com/");
+            emailService.sendEmail(emailDetail);
+
             return modelMapper.map(newUser, RegistrationResponse.class);
         } catch (Exception e) {
             throw new RuntimeException("Error creating user: " + e.getMessage());

@@ -1,15 +1,12 @@
 package com.example.koiorderingdeliverysystem.service;
 
-import com.example.koiorderingdeliverysystem.dto.NominatimResponse;
-import com.example.koiorderingdeliverysystem.dto.OSRMResponse;
+import com.example.koiorderingdeliverysystem.dto.response.NominatimResponse;
+import com.example.koiorderingdeliverysystem.dto.response.OSRMResponse;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.lang.reflect.Array;
 
 @Service
 public class DistanceService {

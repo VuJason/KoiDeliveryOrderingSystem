@@ -32,7 +32,10 @@ public class Users implements UserDetails {
     private String fullname;
     @Pattern(regexp = "(84|0[3|5|7|8|9])+(\\d{8})", message = "Invalid phone!")
     private String phone;
+    @Email(message = "Invalid Email!")
+    @NotBlank(message = "Email can not blank!")
     private String email;
+    @
     private String address;
     private Date registration_date;
 
