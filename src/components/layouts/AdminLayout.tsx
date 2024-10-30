@@ -6,14 +6,12 @@ import "./AdminLayout.scss";
 
 const AdminLayout: React.FC = () => {
   return (
-    <div className="admin-layout">
+    <div className="min-h-screen bg-gray-100">
+      <Header />
+      <main className="p-4">
+        <Outlet />
+      </main>
       <Sidebar />
-      <div className="main-content">
-        <Header />
-        <div className="page-content">
-          <Outlet />
-        </div>
-      </div>
     </div>
   );
 };
