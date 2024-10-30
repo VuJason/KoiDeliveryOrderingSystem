@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -29,6 +30,7 @@ public class Users implements UserDetails {
     @Size(min = 6, message = "Password must be at    least 6 characters!")
     private String password;
     private String fullname;
+    @Pattern(regexp = "(84|0[3|5|7|8|9])+(\\d{8})", message = "Invalid phone!")
     private String phone;
     private String email;
     private String address;
@@ -59,6 +61,9 @@ public class Users implements UserDetails {
 
     @OneToMany(mappedBy = "staff")
     List<BlogPosts> blogPosts;
+
+    @OneToMany(mappedBy = "customer")
+    List<FeedBack> customer_feedBacks;
 
 
     @Override

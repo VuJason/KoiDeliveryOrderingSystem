@@ -10,6 +10,8 @@ D:\FPT\Sem5\SWP391\KoiDeliveryOrderingSystem-back-end\src\main\java\com\example\
 D:\FPT\Sem5\SWP391\KoiDeliveryOrderingSystem-back-end\src\main\java\com\example\koiorderingdeliverysystem\controller\RevenueController.java
 D:\FPT\Sem5\SWP391\KoiDeliveryOrderingSystem-back-end\src\main\java\com\example\koiorderingdeliverysystem\controller\UserController.java
 D:\FPT\Sem5\SWP391\KoiDeliveryOrderingSystem-back-end\src\main\java\com\example\koiorderingdeliverysystem\dto\BlogPostDto.java
+D:\FPT\Sem5\SWP391\KoiDeliveryOrderingSystem-back-end\src\main\java\com\example\koiorderingdeliverysystem\dto\FeedBackRequest.java
+D:\FPT\Sem5\SWP391\KoiDeliveryOrderingSystem-back-end\src\main\java\com\example\koiorderingdeliverysystem\dto\FeedBackResponse.java
 D:\FPT\Sem5\SWP391\KoiDeliveryOrderingSystem-back-end\src\main\java\com\example\koiorderingdeliverysystem\dto\ForgotPasswordRequest.java
 D:\FPT\Sem5\SWP391\KoiDeliveryOrderingSystem-back-end\src\main\java\com\example\koiorderingdeliverysystem\dto\KoiServiceDto.java
 D:\FPT\Sem5\SWP391\KoiDeliveryOrderingSystem-back-end\src\main\java\com\example\koiorderingdeliverysystem\dto\LoginDto.java

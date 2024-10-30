@@ -50,8 +50,10 @@ com\example\koiorderingdeliverysystem\dto\NominatimResponse.class
 com\example\koiorderingdeliverysystem\entity\Pricing.class
 com\example\koiorderingdeliverysystem\entity\OrderStatus.class
 com\example\koiorderingdeliverysystem\controller\FeedBackController.class
+com\example\koiorderingdeliverysystem\dto\FeedBackResponse.class
 com\example\koiorderingdeliverysystem\exception\ResourceNotFoundException.class
 com\example\koiorderingdeliverysystem\repository\BlogPostRepository.class
+com\example\koiorderingdeliverysystem\dto\FeedBackRequest.class
 com\example\koiorderingdeliverysystem\KoiorderingdeliverysystemApplication.class
 com\example\koiorderingdeliverysystem\exception\ValidationHandler.class
 com\example\koiorderingdeliverysystem\dto\BlogPostDto.class

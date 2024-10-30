@@ -1,20 +1,23 @@
 package com.example.koiorderingdeliverysystem.controller;
 
 
+import com.example.koiorderingdeliverysystem.dto.FeedBackRequest;
+import com.example.koiorderingdeliverysystem.dto.FeedBackResponse;
+import com.example.koiorderingdeliverysystem.dto.response.CreatedFeedbackResponse;
 import com.example.koiorderingdeliverysystem.entity.FeedBack;
+import com.example.koiorderingdeliverysystem.exception.AccessDeniedException;
 import com.example.koiorderingdeliverysystem.service.FeedBackService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "https://localhost:8080")
+@CrossOrigin("*")
 @RequestMapping("/api/feedback")
 @SecurityRequirement(name = "api")
 public class FeedBackController {
@@ -22,8 +25,15 @@ public class FeedBackController {
     @Autowired
     FeedBackService feedBackService;
 
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    @PostMapping
+    public CreatedFeedbackResponse create(@RequestBody FeedBackRequest feedBackRequest) {
+        return feedBackService.createFeedBack(feedBackRequest);
+
+    }
+
     @GetMapping
-    public List<FeedBack> getAllFeedback() {
-        return feedBackService.getAll();
+    public List<FeedBackResponse> getAllFeedback() {
+        return feedBackService.getFeedback();
     }
 }

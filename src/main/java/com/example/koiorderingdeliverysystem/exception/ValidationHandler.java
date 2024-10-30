@@ -5,10 +5,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
+@ControllerAdvice
 public class ValidationHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -35,6 +37,11 @@ public class ValidationHandler {
     @ExceptionHandler(DuplicateUserException.class)
     public ResponseEntity handleValidation(DuplicateUserException exception) {
         return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity handleValidation() {
+        return new ResponseEntity(new AccessDeniedException(), HttpStatus.FORBIDDEN);
     }
 
 }

@@ -53,7 +53,7 @@ public class UserService implements UserDetailsService {
             user.setPassword(passwordEncoder.encode(originalPassword));
             user.setRegistration_date(new Date(System.currentTimeMillis()));
 
-            if (register.getRole() != null) {
+            if (register.getRole() != null && !register.getRole().isEmpty()) {
                 try {
                     Roles role = Roles.valueOf(register.getRole().toString().toUpperCase().replace(" ", "_"));
                     user.setRoles(role);

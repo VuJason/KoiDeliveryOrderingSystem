@@ -31,7 +31,7 @@ public class UserController {
     private UserRepository userRepository;
 
     @PostMapping("/register")
-    public ResponseEntity<RegistrationResponse> register(@RequestBody RegistrationDto register) {
+    public ResponseEntity<RegistrationResponse> register(@Valid @RequestBody RegistrationDto register) {
         RegistrationResponse newUser = userService.register(register);
         return ResponseEntity.ok(newUser);
 
