@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FaStar, FaTimes } from 'react-icons/fa';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { ORDER_STATUS, STATUS_COLORS } from '../../../../constants/orderStatus';
 
 interface ProductDetail {
   id: string;
@@ -74,40 +75,27 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
     }
   };
 
-  const handleReject = () => {
+  const handleReject = async () => {
     if (window.confirm('Are you sure you want to reject this order?')) {
-      const newStatus = 'Rejected';
-      updateStatus(deliveryId, newStatus);
-      setProductDetails(prev => ({
-        ...prev,
-        status: newStatus
-      }));
-      toast.error('Order has been rejected.', {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
+      try {
+        await updateStatus(deliveryId, ORDER_STATUS.REJECTED);
+        setProductDetails(prev => ({
+          ...prev,
+          status: ORDER_STATUS.REJECTED
+        }));
+        toast.error('Order has been rejected.');
+      } catch (err) {
+        toast.error('Failed to reject order');
+      }
     }
   };
 
   const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'confirmed':
-        return 'text-green-600';
-      case 'rejected':
-        return 'text-red-600';
-      case 'pending':
-        return 'text-yellow-600';
-      default:
-        return 'text-gray-600';
-    }
+    return STATUS_COLORS[status] || 'text-gray-500 bg-gray-100';
   };
 
   // Kiểm tra xem đơn hàng đã được xử lý chưa
-  const isOrderProcessed = productDetails.status !== 'Pending';
+  const isOrderProcessed = productDetails.status !== ORDER_STATUS.PENDING;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">

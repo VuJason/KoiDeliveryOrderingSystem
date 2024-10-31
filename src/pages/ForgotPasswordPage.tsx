@@ -26,7 +26,7 @@ const ForgotPasswordPage = () => {
       <div className="w-full lg:w-[55%] flex flex-col justify-center px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
         <div className="flex justify-evenly flex-col flex-1">
           <div className="flex-shrink-0">
-        <img src="/koilogo.png" alt="Icon Background" width="100  " height="29" />
+        <img src="/koilogo.png" alt="Icon Background" width="100" height="29" />
       </div>
 
           <div className="w-full">
