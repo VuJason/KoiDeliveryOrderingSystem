@@ -210,7 +210,7 @@ const LoginPage = () => {
                     </button>
                   </div>
 
-                  <div className="mt-4">
+                  {/* <div className="mt-4">
                     <button
                       type="button"
                       className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
@@ -219,19 +219,19 @@ const LoginPage = () => {
                       <FaGoogle className="w-5 h-5 mr-2" />
                       <span>Sign in with Google</span>
                     </button>
-                  </div>
+                  </div> */}
                 </form>
               </div>
             </div>
 
             <p className="mt-8 text-sm text-gray-600 text-center">
               Don't have an account?{" "}
-              <a
-                href="#"
+              <Link
+                to="/signup"
                 className="font-medium text-indigo-600 hover:text-indigo-500"
               >
                 Sign up
-              </a>
+              </Link>
             </p>
           </div>
         </div>

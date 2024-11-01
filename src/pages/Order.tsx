@@ -5,12 +5,38 @@ import Header from "../components/Header";
 const Order = () => {
   const [orderDetails, setOrderDetails] = useState({
     quantity: 0,
-    fish_weight: 0,
     original_location: "",
     destination: "",
     transport_method: "",
+    additional_services: "",
     order_date: new Date().toISOString(),
   });
+  const [isSelectOpen, setIsSelectOpen] = useState(false);
+  const [selectedServices, setSelectedServices] = useState<string[]>([]);
+
+  const handleServiceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    if (!selectedServices.includes(value) && value !== "") {
+      const newServices = [...selectedServices, value];
+      setSelectedServices(newServices);
+      setOrderDetails((prev) => ({
+        ...prev,
+        additional_services: newServices.join(", "),
+      }));
+    }
+    setIsSelectOpen(false);
+  };
+
+  const removeService = (serviceToRemove: string) => {
+    const newServices = selectedServices.filter(
+      (service) => service !== serviceToRemove
+    );
+    setSelectedServices(newServices);
+    setOrderDetails((prev) => ({
+      ...prev,
+      additional_services: newServices.join(", "),
+    }));
+  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -74,14 +100,7 @@ const Order = () => {
               onChange={handleInputChange}
               className="w-full p-2 border rounded"
             />
-            <input
-              type="number"
-              step="0.1"
-              name="fish_weight"
-              placeholder="Enter fish weight (kg)"
-              onChange={handleInputChange}
-              className="w-full p-2 border rounded"
-            />
+
             <input
               type="text"
               name="original_location"
@@ -96,6 +115,56 @@ const Order = () => {
               onChange={handleInputChange}
               className="w-full p-2 border rounded"
             />
+            <div className="relative">
+              <div
+                className="w-full p-2 border rounded min-h-[42px] cursor-pointer flex flex-wrap gap-2"
+                onClick={() => setIsSelectOpen(true)}
+              >
+                {selectedServices.length > 0 ? (
+                  selectedServices.map((service) => (
+                    <div
+                      key={service}
+                      className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full flex items-center gap-2"
+                    >
+                      <span>{service}</span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeService(service);
+                        }}
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <span className="text-gray-400">
+                    Click to select additional services
+                  </span>
+                )}
+              </div>
+
+              {isSelectOpen && (
+                <div className="absolute w-full mt-1 bg-white border rounded shadow-lg z-10">
+                  <select
+                    size={6}
+                    className="w-full p-2"
+                    onChange={handleServiceChange}
+                    onBlur={() => setIsSelectOpen(false)}
+                  >
+                    <option value="">Select Additional Services</option>
+                    <option value="Express Delivery">Express Delivery</option>
+                    <option value="Insurance">Insurance</option>
+                    <option value="Package Tracking">Package Tracking</option>
+                    <option value="Warehousing">Warehousing</option>
+                    <option value="Custom Clearance">Custom Clearance</option>
+                    <option value="Fragile Handling">Fragile Handling</option>
+                  </select>
+                </div>
+              )}
+            </div>
+
             <select
               name="transport_method"
               onChange={handleInputChange}

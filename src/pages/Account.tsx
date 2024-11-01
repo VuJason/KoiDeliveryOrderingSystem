@@ -1,9 +1,67 @@
+import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+interface FormData {
+  fullName: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+}
 
 const Account = () => {
   const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState<FormData>({
+    fullName: "John Doe",
+    email: "john@example.com",
+    phone: "+1234567890",
+    address: "123 Main St",
+    city: "New York",
+  });
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem("user");
+    if (!isLoggedIn) {
+      navigate("/login");
+    }
+  }, [navigate]);
+
+  const handleInputChange = (field: keyof FormData, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleUpdateAccount = async () => {
+    try {
+      const customerId = localStorage.getItem("customerId");
+      const response = await fetch(
+        `http://103.67.197.66:8080/api/customer/${customerId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            fullName: formData.fullName,
+            email: formData.email,
+            phone: formData.phone,
+            address: formData.address,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        setIsEditing(false);
+      }
+    } catch (error) {
+      console.error("Error updating account:", error);
+    }
+  };
 
   return (
     <div className="bg-white min-h-screen text-black">
@@ -20,32 +78,43 @@ const Account = () => {
 
           <div className="grid md:grid-cols-2 gap-8 text-left">
             <div>
-              <InputField label="Name" value="John Doe" disabled={!isEditing} />
-
+              <InputField
+                label="Name"
+                value={formData.fullName}
+                disabled={!isEditing}
+                onChange={(value) => handleInputChange("fullName", value)}
+              />
               <InputField
                 label="Delivery Address"
-                value="123 Main St"
+                value={formData.address}
                 disabled={!isEditing}
+                onChange={(value) => handleInputChange("address", value)}
               />
-              <InputField label="City" value="New York" disabled={!isEditing} />
+              <InputField
+                label="City"
+                value={formData.city}
+                disabled={!isEditing}
+                onChange={(value) => handleInputChange("city", value)}
+              />
             </div>
             <div>
               <InputField
                 label="Email"
-                value="john@example.com"
+                value={formData.email}
                 disabled={!isEditing}
+                onChange={(value) => handleInputChange("email", value)}
               />
               <InputField
                 label="Phone Number"
-                value="+1234567890"
+                value={formData.phone}
                 disabled={!isEditing}
+                onChange={(value) => handleInputChange("phone", value)}
               />
-
               <InputField
                 label="Password"
                 type="password"
                 value="********"
-                disabled={!isEditing}
+                disabled={true}
               />
             </div>
           </div>
@@ -59,7 +128,7 @@ const Account = () => {
             </button>
             {isEditing && (
               <button
-                onClick={() => setIsEditing(false)}
+                onClick={handleUpdateAccount}
                 className="px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600"
               >
                 Save
@@ -74,7 +143,21 @@ const Account = () => {
   );
 };
 
-const InputField = ({ label, value, type = "text", disabled }) => (
+interface InputFieldProps {
+  label: string;
+  value: string;
+  type?: string;
+  disabled: boolean;
+  onChange?: (value: string) => void;
+}
+
+const InputField: React.FC<InputFieldProps> = ({
+  label,
+  value,
+  type = "text",
+  disabled,
+  onChange,
+}) => (
   <div className="mb-4">
     <label className="block text-sm font-medium text-gray-700 mb-1">
       {label}
@@ -83,6 +166,7 @@ const InputField = ({ label, value, type = "text", disabled }) => (
       type={type}
       value={value}
       disabled={disabled}
+      onChange={(e) => onChange?.(e.target.value)}
       className="w-full p-2 border rounded-md bg-gray-50 disabled:opacity-75"
     />
   </div>
