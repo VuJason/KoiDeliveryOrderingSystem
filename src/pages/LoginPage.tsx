@@ -11,6 +11,7 @@ const LoginPage = () => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -21,7 +22,7 @@ const LoginPage = () => {
         headers: {
           "Content-Type": "application/json",
           accept: "*/*",
-        },  
+        },
         body: JSON.stringify({
           email: email,
           password: password,
@@ -33,24 +34,21 @@ const LoginPage = () => {
       if (response.ok) {
         // Handle successful login
         console.log("Login successful:", data);
-        // You can add navigation or store the token here
-        localStorage.setItem(
-          "user",
-          JSON.stringify({
-            id: data.id,
-            username: data.username,
-            email: data.email,
-            phone: data.phone,
-          })
-        );
-
-        // Store token separately
+        localStorage.setItem("user", JSON.stringify(data.user));
         localStorage.setItem("token", data.token);
 
-        // You can add navigation here
-        navigate("/");
+        // Kiểm tra token để điều hướng
+        const decodedToken = JSON.parse(atob(data.token.split('.')[1]));
+        if (decodedToken.sub === "35") { // Kiểm tra ID admin
+          navigate("/dashboard"); // Điều hướng đến dashboard
+        } else if (decodedToken.sub === "36") { // Kiểm tra ID staff
+          navigate("/browser-track"); // Điều hướng đến BrowserTrack
+        } else if (decodedToken.sub === "38") { // Kiểm tra ID delivery
+          navigate("/delivery-track"); // Điều hướng đến Delivery
+        } else {
+          navigate("/"); // Điều hướng đến trang chính
+        }
       } else {
-        // Handle error response
         setErrors({
           email: data.message || "Login failed",
         });

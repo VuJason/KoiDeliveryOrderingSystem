@@ -94,6 +94,10 @@ export const useOrderManagement = ({
   };
 
   const getFilteredData = () => {
+    if (!orders || !Array.isArray(orders)) {
+        return []; // Return an empty array if orders is undefined or not an array
+    }
+
     const filtered = orders.filter((order) => {
       const conditions = [
         orderNumber === "" || order.id.toString().includes(orderNumber),
@@ -159,8 +163,17 @@ export const useOrderManagement = ({
   };
 
   useEffect(() => {
-    fetchOrders();
-  }, [fetchOrdersFn]);
+    const fetchData = async () => {
+        try {
+            const response = await fetchOrdersFn();
+            setOrders(response.data); // Adjust based on your API response structure
+        } catch (error) {
+            setError("Failed to fetch orders");
+        }
+    };
+
+    fetchData();
+}, [fetchOrdersFn]);
 
   const handleSearch = () => {
     if (!searchInput.trim()) {
