@@ -52,6 +52,8 @@ public class OrderService {
                 orderRequestDto.getDestination()
         );
         Orders orders = modelMapper.map(orderRequestDto, Orders.class);
+        double totalCost=0;
+
         try {
             orders.setCustomerId(customer);
             orders.setOrder_date(new Date());
