@@ -1,72 +1,146 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
 
 
-const Header = ({ currentPage }) => {
+const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const [user, setUser] = useState(null);
 
-return (
-    <header className="bg-white text-black p-5 px-28 shadow-lg">
-  <div className="container mx-auto flex flex-col md:flex-row items-center justify-between">
-    <div className="flex items-center justify-between w-full">
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    const token = localStorage.getItem("token");
+    if (storedUser && token) {
+      try {
+      setUser(JSON.parse(storedUser));
+    } catch (error){
+      console.error("Error parsing user data:", error);
+  }
+}
+  },  []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    setUser(null);
+    setIsMenuOpen(false);
+  };
+  const renderAuthSection = () => {
+    if (user) {
+      return (
+        <div className="relative">
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="flex items-center space-x-2 focus:outline-none"
+            aria-label="User menu"
+          >
+            <span className="text-sm font-medium">{user.username}</span>
+            <RiArrowDropDownLine className="text-2xl" />
+          </button>
+          {isMenuOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
+              <Link
+                to="/profile"
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
+                View Profile
+              </Link>
+              <Link
+                to="/change-password"
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
+                Change Password
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
+                Log Out
+              </button>
+            </div>
+          )}
+        </div>
+      );
+    }
+    return (
+      <div className="flex items-center space-x-4">
+        <Link
+          to="/login"
+          className="px-4 py-2 text-blue-600 hover:text-blue-700 transition duration-300"
+        >
+          Login
+        </Link>
+        <Link
+          to="/signup"
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300"
+        >
+          Signup
+        </Link>
+      </div>
+    );
+  };
+  return (
+    <header className="bg-white  text-black p-5 px-28 shadow-lg">
+      <div className="container mx-auto flex flex-col md:flex-row items-center justify-between">
+        <div className="flex gap-36">
+           <div className="flex items-center justify-between w-full">
       <div className="flex-shrink-0">
         <img src="/koilogo.png" alt="Icon Background" width="60" height="29" />
       </div>
-
-      <nav className="flex-grow">
-        <ul className="flex justify-center space-x-6">
-          <li>
-            <Link
-              to="/"
-              className="hover:text-yellow-300 transition duration-300"
-              aria-label="Home"
-            >
-              Home
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/services"
-              className="hover:text-yellow-300 transition duration-300"
-              aria-label="Services"
-            >
-              Services
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/history"
-              className="hover:text-yellow-300 transition duration-300"
-              aria-label="Track"
-            >
-              Track
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/account"
-              className="hover:text-yellow-300 transition duration-300"
-              aria-label="Account"
-            >
-              Account
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/support"
-              className="hover:text-yellow-300 transition duration-300"
-              aria-label="Support"
-            >
-              Support
-            </Link>
-          </li>
-        </ul>
-      </nav>
-    </div>  
-
+          </div>
+          <nav className="">
+            <ul className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6">
+              <li>
+                <Link
+                  to="/"
+                  className="hover:text-yellow-300 transition duration-300"
+                  aria-label="Home"
+                >
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="#"
+                  className="hover:text-yellow-300 transition duration-300"
+                  aria-label="About"
+                >
+                  Services
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/history"
+                  className="hover:text-yellow-300 transition duration-300"
+                  aria-label="Destinations"
+                >
+                  Track
+                </Link>
+              </li>
+              <li>
+                <a
+                  href="/account"
+                  className="hover:text-yellow-300 transition duration-300"
+                  aria-label="Destinations"
+                >
+                  Account
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="hover:text-yellow-300 transition duration-300"
+                  aria-label="Destinations"
+                >
+                  Support
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
    <div className="flex items-center space-x-10">
           <Link
             to="/order"
@@ -88,49 +162,10 @@ return (
             </svg>
           </Link>
 
-          <div className="relative">
-            <button
-              onClick={toggleMenu}
-              className="flex items-center space-x-2 focus:outline-none"
-              aria-label="User menu"
-              aria-expanded={isMenuOpen}
-              aria-haspopup="true"
-            >
-              <img
-                src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=40&q=80"
-                alt="User Avatar"
-                className="w-8 h-8 rounded-full"
-              />
-              <RiArrowDropDownLine className="text-2xl" />
-            </button>
-
-
-          {isMenuOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
-              <a
-                href="#"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-              >
-                View Profile
-              </a>
-              <a
-                href="#"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-              >
-                Change Password
-              </a>
-              <Link
-                to="/login"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-              >
-                Log Out
-              </Link>
-            </div>
-          )}
+        {renderAuthSection()}
         </div>
       </div>
-    </div>
-</header>
+    </header>
   );
 };
 

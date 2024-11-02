@@ -13,12 +13,17 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage.tsx";
 import LoginPage from "./pages/LoginPage.tsx";
 import TrackPage from "./pages/TrackPage.tsx";
 import VerifyOTPPage from "./pages/VerifyOTPPage.tsx";
+import SignupPage from "./pages/SignupPage.tsx";
 import { adminRoutes } from "./routes/AdminRoutes.tsx";
 
 const router = createBrowserRouter([
   {
     path: "/login",
     element: <LoginPage />,
+  },
+  {
+    path : "/signup",
+    element: <SignupPage />,
   },
   {
     path: "/forgot-password",
