@@ -9,33 +9,29 @@ import {
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom"; // Import Link and useLocation from react-router-dom
+import { Link, useLocation, useNavigate } from "react-router-dom"; // Import useNavigate
 import Logout from "../logout-form/LogoutForm";
 import "./Sidebar.scss";
 
 const Sidebar: React.FC = () => {
   const [isLogoutVisible, setIsLogoutVisible] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate(); // Initialize useNavigate
 
-  const location = useLocation(); // Get the current location for active route highlighting
-
-  // Show the logout confirmation modal
   const showLogoutModal = () => {
     setIsLogoutVisible(true);
   };
 
-  // Handle logout confirmation
   const handleLogoutOk = () => {
+    localStorage.removeItem("token"); // Clear the token
     setIsLogoutVisible(false);
-    // Add your logout logic here
-    console.log("Logged out");
+    navigate("/"); // Redirect to home page
   };
 
-  // Cancel the logout modal
   const handleLogoutCancel = () => {
     setIsLogoutVisible(false);
   };
 
-  // Determine the selected menu item based on the current route
   const selectedKey = () => {
     switch (location.pathname) {
       case "/dashboard":

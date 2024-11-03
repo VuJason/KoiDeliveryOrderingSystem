@@ -1,12 +1,10 @@
 export const ORDER_STATUS = {
-  PENDING: 'pending',
-  CONFIRMED: 'confirmed',
-  DELIVERING: 'delivering',
-  DELIVERED: 'delivered',
-  IN_TRANSIT: 'in_transit',
-  CANCELED: 'canceled',
-  REJECTED: 'rejected'
-} as const;
+  PENDING: 'Pending',
+  CONFIRMED: 'Confirmed',
+  REJECTED: 'Rejected',
+  DELIVERED: 'Delivered',
+  CANCELED: 'Canceled',
+};
 
 export const STATUS_COLORS = {
   [ORDER_STATUS.PENDING]: 'bg-yellow-200 text-yellow-800',

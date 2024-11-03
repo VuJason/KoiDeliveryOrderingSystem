@@ -1,23 +1,38 @@
-import React from 'react';
-import { useOrderManagement } from '../../hooks/useOrderManagement';
+import React, { useState, useEffect } from 'react';
 import { orderApi } from '../../services/orderApi';
 import Header from '../../components/Header';
 
 function DeliveryTrackPage() {
-  const {
-    isLoading,
-    error,
-    getCurrentPageData,
-  } = useOrderManagement({
-    fetchOrdersFn: orderApi.getDeliveryTrackOrders,
-    initialFilters: {
-      date: false,
-      type: false,
-      status: true,
-      price: true,
-      product: true
-    }
-  });
+  const [orders, setOrders] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch("http://103.67.197.66:8080/api/delivery-track-orders", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch delivery track orders");
+        }
+
+        const data = await response.json();
+        setOrders(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
 
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
@@ -55,7 +70,7 @@ function DeliveryTrackPage() {
               </tr>
             </thead>
             <tbody>
-              {getCurrentPageData().map((order) => (
+              {orders.map((order) => (
                 <tr key={order.id} className="border-b">
                   <td className="py-3 px-4 text-sm text-gray-700">{order.id}</td>
                   <td className="py-3 px-4 text-sm text-gray-700">{order.customer || 'N/A'}</td>

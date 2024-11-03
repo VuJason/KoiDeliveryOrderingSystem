@@ -1,22 +1,40 @@
-import React from 'react';
-import { useOrderManagement } from '../../hooks/useOrderManagement';
-import { orderApi } from '../../services/orderApi';
-import Header from '../../components/Header';
+import React, { useEffect, useState } from "react";
+import Header from "../../components/Header";
+import ProductDetailsModal from "../../components/admin/delivery/productDetailsModal/ProductDetailsModal";
 
 function BrowserTrack() {
-  const {
-    orders,
-    isLoading,
-    error,
-    getCurrentPageData,
-  } = useOrderManagement({
-    fetchOrdersFn: orderApi.getCustomerOrders,
-    initialFilters: {
-      type: true,
-      price: true,
-      status: true
-    }
-  });
+  const [orders, setOrders] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch("http://103.67.197.66:8080/api/order", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch orders");
+        }
+
+        const data = await response.json();
+        setOrders(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
 
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
@@ -31,6 +49,16 @@ function BrowserTrack() {
       default:
         return "text-gray-500 bg-gray-100";
     }
+  };
+
+  const handleViewDetails = (order) => {
+    setSelectedOrder(order);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedOrder(null);
   };
 
   return (
@@ -53,10 +81,11 @@ function BrowserTrack() {
                   <th className="py-2 px-4 text-left font-medium text-gray-600">ORDER DATE</th>
                   <th className="py-2 px-4 text-left font-medium text-gray-600">PRICE</th>
                   <th className="py-2 px-4 text-left font-medium text-gray-600">STATUS</th>
+                  <th className="py-2 px-4 text-left font-medium text-gray-600">ACTIONS</th>
                 </tr>
               </thead>
               <tbody>
-                {getCurrentPageData().map((order) => (
+                {orders.map((order) => (
                   <tr key={order.id} className="border-b">
                     <td className="py-3 px-4 text-sm text-gray-700">{order.id}</td>
                     <td className="py-3 px-4 text-sm text-gray-700">{order.customer || 'N/A'}</td>
@@ -66,6 +95,14 @@ function BrowserTrack() {
                     <td className={`py-3 px-4 text-sm ${getStatusColor(order.status)}`}>
                       {order.status}
                     </td>
+                    <td className="py-3 px-4 text-sm text-gray-700">
+                      <button
+                        className="text-blue-600 hover:underline"
+                        onClick={() => handleViewDetails(order)}
+                      >
+                        View Details
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -73,6 +110,17 @@ function BrowserTrack() {
           )}
         </div>
       </section>
+
+      {isModalOpen && selectedOrder && (
+        <ProductDetailsModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          deliveryId={selectedOrder.id}
+          updateStatus={(id, status) => {
+            // Implement the update status logic here
+          }}
+        />
+      )}
     </div>
   );
 }
