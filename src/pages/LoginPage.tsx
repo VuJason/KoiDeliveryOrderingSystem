@@ -33,8 +33,12 @@ const LoginPage = () => {
 
       if (response.ok) {
         // Handle successful login
+        const user = {
+          ...data
+          
+        }
         console.log("Login successful:", data);
-        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("user", JSON.stringify(user));
         localStorage.setItem("token", data.token);
 
         // Kiểm tra token để điều hướng
