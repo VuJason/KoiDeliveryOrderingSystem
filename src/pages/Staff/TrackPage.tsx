@@ -1,32 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { orderApi } from '../../services/orderApi'
+import { orderApi } from '../../services/orderApi';
 import Header from '../../components/Header';
-import DeliveryPagination from '../../components/admin/delivery/pagination/DeliveryPagination';
-import Footer from '../../components/Footer';
 
 function TrackPage() {
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 10; // Adjust as needed
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await fetch("http://103.67.197.66:8080/api/track-orders", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch orders");
-        }
-
-        const data = await response.json();
+        const data = await orderApi.getCustomerOrders();
         setOrders(data);
       } catch (err) {
         setError(err.message);
@@ -38,9 +22,13 @@ function TrackPage() {
     fetchOrders();
   }, []);
 
-  const getCurrentPageData = () => {
-    const startIndex = (currentPage - 1) * pageSize;
-    return orders.slice(startIndex, startIndex + pageSize);
+  const handleDeleteOrder = async (orderId) => {
+    try {
+      await orderApi.deleteOrder(orderId);
+      setOrders(prevOrders => prevOrders.filter(order => order.id !== orderId));
+    } catch (err) {
+      setError("Failed to delete order");
+    }
   };
 
   const getStatusColor = (status) => {
@@ -73,21 +61,32 @@ function TrackPage() {
               <thead>
                 <tr className="bg-gray-50">
                   <th className="py-2 px-4 text-left font-medium text-gray-600">ID</th>
-                  <th className="py-2 px-4 text-left font-medium text-gray-600">CLIENT</th>
-                  <th className="py-2 px-4 text-left font-medium text-gray-600">ADDRESS</th>
+                  <th className="py-2 px-4 text-left font-medium text-gray-600">CUSTOMER NAME</th>
+                  <th className="py-2 px-4 text-left font-medium text-gray-600">DELIVERY ADDRESS</th>
+                  <th className="py-2 px-4 text-left font-medium text-gray-600">ORDER DATE</th>
                   <th className="py-2 px-4 text-left font-medium text-gray-600">PRICE</th>
                   <th className="py-2 px-4 text-left font-medium text-gray-600">STATUS</th>
+                  <th className="py-2 px-4 text-left font-medium text-gray-600">ACTIONS</th>
                 </tr>
               </thead>
               <tbody>
-                {getCurrentPageData().map((order) => (
+                {orders.map((order) => (
                   <tr key={order.id} className="border-b">
                     <td className="py-3 px-4 text-sm text-gray-700">{order.id}</td>
-                    <td className="py-3 px-4 text-sm text-gray-700">{order.client}</td>
+                    <td className="py-3 px-4 text-sm text-gray-700">{order.customer || 'N/A'}</td>
                     <td className="py-3 px-4 text-sm text-gray-700">{order.address}</td>
+                    <td className="py-3 px-4 text-sm text-gray-700">{new Date(order.order_date).toLocaleDateString()}</td>
                     <td className="py-3 px-4 text-sm text-gray-700">{order.price}</td>
                     <td className={`py-3 px-4 text-sm ${getStatusColor(order.status)}`}>
                       {order.status}
+                    </td>
+                    <td className="py-3 px-4 text-sm text-gray-700">
+                      <button
+                        className="text-red-600 hover:underline"
+                        onClick={() => handleDeleteOrder(order.id)}
+                      >
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -95,16 +94,7 @@ function TrackPage() {
             </table>
           )}
         </div>
-        <div className="mt-4">
-          <DeliveryPagination
-            current={currentPage}
-            onChange={setCurrentPage}
-            total={orders.length}
-            pageSize={pageSize}
-          />
-        </div>
       </section>
-      <Footer />
     </div>
   );
 }

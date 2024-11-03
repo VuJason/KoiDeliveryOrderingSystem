@@ -11,5 +11,9 @@ export const orderApi = {
     const response = await axios.get(`${API_BASE_URL}/delivery-history`); // Adjust the endpoint as per your swagger.yml
     return response.data;
   },
+  deleteOrder: async (orderId) => {
+    const response = await axios.delete(`${API_BASE_URL}/orders/${orderId}`); // Đảm bảo endpoint đúng
+    return response.data;
+  },
   // Other API methods...
 }; 
