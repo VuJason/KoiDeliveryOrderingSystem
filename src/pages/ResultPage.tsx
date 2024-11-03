@@ -1,8 +1,38 @@
 import { useSearchParams } from 'react-router-dom';
-
+import {useEffect} from "react"
 const PaymentResult = () => {
   const [searchParams] = useSearchParams();
 
+  // Lấy tất cả các tham số từ URL và đưa vào một object
+  const params = {};
+  searchParams.forEach((value, key) => {
+    params[key] = value;
+  });
+
+  useEffect(() => {
+    // Tạo chuỗi truy vấn từ object params
+    const queryString = new URLSearchParams(params).toString();
+
+    // Gọi API với phương thức GET và chuỗi truy vấn
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`http://103.67.197.66:8080/api/payment/callback?${queryString}`, {
+          method: 'GET',
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('API response:', data);
+        } else {
+          console.error('Failed to fetch data from API');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    fetchData();
+  }, [params]);
   const responseCode = searchParams.get('vnp_ResponseCode');
   const amount = Number(searchParams.get('vnp_Amount')) / 100; // Convert to VND
   const orderInfo = searchParams.get('vnp_OrderInfo');
