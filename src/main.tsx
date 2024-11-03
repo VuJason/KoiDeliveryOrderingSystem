@@ -15,7 +15,12 @@ import TrackPage from "./pages/TrackPage.tsx";
 import VerifyOTPPage from "./pages/VerifyOTPPage.tsx";
 import { adminRoutes } from "./routes/AdminRoutes.tsx";
 import SignupPage from "./pages/SignupPage.tsx";
+import PaymentResult from "./pages/ResultPage.tsx";
 const router = createBrowserRouter([
+  {
+    path: "/result",
+    element: <PaymentResult />,
+  },
   {
     path: "/login",
     element: <LoginPage />,

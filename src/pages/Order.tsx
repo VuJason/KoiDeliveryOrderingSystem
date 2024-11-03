@@ -11,8 +11,14 @@ const Order = () => {
     additional_services: "",
     order_date: new Date().toISOString(),
   });
+  const [qrCode, setQrCode] = useState<string>("");
+
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [notification, setNotification] = useState({
+    message: '',
+    type: '' // 'success' hoặc 'error'
+  });
 
   const handleServiceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
@@ -49,9 +55,22 @@ const Order = () => {
     }));
   };
   const handlePlaceOrder = async () => {
-    const token = localStorage.getItem("token");
+    setNotification({
+      message:"",
+      type:""
+    })
+    if (!orderDetails.quantity || !orderDetails.original_location || !orderDetails.destination || !orderDetails.transport_method) {
+      setNotification({
+        message: 'Vui lòng điền đầy đủ thông tin đơn hàng',
+        type: 'error'
+      });
+      return;
+    }
+
+  
 
     try {
+      const token = localStorage.getItem("token");
       const response = await fetch("http://103.67.197.66:8080/api/order", {
         method: "POST",
         headers: {
@@ -64,7 +83,26 @@ const Order = () => {
 
       const data = await response.json();
       console.log("Order placed successfully:", data);
+
+      const orderId = data.id;
+      const paymentResponse = await fetch(`http://103.67.197.66:8080/api/payment/generate-qrcode/${orderId}`, {
+          method: "GET",
+          headers: {
+              accept: "*/*",
+              Authorization: `Bearer ${token}`,
+          },
+      });
+      
+      const paymentData = await paymentResponse.text();
+      console.log("Payment QR code:", paymentData);
+      window.open(paymentData, '_blank');
+
+      
     } catch (error) {
+      setNotification({
+        message: 'Đã có lỗi xảy ra khi đặt hàng',
+        type: 'error'
+      });
       console.error("Error placing order:", error);
     }
   };
@@ -175,6 +213,24 @@ const Order = () => {
               <option value="Sea">Sea</option>
               <option value="Ground">Ground</option>
             </select>
+            {notification.message && (
+              <div className={`p-4 rounded-md ${
+                notification.type === 'success' 
+                  ? 'bg-green-100 text-green-700 border border-green-400' 
+                  : 'bg-red-100 text-red-700 border border-red-400'
+              }`}>
+                {notification.message}
+              </div>
+            )}
+            {qrCode && (
+                <div className="mt-4 flex justify-center">
+                    <img 
+                        src={qrCode} 
+                        alt="Payment QR Code"
+                        className="w-64 h-64" // Adjust size as needed
+                    />
+                </div>
+            )}
             <button
               onClick={handlePlaceOrder}
               className="w-full bg-blue-500 text-white p-2 rounded"
