@@ -152,8 +152,12 @@ export const useOrderManagement = ({
     try {
       setIsLoading(true);
       const data = await fetchOrdersFn();
-      setOrders(data);
-      setError(null);
+      console.log("Fetched Orders:", data); // Log dữ liệu để kiểm tra
+      if (data && Array.isArray(data) && data.length > 0) {
+        setOrders(data); // Đảm bảo rằng data là mảng
+      } else {
+        setError('No orders found');
+      }
     } catch (err) {
       setError('Failed to fetch orders');
       setOrders([]);
@@ -163,17 +167,8 @@ export const useOrderManagement = ({
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-        try {
-            const response = await fetchOrdersFn();
-            setOrders(response.data); // Adjust based on your API response structure
-        } catch (error) {
-            setError("Failed to fetch orders");
-        }
-    };
-
-    fetchData();
-}, [fetchOrdersFn]);
+    fetchOrders(); // Gọi hàm fetchOrders khi component mount
+  }, [fetchOrdersFn]);
 
   const handleSearch = () => {
     if (!searchInput.trim()) {
@@ -205,7 +200,7 @@ export const useOrderManagement = ({
   };
 
   const getCurrentPageData = () => {
-    const dataToUse = searchResults.length > 0 ? searchResults : getFilteredData();
+    const dataToUse = searchResults.length > 0 ? searchResults : orders;
     const startIndex = (currentPage - 1) * pageSize;
     const endIndex = startIndex + pageSize;
     return dataToUse.slice(startIndex, endIndex);

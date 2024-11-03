@@ -33,6 +33,7 @@ export const orderApi = {
 
   getCustomerOrders: async (): Promise<Order[]> => {
     const response = await api.get<OrderResponse>('/api/order');
+    console.log("Customer Orders Response:", response.data); // Log dữ liệu để kiểm tra
     return response.data.data;
   },
 

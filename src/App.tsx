@@ -2,9 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { OrderProvider } from './context/OrderContext';
 import LandingPage from './LandingPage';
-import BrowserTrack from './pages/BrowserTrack';
-import TrackPage from './pages/TrackPage';
-import DeliveryTrackPage from './pages/DeliveryTrackPage';
+import BrowserTrack from './pages/Staff/BrowserTrack';
+import TrackPage from './pages/Staff/TrackPage';
+import DeliveryTrackPage from './pages/deliverystaff/DeliveryTrackPage';
 
 const App: React.FC = () => {
   return (
