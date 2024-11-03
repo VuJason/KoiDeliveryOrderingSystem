@@ -1,10 +1,10 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import App from "./App.tsx";
 import DeliveryHistory from "./pages/DeliveryHistory.tsx";
 import Order from "./pages/Order.tsx";
 import Account from "./pages/Account.tsx";
+import App from "./LandingPage.tsx";
 import "./index.css";
 import BrowserTrack from "./pages/BrowserTrack.tsx";
 import ChangPasswordPage from "./pages/ChangePasswrod.tsx";

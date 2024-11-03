@@ -1,118 +1,56 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter, faSyncAlt, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import DeliveryPagination from "../components/admin/delivery/pagination/DeliveryPagination";
+import { orderApi } from '../services/orderApi';
+import { Order } from '../types/order';
+import { useOrderManagement } from '../hooks/useOrderManagement';
 
 
 function DeliveryTrackPage() {
-  const [searchInput, setSearchInput] = useState("");  // Changed from orderNumber
-  const [orderNumber, setOrderNumber] = useState("");  
-  const [filterPrice, setFilterPrice] = useState("");
-  const [filterProduct, setFilterProduct] = useState("");
-  const [filterStatus, setFilterStatus] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchError, setSearchError] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-
-  const deliveries = [
-    { id: "00001",  product: "Koi Bird", address: "Phường Bến Nghé, Quận 1, TP.HCM", price: "100.000", customer: "Doanh", status: "Confirmed" },
-    { id: "00002",  product: "Koi Bird", address: "Nguyễn Thái Bình, Quận 1, TP.HCM", price: "200.000", customer: "Doanh", status: "Confirmed" },
-    { id: "00003",  product: "Koi Bird", address: "Lê Lai, Quận 1, TP.HCM", price: "150.000", customer: "Doanh", status: "Canceled" },
-    { id: "00004",  product: "Gilbert Koi", address: "Trần Hưng Đạo, Quận 1, TP.HCM", price: "80.000", customer: "Doanh", status: "Canceled" },
-    { id: "00005",  product: "Alan Koi", address: "Nguyễn Huệ, Quận 1, TP.HCM", price: "300.000", customer: "Doanh", status: "In Transit" },
-    { id: "00006",  product: "Koi Murray", address: "Lê Văn Sỹ, Quận 3, TP.HCM", price: "250.000", customer: "Doanh", status: "Confirmed" },
-    { id: "00007",  product: "Koi Sullivan", address: "Ngô Đức Kế, Quận 1, TP.HCM", price: "175.000", customer: "Doanh", status: "Confirmed" },
-    { id: "00008",  product: "Gilbert Koi", address: "Cầu Ông Lãnh, Quận 1, TP.HCM", price: "90.000", customer: "Doanh", status: "In Transit" },
-    { id: "00009",  product: "Alan Koi", address: "Tôn Thất Tùng, Quận 1, TP.HCM", price: "220.000", customer: "Doanh", status: "Confirmed" },
-    { id: "00010",  product: "Koi Murray", address: "Nguyễn Xiển, Quận 9, TP.HCM", price: "300.000", customer: "Doanh", status: "Canceled" }
-  ];
-
-  const pageSize = 5;
-
-  const parsePrice = (price: string) => {
-    return parseInt(price.replace(/\./g, ""), 10); 
-  };
- // Tính toán dữ liệu cho trang hiện tại
-  const getFilteredData = () => {
-    let filteredDeliveries = deliveries.filter((delivery) => {
-      return (
-        (orderNumber === "" || delivery.id.includes(orderNumber)) && 
-        (filterProduct === "" || delivery.product.toLowerCase().includes(filterProduct.toLowerCase())) &&
-        (filterStatus === "" || delivery.status.toLowerCase() === filterStatus.toLowerCase())
-      );
-    });
-
-    // Thêm logic sắp xếp theo giá
-    if (filterPrice === "low") {
-    filteredDeliveries.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
-  } else if (filterPrice === "high") {
-    filteredDeliveries.sort((a, b) => parsePrice(b.price) - parsePrice(a.price));
-  }
-
-  return filteredDeliveries;
-  };
-
-  // Lấy dữ liệu đã được lọc
-  const filteredData = getFilteredData();
-  
-  // Tính toán dữ liệu cho trang hiện tại
-  const getCurrentPageData = () => {
-  const dataToUse = searchResults.length > 0 ? searchResults : filteredData;
-  const startIndex = (currentPage - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
-  return dataToUse.slice(startIndex, endIndex);
-};
-
-  // Xử lý khi thay đổi trang
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  const handleSearch = () => {
-    if (!searchInput.trim()) {
-      setSearchError("Tracking number required");
-      return;
+  const {
+    isLoading,
+    error,
+    currentPage,
+    searchInput,
+    searchError,
+    filterPrice,
+    filterProduct,
+    filterStatus,
+    setCurrentPage,
+    setSearchInput,
+    setFilterPrice,
+    setFilterProduct,
+    setFilterStatus,
+    handleSearch,
+    resetFilters,
+    getCurrentPageData,
+    pageSize
+  } = useOrderManagement({
+    fetchOrdersFn: orderApi.getDeliveryTrackOrders,
+    initialFilters: {
+      date: false,
+      type: false,
+      status: true,
+      price: true,
+      product: true
     }
-    setSearchError("");
-    setOrderNumber(searchInput);  // Update orderNumber with searchInput
-
-    // Save search results
-    const results = deliveries.filter(delivery => delivery.id.includes(searchInput));
-    setSearchResults(results);
-  };
-
-  
-
-  const resetFilters = () => {
-    setSearchInput("");  // Reset search input
-    setOrderNumber("");
-    setFilterPrice("");
-    setFilterProduct("");
-    setFilterStatus("");
-    setSearchError("");
-    setSearchResults([]); // Reset search results
-  };
-
-  const updateStatus = (id, newStatus) => {
-    const updatedDeliveries = deliveries.map((delivery) =>
-      delivery.id === id ? { ...delivery, status: newStatus } : delivery
-    );
-    setDeliveries(updatedDeliveries);
-  };
-
+  });
 
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
       case "confirmed":
-        return "text-green-500 bg-green-100"; // Xanh lá cây cho trạng thái "Confirmed"
+        return "text-green-500 bg-green-100";
       case "in transit":
-        return "text-yellow-500 bg-green-100";
+        return "text-yellow-500 bg-yellow-100";
+      case "delivered":
+        return "text-blue-500 bg-blue-100";
       case "canceled":
-        return "text-red-500 bg-red-100"; // Đỏ cho trạng thái "Canceled"
+        return "text-red-500 bg-red-100";
       default:
-        return "text-gray-500 bg-gray-100"; // Mặc định xám cho các trạng thái khác
+        return "text-gray-500 bg-gray-100";
     }
   };
 
@@ -202,15 +140,16 @@ function DeliveryTrackPage() {
               onChange={(e) => setFilterStatus(e.target.value)}
               className="border border-gray-300 rounded-md px-4 py-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-                <option value="">Delivery Status</option>
-                <option value="confirmed">Confirmed</option>
-                <option value="in transit">In Transit</option>
-                <option value="canceled">Canceled</option>
-
-
-              </select>
-              <FontAwesomeIcon icon={faChevronDown} className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
-            </div>
+              <option value="">Delivery Status</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="delivering">Delivering</option>
+              <option value="delivered">Delivered</option>
+              <option value="in_transit">In Transit</option>
+              <option value="canceled">Canceled</option>
+              <option value="rejected">Rejected</option>
+            </select>
+            <FontAwesomeIcon icon={faChevronDown} className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
+          </div>
              {/* Nút Reset */}
           <button
             className="text-red-500 flex items-center font-semibold"
@@ -223,42 +162,48 @@ function DeliveryTrackPage() {
 
 
         {/* Delivery Table */}
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border border-gray-200">
-            <thead>
-              <tr className="bg-gray-50">
-                <th className="py-2 px-4 text-left font-medium text-gray-600">ID</th>
-                <th className="py-2 px-4 text-left font-medium text-gray-600">DELIVERY PRODUCT</th>
-                <th className="py-2 px-4 text-left font-medium text-gray-600">DELIVERY ADDRESS</th>
-                <th className="py-2 px-4 text-left font-medium text-gray-600">PRICE</th>
-                <th className="py-2 px-4 text-left font-medium text-gray-600">CUSTOMER</th>
-                <th className="py-2 px-4 text-left font-medium text-gray-600">STATUS</th>
-              </tr>
-            </thead>
-            <tbody>
-              {getCurrentPageData().map((delivery) => (
-                <tr key={delivery.id} className="border-b">
-                  <td className="py-3 px-4 text-sm text-gray-700">{delivery.id}</td>
-                  <td className="py-3 px-4 text-sm text-gray-700">{delivery.product}</td>
-                  <td className="py-3 px-4 text-sm text-gray-700">{delivery.address}</td>
-                  <td className="py-3 px-4 text-sm text-gray-700">{delivery.price}</td>
-                  <td className="py-3 px-4 text-sm text-gray-700">{delivery.customer}</td>
-                  <td className={`py-3 px-4 text-sm  ${getStatusColor(delivery.status)}`}>
-           {delivery.status}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-          </table>
-        </div>
+<div className="overflow-x-auto">
+  {isLoading ? (
+    <div className="text-center py-4">Loading...</div>
+  ) : error ? (
+    <div className="text-center py-4 text-red-500">{error}</div>
+  ) : (
+    <table className="min-w-full bg-white border border-gray-200">
+      <thead>
+        <tr className="bg-gray-50">
+          <th className="py-2 px-4 text-left font-medium text-gray-600">ID</th>
+          <th className="py-2 px-4 text-left font-medium text-gray-600">DELIVERY PRODUCT</th>
+          <th className="py-2 px-4 text-left font-medium text-gray-600">DELIVERY ADDRESS</th>
+          <th className="py-2 px-4 text-left font-medium text-gray-600">PRICE</th>
+          <th className="py-2 px-4 text-left font-medium text-gray-600">CUSTOMER</th>
+          <th className="py-2 px-4 text-left font-medium text-gray-600">STATUS</th>
+        </tr>
+      </thead>
+      <tbody>
+        {getCurrentPageData().map((order) => (
+          <tr key={order.id} className="border-b">
+            <td className="py-3 px-4 text-sm text-gray-700">{order.id}</td>
+            <td className="py-3 px-4 text-sm text-gray-700">{order.product}</td>
+            <td className="py-3 px-4 text-sm text-gray-700">{order.address}</td>
+            <td className="py-3 px-4 text-sm text-gray-700">{order.price}</td>
+            <td className="py-3 px-4 text-sm text-gray-700">{order.customer}</td>
+            <td className={`py-3 px-4 text-sm ${getStatusColor(order.status)}`}>
+              {order.status}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )}
+</div>
 
  <div className="mt-4">
           <DeliveryPagination
-          current={currentPage}
-          onChange={handlePageChange}
-          total={searchResults.length > 0 ? searchResults.length : filteredData.length}
-          pageSize={pageSize}
-         />
+            current={currentPage}
+            onChange={setCurrentPage}
+            total={getCurrentPageData().length}
+            pageSize={pageSize}
+          />
         </div>
       </section>
 

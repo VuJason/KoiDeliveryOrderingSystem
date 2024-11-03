@@ -2,54 +2,58 @@ import React, { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter, faSyncAlt, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import DeliveryPagination from "../components/admin/delivery/pagination/DeliveryPagination";
+import { useOrderManagement } from "../hooks/useOrderManagement";
+import ProductDetailsModal from "../components/admin/delivery/productDetailsModal/ProductDetailsModal";
+import Header from "../components/admin/header/Header";
+import { orderApi } from '../services/orderApi';
 
 function DeliveryPage() {
-  const [filterDate, setFilterDate] = useState("");
-  const [filterType, setFilterType] = useState("");
-  const [filterStatus, setFilterStatus] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchResults, setSearchResults] = useState([]);
+  const {
+    orders,
+    isLoading,
+    error,
+    currentPage,
+    filterDate,
+    filterType,
+    filterStatus,
+    selectedOrderId,
+    isModalOpen,
+    setCurrentPage,
+    setFilterDate,
+    setFilterType,
+    setFilterStatus,
+    handleSearch,
+    resetFilters,
+    getCurrentPageData,
+    handleViewDetails,
+    handleCloseModal,
+    updateOrderStatus
+  } = useOrderManagement({
+    fetchOrdersFn: orderApi.getDeliveryOrders,
+    initialFilters: {
+      date: true,
+      type: true,
+      status: true,
+      price: false,
+      product: false
+    }
+  });
 
-  // Sử dụng dữ liệu từ các trang khác
-  const deliveries = [
-    { id: "00001", rider: "John Doe", address: "Phường Bến Nghé, Quận 1, TP.HCM", date: "2023-05-15", type: "Foodstuff", status: "Confirmed" },
-    { id: "00002", rider: "Jane Smith", address: "Nguyễn Thái Bình, Quận 1, TP.HCM", date: "2023-05-16", type: "Electronics", status: "In Transit" },
-    { id: "00003", rider: "Bob Johnson", address: "Lê Lai, Quận 1, TP.HCM", date: "2023-05-17", type: "Clothing", status: "Delivered" },
-    { id: "00004", rider: "Alice Brown", address: "Trần Hưng Đạo, Quận 1, TP.HCM", date: "2023-05-18", type: "Home Appliances", status: "Canceled" },
-    { id: "00005", rider: "Charlie Wilson", address: "Nguyễn Huệ, Quận 1, TP.HCM", date: "2023-05-19", type: "Books", status: "Confirmed" },
-  ];
+  console.log('Orders:', orders);
+  console.log('IsLoading:', isLoading);
+  console.log('Error:', error);
 
-  const pageSize = 5;
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
-  // Tính toán dữ liệu cho trang hiện tại
-  const getFilteredData = () => {
-    return deliveries.filter((delivery) => {
-      return (
-        (filterDate === "" || delivery.date.includes(filterDate)) && 
-        (filterType === "" || delivery.type.toLowerCase() === filterType.toLowerCase()) &&
-        (filterStatus === "" || delivery.status.toLowerCase() === filterStatus.toLowerCase())
-      );
-    });
-  };
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
-  const filteredData = getFilteredData();
-  
-  const getCurrentPageData = () => {
-    const startIndex = (currentPage - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    return filteredData.slice(startIndex, endIndex);
-  };
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  const resetFilters = () => {
-    setFilterDate("");
-    setFilterType("");
-    setFilterStatus("");
-    setSearchResults([]);
-  };
+  if (!orders || orders.length === 0) {
+    return <div>No orders found</div>;
+  }
 
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
@@ -67,96 +71,138 @@ function DeliveryPage() {
   };
 
   return (
-    <div className="w-full px-6 py-6 bg-light-blue">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6">Manage Deliveries</h2>
-      <div className="flex justify-start items-center mb-6 space-x-4">
-        <button className="flex items-center text-gray-600 font-medium">
-          <FontAwesomeIcon icon={faFilter} className="mr-2" />
-          Filter By
-        </button>
-        <div className="relative">
-          <input
-            type="date"
-            value={filterDate}
-            onChange={(e) => setFilterDate(e.target.value)}
-            className="border border-gray-300 rounded-md px-4 py-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-        <div className="relative">
-          <select
-            value={filterType}
-            onChange={(e) => setFilterType(e.target.value)}
-            className="border border-gray-300 rounded-md px-4 py-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+    <div className="w-screen overflow-x-hidden bg-light-blue">
+      <Header currentPage={undefined} />
+      
+      <section className="mt-12 px-6 mb-20">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-6">Delivery Management</h2>
+        
+        {/* Filter Section */}
+        <div className="flex justify-start items-center mb-6 space-x-4">
+          <button className="flex items-center text-gray-600 font-medium">
+            <FontAwesomeIcon icon={faFilter} className="mr-2" />
+            Filter By
+          </button>
+          
+          <div className="relative">
+            <input
+              type="date"
+              value={filterDate}
+              onChange={(e) => setFilterDate(e.target.value)}
+              className="border border-gray-300 rounded-md px-4 py-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div className="relative">
+            <select
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+              className="border border-gray-300 rounded-md px-4 py-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Delivery Type</option>
+              <option value="foodstuff">Foodstuff</option>
+              <option value="electronics">Electronics</option>
+              <option value="clothing">Clothing</option>
+              <option value="home appliances">Home Appliances</option>
+              <option value="books">Books</option>
+            </select>
+            <FontAwesomeIcon icon={faChevronDown} className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
+          </div>
+
+          <div className="relative">
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="border border-gray-300 rounded-md px-4 py-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Delivery Status</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="delivering">Delivering</option>
+              <option value="delivered">Delivered</option>
+              <option value="in_transit">In Transit</option>
+              <option value="canceled">Canceled</option>
+              <option value="rejected">Rejected</option>
+            </select>
+            <FontAwesomeIcon icon={faChevronDown} className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
+          </div>
+
+          <button
+            className="text-red-500 flex items-center font-semibold"
+            onClick={resetFilters}
           >
-            <option value="">Package Type</option>
-            <option value="foodstuff">Foodstuff</option>
-            <option value="electronics">Electronics</option>
-            <option value="clothing">Clothing</option>
-            <option value="home appliances">Home Appliances</option>
-            <option value="books">Books</option>
-          </select>
-          <FontAwesomeIcon icon={faChevronDown} className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
-        </div>
-        <div className="relative">
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            className="border border-gray-300 rounded-md px-4 py-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">Delivery Status</option>
-            <option value="confirmed">Confirmed</option>
-            <option value="in transit">In Transit</option>
-            <option value="delivered">Delivered</option>
-            <option value="canceled">Canceled</option>
-          </select>
-          <FontAwesomeIcon icon={faChevronDown} className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
-        </div>
-        <button
-          className="text-red-500 flex items-center font-semibold"
-          onClick={resetFilters}
-        >
-          <FontAwesomeIcon icon={faSyncAlt} className="mr-2" />
-          Reset Filter
-        </button>
-      </div>
-
-      {/* Delivery Table */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-200">
-          <thead>
-            <tr className="bg-gray-50">
-              <th className="py-2 px-4 text-left font-medium text-gray-600">ID</th>
-              <th className="py-2 px-4 text-left font-medium text-gray-600">RIDER</th>
-              <th className="py-2 px-4 text-left font-medium text-gray-600">DELIVERY ADDRESS</th>
-              <th className="py-2 px-4 text-left font-medium text-gray-600">DATE</th>
-              <th className="py-2 px-4 text-left font-medium text-gray-600">TYPE</th>
-              <th className="py-2 px-4 text-left font-medium text-gray-600">STATUS</th>
-            </tr>
-          </thead>
-          <tbody>
-            {getCurrentPageData().map((delivery) => (
-              <tr key={delivery.id} className="border-b border-gray-200">
-                <td className="py-2 px-4">{delivery.id}</td>
-                <td className="py-2 px-4">{delivery.rider}</td>
-                <td className="py-2 px-4">{delivery.address}</td>
-                <td className="py-2 px-4">{delivery.date}</td>
-                <td className="py-2 px-4">{delivery.type}</td>
-                <td className={`py-2 px-4 ${getStatusColor(delivery.status)}`}>{delivery.status}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Pagination */}
-          <DeliveryPagination
-          current={currentPage}
-          onChange={handlePageChange}
-          total={searchResults.length > 0 ? searchResults.length : filteredData.length}
-          pageSize={pageSize}
-         />
+            <FontAwesomeIcon icon={faSyncAlt} className="mr-2" />
+            Reset Filter
+          </button>
         </div>
 
+        {/* Table Section */}
+        <div className="overflow-x-auto">
+          {isLoading ? (
+            <div className="text-center py-4">Loading...</div>
+          ) : error ? (
+            <div className="text-center py-4 text-red-500">{error}</div>
+          ) : (
+            <>
+              <table className="min-w-full bg-white border border-gray-200">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="py-2 px-4 text-left font-medium text-gray-600">ID</th>
+                    <th className="py-2 px-4 text-left font-medium text-gray-600">RIDER</th>
+                    <th className="py-2 px-4 text-left font-medium text-gray-600">ADDRESS</th>
+                    <th className="py-2 px-4 text-left font-medium text-gray-600">DATE</th>
+                    <th className="py-2 px-4 text-left font-medium text-gray-600">TYPE</th>
+                    <th className="py-2 px-4 text-left font-medium text-gray-600">STATUS</th>
+                    <th className="py-2 px-4 text-left font-medium text-gray-600">ACTIONS</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {getCurrentPageData().map((order) => (
+                    <tr key={order.id} className="border-b">
+                      <td className="py-3 px-4 text-sm text-gray-700">{order.id}</td>
+                      <td className="py-3 px-4 text-sm text-gray-700">{order.rider}</td>
+                      <td className="py-3 px-4 text-sm text-gray-700">{order.address}</td>
+                      <td className="py-3 px-4 text-sm text-gray-700">{order.date}</td>
+                      <td className="py-3 px-4 text-sm text-gray-700">{order.type}</td>
+                      <td className={`py-3 px-4 text-sm ${getStatusColor(order.status)}`}>
+                        {order.status}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-700">
+                        <button
+                          onClick={() => handleViewDetails(order.id)}
+                          className="text-blue-600 hover:underline"
+                        >
+                          View Details
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              <div className="mt-4">
+                <DeliveryPagination
+                  current={currentPage}
+                  onChange={setCurrentPage}
+                  total={getCurrentPageData().length}
+                  pageSize={5}
+                />
+              </div>
+            </>
+          )}
+        </div>
+      </section>
+
+      {isModalOpen && selectedOrderId && (
+        <ProductDetailsModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          deliveryId={selectedOrderId}
+          updateStatus={updateOrderStatus}
+        />
+      )}
+
+      <Footer />
+    </div>
   );
 }
 
