@@ -6,6 +6,7 @@ import com.example.koiorderingdeliverysystem.dto.*;
 import com.example.koiorderingdeliverysystem.dto.request.LoginDto;
 import com.example.koiorderingdeliverysystem.dto.request.RegistrationDto;
 import com.example.koiorderingdeliverysystem.dto.response.RegistrationResponse;
+import com.example.koiorderingdeliverysystem.dto.response.UpdateResponse;
 import com.example.koiorderingdeliverysystem.dto.response.UserResponse;
 import com.example.koiorderingdeliverysystem.entity.Users;
 import com.example.koiorderingdeliverysystem.repository.UserRepository;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "https://localhost:5173")
+@CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/api")
 @SecurityRequirement(name = "api")
 public class UserController {
@@ -55,8 +56,8 @@ public class UserController {
     }
 
     @PutMapping("/customer/{customerId}")
-    public ResponseEntity<UserResponse> updateCustomer(UpdateProfile updateProfile) {
-        UserResponse update = userService.updateCustomerProfile(updateProfile);
+    public ResponseEntity<UpdateResponse> updateCustomer(@Valid @RequestBody UpdateProfile updateProfile) {
+        UpdateResponse update = userService.updateCustomerProfile(updateProfile);
         return ResponseEntity.ok(update);
     }
 

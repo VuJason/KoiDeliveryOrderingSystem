@@ -50,4 +50,7 @@ public class Orders {
     @OneToMany(mappedBy = "orders")
     private List<OrderServices> orderServices;
 
+
+    @OneToMany(mappedBy = "order")
+    private List<KoiFish> koiFish;
 }

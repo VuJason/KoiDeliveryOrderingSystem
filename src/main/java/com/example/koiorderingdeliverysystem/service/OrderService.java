@@ -5,6 +5,7 @@ import com.example.koiorderingdeliverysystem.dto.*;
 import com.example.koiorderingdeliverysystem.dto.request.OrderRequestDto;
 import com.example.koiorderingdeliverysystem.dto.response.OrderResponse;
 import com.example.koiorderingdeliverysystem.entity.*;
+import com.example.koiorderingdeliverysystem.exception.EntityNotFoundException;
 import com.example.koiorderingdeliverysystem.exception.ResourceNotFoundException;
 import com.example.koiorderingdeliverysystem.repository.KoiServiceRepository;
 import com.example.koiorderingdeliverysystem.repository.OrderServicesRepository;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -85,11 +87,16 @@ public class OrderService {
                 }
             }
         }
-        double fees = 100 * distance * orderRequestDto.getQuantity();
-        double totalCost = fees + totalServiceCost;
+        double fees = 0.05 * distance * orderRequestDto.getQuantity();
+        double cost = fees + totalServiceCost;
+        double totalCost = Math.floor(cost / 100) * 100;
 
+        order.setTotal(totalCost);
+
+
+        savedOrder = ordersRepository.save(order);
         OrderResponse response = modelMapper.map(savedOrder, OrderResponse.class);
-        response.setTotalCost(totalCost);  // Set total cost in the response
+        response.setTotalCost(totalCost);
         return response;
 
     }
@@ -136,18 +143,23 @@ public class OrderService {
     }
 
 
-    public List<OrderHistory> getAllOrders() {
-        List<Orders> orders = ordersRepository.findAll();
+    public List<OrderHistory> getCustomerOrder() {
+        Users customer = userService.getCurrentAccount();
+        List<Orders> orders = ordersRepository.findAllByCustomerAndStatusNot(customer, String.valueOf(OrderStatus.CANCELED));
+        if(orders.isEmpty()) {
+            throw new EntityNotFoundException("No orders found for customer " + customer.getUsername());
+        }
         return orders.stream().map(order -> {
             OrderHistory history = new OrderHistory();
             history.setId(order.getId());
             history.setCustomerName(order.getCustomer().getFullname());
             history.setDestination(order.getDestination());
             history.setOrder_date(order.getOrder_date());
-            history.getPrice();
+            history.setPrice(order.getTotal());
             history.setStatus(order.getStatus());
             return history;
         }).collect(Collectors.toList());
+
     }
     public List<OrderDto> getOrders() {
         List<Orders> orders = ordersRepository.findAll();

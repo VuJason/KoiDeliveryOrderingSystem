@@ -1,8 +1,10 @@
 com\example\koiorderingdeliverysystem\dto\OrderHistory.class
 com\example\koiorderingdeliverysystem\dto\EmailDetail.class
 com\example\koiorderingdeliverysystem\repository\KoiServiceRepository.class
+com\example\koiorderingdeliverysystem\service\KoiFishService.class
 com\example\koiorderingdeliverysystem\config\AppConfig.class
 com\example\koiorderingdeliverysystem\dto\request\FeedBackRequest.class
+com\example\koiorderingdeliverysystem\dto\request\KoiFishRequest.class
 com\example\koiorderingdeliverysystem\entity\Revenue.class
 com\example\koiorderingdeliverysystem\dto\response\FeedBackResponse.class
 com\example\koiorderingdeliverysystem\repository\FeedBackRepository.class
@@ -33,6 +35,8 @@ com\example\koiorderingdeliverysystem\dto\response\OSRMResponse$Route.class
 com\example\koiorderingdeliverysystem\entity\KoiFish.class
 com\example\koiorderingdeliverysystem\entity\Users.class
 com\example\koiorderingdeliverysystem\controller\UserController.class
+com\example\koiorderingdeliverysystem\controller\KoiFishController.class
+com\example\koiorderingdeliverysystem\dto\response\UpdateResponse.class
 com\example\koiorderingdeliverysystem\service\EmailService.class
 com\example\koiorderingdeliverysystem\dto\request\ForgotPasswordRequest.class
 com\example\koiorderingdeliverysystem\dto\response\UserResponse.class

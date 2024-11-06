@@ -33,9 +33,7 @@ public class Users implements UserDetails {
     @Pattern(regexp = "(84|0[3|5|7|8|9])+(\\d{8})", message = "Invalid phone!")
     private String phone;
     @Email(message = "Invalid Email!")
-    @NotBlank(message = "Email can not blank!")
     private String email;
-    @Pattern(regexp = "^[\\\\p{L}0-9\\\\s\\\\,\\\\.\\\\-\\\\/]+$", message = "Invalid Address")
     private String address;
     private Date registration_date;
 
@@ -68,11 +66,9 @@ public class Users implements UserDetails {
     @OneToMany(mappedBy = "customer")
     List<FeedBack> customer_feedBacks;
 
+    @OneToMany(mappedBy = "customer_koi")
+    List<KoiFish> koiFishList;
 
-    @Override
-    public String getUsername() {
-        return this.email;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

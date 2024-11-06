@@ -5,6 +5,7 @@ import com.example.koiorderingdeliverysystem.dto.*;
 import com.example.koiorderingdeliverysystem.dto.request.LoginDto;
 import com.example.koiorderingdeliverysystem.dto.request.RegistrationDto;
 import com.example.koiorderingdeliverysystem.dto.response.RegistrationResponse;
+import com.example.koiorderingdeliverysystem.dto.response.UpdateResponse;
 import com.example.koiorderingdeliverysystem.dto.response.UserResponse;
 import com.example.koiorderingdeliverysystem.entity.Roles;
 import com.example.koiorderingdeliverysystem.entity.Users;
@@ -113,17 +114,16 @@ public class UserService implements UserDetailsService {
         return userRepository.findUsersByStatusTrue();
     }
 
-    public UserResponse updateCustomerProfile(UpdateProfile updateProfile) {
+    public UpdateResponse updateCustomerProfile(UpdateProfile updateProfile) {
         Users currentUser = getCurrentAccount();
         if(currentUser == null) {
             throw new EntityNotFoundException("Customer not found!");
         }
         currentUser.setFullname(updateProfile.getFullName());
-        currentUser.setEmail(updateProfile.getEmail());
         currentUser.setPhone(updateProfile.getPhone());
         currentUser.setAddress(updateProfile.getAddress());
         Users updatedUser = userRepository.save(currentUser);
-        return modelMapper.map(updatedUser, UserResponse.class);
+        return modelMapper.map(updatedUser, UpdateResponse.class);
 
 
     }

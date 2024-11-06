@@ -1,10 +1,12 @@
 package com.example.koiorderingdeliverysystem.controller;
 
 
+import com.example.koiorderingdeliverysystem.dto.OrderDto;
 import com.example.koiorderingdeliverysystem.dto.OrderHistory;
 import com.example.koiorderingdeliverysystem.dto.UpdateProfile;
 import com.example.koiorderingdeliverysystem.dto.request.RegistrationDto;
 import com.example.koiorderingdeliverysystem.dto.response.RegistrationResponse;
+import com.example.koiorderingdeliverysystem.dto.response.UpdateResponse;
 import com.example.koiorderingdeliverysystem.dto.response.UserResponse;
 import com.example.koiorderingdeliverysystem.entity.Users;
 import com.example.koiorderingdeliverysystem.service.AdminService;
@@ -22,7 +24,7 @@ import java.util.Map;
 
 
 @RestController
-@CrossOrigin(origins = "https://localhost:5173")
+@CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/api/admin")
 @SecurityRequirement(name = "api")
 @PreAuthorize("hasAuthority('ADMIN')")
@@ -51,8 +53,8 @@ public class AdminController {
     }
 
     @PutMapping("/user/{userId}")
-    public ResponseEntity<UserResponse> updateCustomer(UpdateProfile updateProfile) {
-        UserResponse update = userService.updateCustomerProfile(updateProfile);
+    public ResponseEntity<UpdateResponse> updateCustomer(UpdateProfile updateProfile) {
+        UpdateResponse update = userService.updateCustomerProfile(updateProfile);
         return ResponseEntity.ok(update);
     }
 
@@ -68,8 +70,8 @@ public class AdminController {
     }
 
     @GetMapping("/order")
-    public List<OrderHistory> getAllOrders() {
-        return orderService.getAllOrders();
+    public List<OrderDto> getAllOrders() {
+        return orderService.getOrders();
 
     }
 

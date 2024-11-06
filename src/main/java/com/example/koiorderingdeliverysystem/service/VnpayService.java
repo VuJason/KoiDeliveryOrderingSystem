@@ -2,12 +2,15 @@ package com.example.koiorderingdeliverysystem.service;
 
 
 
+import com.example.koiorderingdeliverysystem.entity.Orders;
+import com.example.koiorderingdeliverysystem.repository.OrdersRepository;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -25,6 +28,9 @@ public class VnpayService {
     private static final String VNPAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
     private static final String VNP_HASH_SECRET = "VI6CNUGHU58HI2U74JXGYSR8MTWB90LQ"; // Replace with your actual secret code
 
+    @Autowired
+    OrdersRepository ordersRepository;
+
     public String generatePaymentQR(int orderId, double totalAmount, HttpServletRequest request) {
         try {
             String ipAddress= getClientIp(request);
@@ -38,7 +44,7 @@ public class VnpayService {
             vnpParams.put("vnp_OrderInfo", "Payment for order " + orderId);
             vnpParams.put("vnp_OrderType", "order");
             vnpParams.put("vnp_Amount", String.valueOf((int) (totalAmount * 100))); // Convert to VND in cents
-            vnpParams.put("vnp_ReturnUrl", "http://103.67.197.66:8080/swagger-ui/index.html"); // Replace with your return URL
+            vnpParams.put("vnp_ReturnUrl", "http://localhost:5173/result"); // Replace with your return URL
             vnpParams.put("vnp_IpAddr", ipAddress);
             vnpParams.put("vnp_CreateDate", getCurrentDate("yyyyMMddHHmmss"));
 
@@ -112,6 +118,34 @@ public class VnpayService {
 
         Path path = FileSystems.getDefault().getPath(filePath);
         MatrixToImageWriter.writeToPath(bitMatrix, "PNG", path);
+    }
+
+    public String handleVnpayCallback(Map<String, String> vnpParams) {
+        String transactionStatus = vnpParams.get("vnp_TransactionStatus");
+        if ("00".equals(transactionStatus)) { // "00" nghĩa là thanh toán thành công
+            String orderID = vnpParams.get("vnp_TxnRef");
+            int orderId = Integer.parseInt(orderID);
+            double amount = Double.parseDouble(vnpParams.get("vnp_Amount")) / 100; // Đổi về VND
+
+            // Cập nhật trạng thái đơn hàng
+            updateOrderStatus(orderId, "PAID");
+            return "Payment successful";
+        } else {
+            return "Payment failed";
+        }
+    }
+
+    private void updateOrderStatus(int orderId, String status) {
+        // Lấy thông tin đơn hàng từ cơ sở dữ liệu dựa trên orderId
+        Orders order = ordersRepository.findById(orderId).orElse(null);
+        if (order != null) {
+            order.setStatus(status);
+            order.setPaid(true); // Đặt isPaid thành true khi đơn hàng đã thanh toán
+            order.setPaymentDeadline(new Date()); // Lưu thời gian thanh toán
+            ordersRepository.save(order); // Lưu thay đổi vào cơ sở dữ liệu
+        } else {
+            System.out.println("Order not found with ID: " + orderId);
+        }
     }
 
 }

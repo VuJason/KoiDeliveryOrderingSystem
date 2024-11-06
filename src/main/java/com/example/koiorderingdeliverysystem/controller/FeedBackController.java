@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin("*")
+@CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/api/feedback")
 @SecurityRequirement(name = "api")
 public class FeedBackController {

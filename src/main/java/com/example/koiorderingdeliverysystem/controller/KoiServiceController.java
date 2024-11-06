@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/staff/services")
-@CrossOrigin(origins = "https://localhost:5173")
+@CrossOrigin(origins = "http://localhost:5173")
 @SecurityRequirement(name = "api")
 @PreAuthorize("hasAuthority('STAFF')")
 public class KoiServiceController {

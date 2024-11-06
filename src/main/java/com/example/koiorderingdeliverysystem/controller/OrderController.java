@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/api")
-@CrossOrigin(origins = "https://localhost:5173")
 @SecurityRequirement(name = "api")
 public class OrderController {
     @Autowired
@@ -27,16 +27,16 @@ public class OrderController {
     private ModelMapper modelMapper;
 
     @PostMapping("/order")
-    @PreAuthorize("hasAuthority('CUSTOMER')")
+//    @PreAuthorize("hasAuthority('CUSTOMER')")
     public ResponseEntity<OrderResponse> placeOrder(@Valid @RequestBody OrderRequestDto orderRequest) {
 
         OrderResponse order = orderService.placeOrder(orderRequest);
         return ResponseEntity.ok(order);
     }
 
-    @GetMapping("/order")
-    public List<OrderHistory> getAllOrders() {
-        return orderService.getAllOrders();
+    @GetMapping("/order/customer")
+    public List<OrderHistory> getCustomerOrder() {
+        return orderService.getCustomerOrder();
 
     }
 

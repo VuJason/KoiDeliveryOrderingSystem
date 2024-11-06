@@ -16,9 +16,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "https://localhost:5173")
+@CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/api/payment")
 @SecurityRequirement(name = "api")
 public class PaymentController {
@@ -30,27 +31,16 @@ public class PaymentController {
     private VnpayService vnPayService;
 
     @GetMapping("/generate-qrcode/{orderId}")
-    public ResponseEntity<byte[]> getQRCode(@PathVariable int orderId, HttpServletRequest request) {
-        String vnpUrl= orderService.getOrderById(orderId)
+    public String generateQR(@PathVariable int orderId, HttpServletRequest request) {
+        return orderService.getOrderById(orderId)
                 .map(order -> vnPayService.generatePaymentQR(order.getId(), order.getTotal(), request))
                 .orElse("Order not found");
-
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            BitMatrix matrix = new QRCodeWriter().encode(vnpUrl, BarcodeFormat.QR_CODE, 300, 300);
-            MatrixToImageWriter.writeToStream(matrix, "PNG", baos);
-
-            byte[] qrCodeImage = baos.toByteArray();
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.IMAGE_PNG);
-            headers.setContentLength(qrCodeImage.length);
-
-            return ResponseEntity.ok().headers(headers).body(qrCodeImage);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).build();
-        }
-
     }
+
+    @GetMapping("/callback")
+    public String vnpayCallback(@RequestParam Map<String, String> vnpParams) {
+        // Gọi qua instance được inject
+        return vnPayService.handleVnpayCallback(vnpParams);
+    }
+
 }
