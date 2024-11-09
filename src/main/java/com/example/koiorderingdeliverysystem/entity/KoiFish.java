@@ -20,7 +20,7 @@ public class KoiFish {
     @JoinColumn(name = "customer_id")
     private Users customer_koi;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Orders order;
+//    @ManyToOne
+//    @JoinColumn(name = "order_id")
+//    private Orders order;
 }

@@ -143,16 +143,7 @@ public class UserService implements UserDetailsService {
     }
 
     public Users getCurrentAccount() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new RuntimeException("No authenticated user found");
-        }
-        String email = authentication.getName();
-        Users user = userRepository.findUsersByEmail(email);
-
-        if (user == null) {
-            throw new EntityNotFoundException("User not found with email: " + email);
-        }
+        Users user = (Users) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return user;
     }
 

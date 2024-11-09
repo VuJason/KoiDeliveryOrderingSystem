@@ -50,54 +50,58 @@ public class OrderService {
     public OrderResponse placeOrder(OrderRequestDto orderRequestDto) {
 
 
-        Users customer = userService.getCurrentAccount();
+            Users customer = userService.getCurrentAccount();
 
-        Orders order = modelMapper.map(orderRequestDto, Orders.class);
-        order.setCustomer(customer);
-        order.setOrder_date(new Date());
-        order.setStatus(OrderStatus.PENDING.toString().toUpperCase());
-        Date paymentDeadline = new Date(System.currentTimeMillis() + 5*1000*60); // 5 phút sau
-        order.setPaymentDeadline(paymentDeadline); // Thiết lập thời gian thanh toán
-        order.setPaid(false);
-        Orders savedOrder = ordersRepository.save(order);
+            Orders order = modelMapper.map(orderRequestDto, Orders.class);
+            order.setCustomer(customer);
+            order.setOrder_date(new Date());
+            order.setStatus(OrderStatus.PENDING.toString().toUpperCase());
 
-        double distance = distanceService.calculateDistance(
-                orderRequestDto.getOriginal_location(),
-                orderRequestDto.getDestination()
-        );
+            Date paymentDeadline = new Date(System.currentTimeMillis() + 5 * 1000 * 60); // 5 phút sau
+            order.setPaymentDeadline(paymentDeadline); // Thiết lập thời gian thanh toán
+            order.setPaid(false);
 
-        double totalServiceCost = 0;
+//        if (order.getKoiFish().isEmpty()) {
+//            throw new EntityNotFoundException("Koi Fish information is empty");
+//        }
 
-        if (orderRequestDto.getAdditional_services() != null && !orderRequestDto.getAdditional_services().isEmpty()) {
-            String[] additionalServices = orderRequestDto.getAdditional_services().split(",");
-
-            for (String serviceName : additionalServices) {
-
-                serviceName = serviceName.trim();
+            Orders savedOrder = ordersRepository.save(order);
 
 
-                KoiService service = serviceRepository.findKoiServiceByServiceName(serviceName);
-                if (service != null) {
+            double distance = Double.parseDouble(distanceService.getDistance(orderRequestDto.getOriginal_location(), orderRequestDto.getDestination()));
 
-                    OrderServices orderService = new OrderServices();
-                    orderService.setOrders(savedOrder);
-                    orderService.setServices(service);
-                    orderServicesRepository.save(orderService);
-                    totalServiceCost += service.getPrice();
+            double totalServiceCost = 0;
+
+            if (orderRequestDto.getAdditional_services() != null && !orderRequestDto.getAdditional_services().isEmpty()) {
+                String[] additionalServices = orderRequestDto.getAdditional_services().split(",");
+
+                for (String serviceName : additionalServices) {
+
+                    serviceName = serviceName.trim();
+
+
+                    KoiService service = serviceRepository.findKoiServiceByServiceName(serviceName);
+                    if (service != null) {
+
+                        OrderServices orderService = new OrderServices();
+                        orderService.setOrders(savedOrder);
+                        orderService.setServices(service);
+                        orderServicesRepository.save(orderService);
+                        totalServiceCost += service.getPrice();
+                    }
                 }
             }
-        }
-        double fees = 0.05 * distance * orderRequestDto.getQuantity();
-        double cost = fees + totalServiceCost;
-        double totalCost = Math.floor(cost / 100) * 100;
+            double fees = 0.05 * distance * orderRequestDto.getQuantity();
+            double cost = fees + totalServiceCost;
+            double totalCost = Math.floor(cost / 100) * 100;
 
-        order.setTotal(totalCost);
+            order.setTotal(totalCost);
 
 
-        savedOrder = ordersRepository.save(order);
-        OrderResponse response = modelMapper.map(savedOrder, OrderResponse.class);
-        response.setTotalCost(totalCost);
-        return response;
+            savedOrder = ordersRepository.save(order);
+            OrderResponse response = modelMapper.map(savedOrder, OrderResponse.class);
+            response.setTotalCost(totalCost);
+            return response;
 
     }
 

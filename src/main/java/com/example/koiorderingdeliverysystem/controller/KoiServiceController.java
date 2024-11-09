@@ -18,7 +18,7 @@ import java.util.List;
 @RequestMapping("/api/staff/services")
 @CrossOrigin(origins = "http://localhost:5173")
 @SecurityRequirement(name = "api")
-@PreAuthorize("hasAuthority('STAFF')")
+
 public class KoiServiceController {
     @Autowired
     private KoiServiceService koiServiceService;
@@ -29,16 +29,21 @@ public class KoiServiceController {
         return koiServiceService.getAllServices();
     }
 
+    @PreAuthorize("hasAuthority('STAFF')")
     @PostMapping("/addService")
     public ResponseEntity<KoiService> addService(@RequestBody KoiServiceDto koiServiceDto) {
         KoiService newService = koiServiceService.addService(koiServiceDto);
         return new ResponseEntity<>(newService, HttpStatus.CREATED);
     }
+
+    @PreAuthorize("hasAuthority('STAFF')")
     @PutMapping("/update/{serviceId}")
     public ResponseEntity<KoiService> updateService(@PathVariable Long serviceId, @RequestBody KoiServiceDto koiServiceDto) {
         KoiService updatedService = koiServiceService.updateService(serviceId, koiServiceDto);
         return new ResponseEntity<>(updatedService, HttpStatus.OK);
     }
+
+    @PreAuthorize("hasAuthority('STAFF')")
     @DeleteMapping("/delete/{serviceId}")
     public ResponseEntity<Void> deleteService(@PathVariable Long serviceId) {
         koiServiceService.deleteService(serviceId);
