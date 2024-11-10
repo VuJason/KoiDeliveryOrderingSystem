@@ -38,12 +38,14 @@ const Account = () => {
 
   const handleUpdateAccount = async () => {
     try {
-      const customerId = localStorage.getItem("customerId");
+      const token = localStorage.getItem("token");
+      const user = JSON.parse(localStorage.getItem("user"));
       const response = await fetch(
-        `http://103.67.197.66:8080/api/customer/${customerId}`,
+        `http://103.67.197.66:8080/api/customer/${user.id}`,
         {
           method: "PUT",
           headers: {
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({

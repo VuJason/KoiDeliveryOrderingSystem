@@ -2,8 +2,11 @@ import { useState, useEffect } from "react";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import TrackOrder from "../components/TrackOrder";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
-
+import {
+  AiOutlineLoading3Quarters,
+  AiFillStar,
+  AiOutlineStar,
+} from "react-icons/ai";
 interface Delivery {
   id: number;
   customerName: string;
@@ -12,6 +15,11 @@ interface Delivery {
   price: number;
   status: string;
 }
+interface FeedbackData {
+  orderId: number;
+  rating: number;
+  comment: string;
+}
 
 const DeliveryHistory = () => {
   const [deliveries, setDeliveries] = useState<Delivery[]>([]);
@@ -19,16 +27,23 @@ const DeliveryHistory = () => {
   const [error, setError] = useState("");
   const [filteredDeliveries, setFilteredDeliveries] = useState<Delivery[]>([]);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
+  const [rating, setRating] = useState<number>(5);
+  const [content, setContent] = useState<string>("");
   useEffect(() => {
     const fetchDeliveries = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("http://103.67.197.66:8080/api/order", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          "http://103.67.197.66:8080/api/order/customer",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
         const data = await response.json();
         setDeliveries(data);
         setFilteredDeliveries(data);
@@ -44,7 +59,36 @@ const DeliveryHistory = () => {
     setTrackingNumber(e.target.value);
     setError("");
   };
+  const handleFeedback = (orderId: number) => {
+    setSelectedOrderId(orderId);
+    setIsModalOpen(true);
+  };
+  const handleSubmitFeedback = async () => {
+    if (!selectedOrderId) return;
 
+    try {
+      const token = localStorage.getItem("token");
+      await fetch("http://103.67.197.66:8080/api/feedback", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          orderId: selectedOrderId,
+          rating,
+          content,
+        }),
+      });
+
+      setIsModalOpen(false);
+      setRating(5);
+      setContent("");
+      setSelectedOrderId(null);
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+    }
+  };
   const handleTrackOrder = () => {
     if (!trackingNumber.trim()) {
       setError("Please enter a tracking number");
@@ -133,7 +177,59 @@ const DeliveryHistory = () => {
             </div>
           </div>
         </div>
+        {isModalOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white p-8 rounded-lg w-96">
+              <h3 className="text-xl font-bold mb-4">Leave Your Feedback</h3>
 
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">Rating</label>
+                <div className="flex space-x-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      onClick={() => setRating(star)}
+                      className="text-2xl focus:outline-none"
+                    >
+                      {star <= rating ? (
+                        <AiFillStar className="text-yellow-400" />
+                      ) : (
+                        <AiOutlineStar className="text-yellow-400" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">
+                  Comment
+                </label>
+                <textarea
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  className="w-full p-2 border rounded"
+                  rows={4}
+                />
+              </div>
+
+              <div className="flex justify-end space-x-4">
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSubmitFeedback}
+                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                  Submit Feedback
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         <div className="mt-10 px-4">
           <div className="px-20 space-y-10">
             <div className="mt-16">
@@ -150,6 +246,7 @@ const DeliveryHistory = () => {
                       <th className="border-b p-3 text-left">Order Date</th>
                       <th className="border-b p-3 text-left">Price</th>
                       <th className="border-b p-3 text-left">Status</th>
+                      <th className="border-b p-3 text-left">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -174,6 +271,20 @@ const DeliveryHistory = () => {
                           >
                             {delivery.status}
                           </span>
+                        </td>
+                        <td className="border-b p-3">
+                          {delivery.status === "COMPLETED" ? (
+                            <button
+                              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                              onClick={() => handleFeedback(delivery.id)}
+                            >
+                              Feedback
+                            </button>
+                          ) : (
+                            <span className="text-gray-400">
+                              Feedback unavailable
+                            </span>
+                          )}
                         </td>
                       </tr>
                     ))}
