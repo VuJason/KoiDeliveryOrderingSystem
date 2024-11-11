@@ -8,6 +8,8 @@ import DeliveryPagination from "../components/admin/delivery/pagination/Delivery
 import { orderApi } from '../services/orderApi';
 import { Order } from '../types/order';
 import { useOrderManagement } from '../hooks/useOrderManagement';
+import { getStatusColor } from "../utils/statusColors";
+import axios from "axios";
 
 function BrowserTrack() {
   const {
@@ -25,6 +27,7 @@ function BrowserTrack() {
     setCurrentPage,
     setSearchInput,
     setFilterPrice,
+    fetchOrders,
     setFilterType,
     setFilterStatus,
     handleSearch,
@@ -41,7 +44,36 @@ function BrowserTrack() {
       status: true
     }
   });
-
+  const handleConfirm = async (orderId) => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"))
+      const token = localStorage.getItem("token")
+      await axios.put(`http://103.67.197.66:8080/api/order/staff/${orderId}/status?status=Approved`, {},{
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      await fetchOrders()
+    } catch (err) {
+      console.log(err)
+    }
+  }
+  const handleDelete = async (orderId) => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"))
+      const token = localStorage.getItem("token")
+      await axios.put(`http://103.67.197.66:8080/api/order/staff/${orderId}/status?status=Cancel`, {},{
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      await fetchOrders()
+    } catch (err) {
+      console.log(err)
+    }
+  }
   return (
     <div className="w-screen overflow-x-hidden bg-light-blue">
       <Header currentPage={undefined} />
@@ -97,31 +129,47 @@ function BrowserTrack() {
                 <thead>
                   <tr className="bg-gray-50">
                     <th className="py-2 px-4 text-left font-medium text-gray-600">ID</th>
-                    <th className="py-2 px-4 text-left font-medium text-gray-600">CLIENT</th>
-                    <th className="py-2 px-4 text-left font-medium text-gray-600">DELIVERY ADDRESS</th>
+                    <th className="py-2 px-4 text-left font-medium text-gray-600">CUSTOMER</th>
+                    <th className="py-2 px-4 text-left font-medium text-gray-600">DELIVERY PRODUCT</th>
+                    <th className="py-2 px-4 text-left font-medium text-gray-600">ORIGINAL LOCATION</th>
+                    <th className="py-2 px-4 text-left font-medium text-gray-600">DESTINATION</th>
                     <th className="py-2 px-4 text-left font-medium text-gray-600">PRICE</th>
                     <th className="py-2 px-4 text-left font-medium text-gray-600">TYPE</th>
                     <th className="py-2 px-4 text-left font-medium text-gray-600">STATUS</th>
-                    <th className="py-2 px-4 text-left font-medium text-gray-600">EDIT</th>
+                    <th className="py-2 px-4 text-left font-medium text-gray-600">ACTIONS</th>
                   </tr>
                 </thead>
                 <tbody>
                   {getCurrentPageData().map((order) => (
-                    <tr key={order.id} className="border-b">
-                      <td className="py-3 px-4 text-sm text-gray-700">{order.id}</td>
-                      <td className="py-3 px-4 text-sm text-gray-700">{order.client}</td>
-                      <td className="py-3 px-4 text-sm text-gray-700">{order.address}</td>
-                      <td className="py-3 px-4 text-sm text-gray-700">{order.price}</td>
-                      <td className="py-3 px-4 text-sm text-gray-700">{order.type}</td>
-                      <td className={`py-3 px-4 text-sm ${getStatusColor(order.status)}`}>
-                        {order.status}
-                      </td>
+                    <tr key={order.orderId} className="border-b">
+                      <td className="py-3 px-4 text-sm text-gray-700">{order.orderId}</td>
+                      <td className="py-3 px-4 text-sm text-gray-700">{order.customerName}</td>
+                      <td className="py-3 px-4 text-sm text-gray-700">API CHƯA CÓ</td>
+                      <td className="py-3 px-4 text-sm text-gray-700">{order.original_location}</td>
+                      <td className="py-3 px-4 text-sm text-gray-700">{order.destination}</td>
                       <td className="py-3 px-4 text-sm text-gray-700">
+                        {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.price)}
+                      </td>
+
+                      <td className="py-3 px-4 text-sm text-gray-700">{order.transport_method}</td>
+                      <td className={`py-3 px-4 text-sm ${getStatusColor(order.orderStatus)}`}>
+                        {order.orderStatus}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-700 space-x-2">
+                        {order.orderStatus === "PENDING" && (
+                          <button
+                            className="bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600 transition duration-200"
+                            onClick={() => handleConfirm(order.orderId)}
+                          >
+                            Confirm
+                          </button>
+                        )}
+
                         <button
-                          className="text-blue-600 hover:underline"
-                          onClick={() => handleViewDetails(order.id)}
+                          className="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 transition duration-200"
+                          onClick={() => handleDelete(order.orderId)}
                         >
-                          Details
+                          Delete
                         </button>
                       </td>
                     </tr>
@@ -133,7 +181,7 @@ function BrowserTrack() {
                 <DeliveryPagination
                   current={currentPage}
                   onChange={setCurrentPage}
-                  total={getCurrentPageData().length}
+                  total={orders.length}
                   pageSize={5}
                 />
               </div>

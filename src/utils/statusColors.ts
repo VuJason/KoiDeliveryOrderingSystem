@@ -1,5 +1,5 @@
 export const getStatusColor = (status: string) => {
-  switch (status.toLowerCase()) {
+  switch (status?.toLowerCase()) {
     case 'confirmed':
     case 'delivered':
       return 'text-green-500 bg-green-100';

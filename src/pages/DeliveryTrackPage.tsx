@@ -7,10 +7,12 @@ import DeliveryPagination from "../components/admin/delivery/pagination/Delivery
 import { orderApi } from '../services/orderApi';
 import { Order } from '../types/order';
 import { useOrderManagement } from '../hooks/useOrderManagement';
+import { getStatusColor } from "../utils/statusColors";
 
 
 function DeliveryTrackPage() {
   const {
+    orders,
     isLoading,
     error,
     currentPage,
@@ -29,7 +31,7 @@ function DeliveryTrackPage() {
     getCurrentPageData,
     pageSize
   } = useOrderManagement({
-    fetchOrdersFn: orderApi.getDeliveryTrackOrders,
+    fetchOrdersFn: orderApi.getNewOrders,
     initialFilters: {
       date: false,
       type: false,
@@ -39,20 +41,7 @@ function DeliveryTrackPage() {
     }
   });
 
-  const getStatusColor = (status) => {
-    switch (status.toLowerCase()) {
-      case "confirmed":
-        return "text-green-500 bg-green-100";
-      case "in transit":
-        return "text-yellow-500 bg-yellow-100";
-      case "delivered":
-        return "text-blue-500 bg-blue-100";
-      case "canceled":
-        return "text-red-500 bg-red-100";
-      default:
-        return "text-gray-500 bg-gray-100";
-    }
-  };
+  console.log(orders)
 
   return (
     <div className="w-screen overflow-x-hidden bg-light-blue">
@@ -71,8 +60,8 @@ function DeliveryTrackPage() {
         </div>
       </section>
 
- {/* Search Section */}
-       <div className="relative z-10 mt-10 flex justify-center">
+      {/* Search Section */}
+      <div className="relative z-10 mt-10 flex justify-center">
         <div className="flex items-center space-x-2">
           <div className="relative w-96">
             <input
@@ -150,7 +139,7 @@ function DeliveryTrackPage() {
             </select>
             <FontAwesomeIcon icon={faChevronDown} className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
           </div>
-             {/* Nút Reset */}
+          {/* Nút Reset */}
           <button
             className="text-red-500 flex items-center font-semibold"
             onClick={resetFilters}
@@ -158,50 +147,55 @@ function DeliveryTrackPage() {
             <FontAwesomeIcon icon={faSyncAlt} className="mr-2" />
             Reset Filter
           </button>
-          </div>
+        </div>
 
 
         {/* Delivery Table */}
-<div className="overflow-x-auto">
-  {isLoading ? (
-    <div className="text-center py-4">Loading...</div>
-  ) : error ? (
-    <div className="text-center py-4 text-red-500">{error}</div>
-  ) : (
-    <table className="min-w-full bg-white border border-gray-200">
-      <thead>
-        <tr className="bg-gray-50">
-          <th className="py-2 px-4 text-left font-medium text-gray-600">ID</th>
-          <th className="py-2 px-4 text-left font-medium text-gray-600">DELIVERY PRODUCT</th>
-          <th className="py-2 px-4 text-left font-medium text-gray-600">DELIVERY ADDRESS</th>
-          <th className="py-2 px-4 text-left font-medium text-gray-600">PRICE</th>
-          <th className="py-2 px-4 text-left font-medium text-gray-600">CUSTOMER</th>
-          <th className="py-2 px-4 text-left font-medium text-gray-600">STATUS</th>
-        </tr>
-      </thead>
-      <tbody>
-        {getCurrentPageData().map((order) => (
-          <tr key={order.id} className="border-b">
-            <td className="py-3 px-4 text-sm text-gray-700">{order.id}</td>
-            <td className="py-3 px-4 text-sm text-gray-700">{order.product}</td>
-            <td className="py-3 px-4 text-sm text-gray-700">{order.address}</td>
-            <td className="py-3 px-4 text-sm text-gray-700">{order.price}</td>
-            <td className="py-3 px-4 text-sm text-gray-700">{order.customer}</td>
-            <td className={`py-3 px-4 text-sm ${getStatusColor(order.status)}`}>
-              {order.status}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  )}
-</div>
+        <div className="overflow-x-auto">
+          {isLoading ? (
+            <div className="text-center py-4">Loading...</div>
+          ) : error ? (
+            <div className="text-center py-4 text-red-500">{error}</div>
+          ) : (
+            <table className="min-w-full bg-white border border-gray-200">
+              <thead>
+                <tr className="bg-gray-50">
+                  <th className="py-2 px-4 text-left font-medium text-gray-600">ID</th>
+                  <th className="py-2 px-4 text-left font-medium text-gray-600">DELIVERY PRODUCT</th>
+                  <th className="py-2 px-4 text-left font-medium text-gray-600">DESTINATION</th>
+                  <th className="py-2 px-4 text-left font-medium text-gray-600">DESTINATION</th>
+                  <th className="py-2 px-4 text-left font-medium text-gray-600">PRICE</th>
+                  <th className="py-2 px-4 text-left font-medium text-gray-600">CUSTOMER</th>
+                  <th className="py-2 px-4 text-left font-medium text-gray-600">STATUS</th>
+                </tr>
+              </thead>
+              <tbody>
+                {getCurrentPageData().map((order) => (
+                  <tr key={order.orderId} className="border-b">
+                    <td className="py-3 px-4 text-sm text-gray-700">{order.orderId}</td>
+                    <td className="py-3 px-4 text-sm text-gray-700">API CHƯA CÓ</td>
+                    <td className="py-3 px-4 text-sm text-gray-700">{order.original_location}</td>
+                    <td className="py-3 px-4 text-sm text-gray-700">{order.destination}</td>
+                    <td className="py-3 px-4 text-sm text-gray-700">
+                      {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.price)}
+                    </td>
 
- <div className="mt-4">
+                    <td className="py-3 px-4 text-sm text-gray-700">{order.customerName}</td>
+                    <td className={`py-3 px-4 text-sm ${getStatusColor(order.orderStatus)}`}>
+                      {order.orderStatus}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+
+        <div className="mt-4">
           <DeliveryPagination
             current={currentPage}
             onChange={setCurrentPage}
-            total={getCurrentPageData().length}
+            total={orders.length}
             pageSize={pageSize}
           />
         </div>

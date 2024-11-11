@@ -22,6 +22,10 @@ const router = createBrowserRouter([
     element: <PaymentResult />,
   },
   {
+    path: "/browser-track",
+    element: <BrowserTrack />,
+  },
+  {
     path: "/login",
     element: <LoginPage />,
   },

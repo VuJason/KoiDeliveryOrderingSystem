@@ -16,9 +16,9 @@ interface UseOrderManagementProps {
   };
 }
 
-export const useOrderManagement = ({ 
-  fetchOrdersFn, 
-  initialFilters 
+export const useOrderManagement = ({
+  fetchOrdersFn,
+  initialFilters
 }: {
   fetchOrdersFn: () => Promise<any>;
   initialFilters: {
@@ -52,7 +52,7 @@ export const useOrderManagement = ({
   const [filterStatus, setFilterStatus] = useState("");
   const [searchError, setSearchError] = useState("");
   const [searchResults, setSearchResults] = useState<Order[]>([]);
-  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [sortField, setSortField] = useState<string>("");
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
@@ -80,7 +80,7 @@ export const useOrderManagement = ({
       const bValue = b[sortField as keyof Order];
 
       if (typeof aValue === 'string' && typeof bValue === 'string') {
-        return sortDirection === 'asc' 
+        return sortDirection === 'asc'
           ? aValue.localeCompare(bValue)
           : bValue.localeCompare(aValue);
       }
@@ -95,7 +95,7 @@ export const useOrderManagement = ({
 
   const getFilteredData = () => {
     if (!orders || !Array.isArray(orders)) {
-        return []; // Return an empty array if orders is undefined or not an array
+      return []; // Return an empty array if orders is undefined or not an array
     }
 
     const filtered = orders.filter((order) => {
@@ -116,7 +116,7 @@ export const useOrderManagement = ({
 
   const dashboardStats = useMemo(() => {
     if (!initialFilters.dashboard) return null;
-    
+
     const filteredOrders = getFilteredData();
     return {
       totalOrders: filteredOrders.length,
@@ -124,8 +124,8 @@ export const useOrderManagement = ({
       deliveredOrders: filteredOrders.filter(order => order.status === ORDER_STATUS.DELIVERED).length,
       canceledOrders: filteredOrders.filter(order => order.status === ORDER_STATUS.CANCELED).length,
       totalRevenue: filteredOrders.reduce((sum, order) => sum + parseFloat(order.price || "0"), 0),
-      averageOrderValue: filteredOrders.length ? 
-        filteredOrders.reduce((sum, order) => sum + parseFloat(order.price || "0"), 0) / filteredOrders.length : 
+      averageOrderValue: filteredOrders.length ?
+        filteredOrders.reduce((sum, order) => sum + parseFloat(order.price || "0"), 0) / filteredOrders.length :
         0
     };
   }, [orders, filterType, filterStatus, filterDate]);
@@ -163,17 +163,12 @@ export const useOrderManagement = ({
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-        try {
-            const response = await fetchOrdersFn();
-            setOrders(response.data); // Adjust based on your API response structure
-        } catch (error) {
-            setError("Failed to fetch orders");
-        }
+    const fetchInitialOrders = async () => {
+      await fetchOrders();
     };
-
-    fetchData();
-}, [fetchOrdersFn]);
+  
+    fetchInitialOrders();
+  }, [fetchOrdersFn]);
 
   const handleSearch = () => {
     if (!searchInput.trim()) {
@@ -183,9 +178,9 @@ export const useOrderManagement = ({
     setSearchError("");
     setOrderNumber(searchInput);
 
-    const results = orders.filter(order => 
-      order.id.toString().includes(searchInput) ||
-      order.customer?.toLowerCase().includes(searchInput.toLowerCase())
+    const results = orders.filter(order =>
+      order.orderId.toString().includes(searchInput) ||
+      order.customerName?.toLowerCase().includes(searchInput.toLowerCase())
     );
     setSearchResults(results);
     setCurrentPage(1);
@@ -211,7 +206,7 @@ export const useOrderManagement = ({
     return dataToUse.slice(startIndex, endIndex);
   };
 
-  const handleViewDetails = (id: string) => {
+  const handleViewDetails = (id: number) => {
     setSelectedOrderId(id);
     setIsModalOpen(true);
     document.body.style.overflow = 'hidden';
@@ -223,14 +218,14 @@ export const useOrderManagement = ({
     document.body.style.overflow = 'unset';
   };
 
-  const handleDeleteOrder = (id: string) => {
-    setOrders(prevOrders => prevOrders.filter(order => order.id.toString() !== id));
-    setSearchResults(prevResults => prevResults.filter(order => order.id.toString() !== id));
+  const handleDeleteOrder = (id: number ) => {
+    setOrders(prevOrders => prevOrders.filter(order => order.orderId !== id));
+    setSearchResults(prevResults => prevResults.filter(order => order.orderId !== id));
   };
 
-  const updateOrderStatus = async (id: string, newStatus: OrderStatus) => {
+  const updateOrderStatus = async (id: number, newStatus: OrderStatus) => {
     try {
-      await orderApi.updateOrderStatus(Number(id), newStatus);
+      await orderApi.updateOrderStatus(id, newStatus);
       await fetchOrders();
     } catch (err) {
       setError('Failed to update order status');

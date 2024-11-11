@@ -1,12 +1,15 @@
 import { useState } from "react";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import MapComponent from "../components/MapComponent";
 
 const Order = () => {
   const [fishDetails, setFishDetails] = useState({
     name: "",
-    fish_weight: 0
+    fish_weight: 0,
   });
+  const [fishImage, setFishImage] = useState<File | null>(null);
+
   const [orderDetails, setOrderDetails] = useState({
     quantity: 0,
     original_location: "",
@@ -17,15 +20,16 @@ const Order = () => {
   });
   const [qrCode, setQrCode] = useState<string>("");
 
-  const [isFishSubmitted, setIsFishSubmitted] = useState(false);
+  const [isFishSubmitted, setIsFishSubmitted] = useState(true);
 
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [notification, setNotification] = useState({
-    message: '',
-    type: '' // 'success' hoặc 'error'
+    message: "",
+    type: "", // 'success' hoặc 'error'
   });
 
+  const [orderId, setOrderId] = useState<number>();
   const handleServiceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     if (!selectedServices.includes(value) && value !== "") {
@@ -39,6 +43,11 @@ const Order = () => {
     setIsSelectOpen(false);
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFishImage(e.target.files[0]);
+    }
+  };
   const removeService = (serviceToRemove: string) => {
     const newServices = selectedServices.filter(
       (service) => service !== serviceToRemove
@@ -64,44 +73,69 @@ const Order = () => {
   const handleFishSubmit = async () => {
     try {
       const token = localStorage.getItem("token");
+      const formData = new FormData();
+      formData.append("name", fishDetails.name);
+      formData.append("fish_weight", fishDetails.fish_weight.toString());
+      if (fishImage) {
+        formData.append("image", fishImage);
+      }
       const response = await fetch("http://103.67.197.66:8080/api/koifish", {
         method: "POST",
         headers: {
           accept: "*/*",
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
         },
-        body: JSON.stringify(fishDetails),
+        body: formData,
       });
 
+      // const orderId = data.id;
+      const paymentResponse = await fetch(
+        `http://103.67.197.66:8080/api/payment/generate-qrcode/${orderId}`,
+        {
+          method: "GET",
+          headers: {
+            accept: "*/*",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const paymentData = await paymentResponse.text();
+      console.log("Payment QR code:", paymentData);
+      window.open(paymentData, "_blank");
+
       if (response.ok) {
+        setOrderId(undefined);
         setIsFishSubmitted(true);
         setNotification({
           message: "Fish details submitted successfully",
-          type: "success"
+          type: "success",
         });
       }
     } catch (error) {
       setNotification({
         message: "Failed to submit fish details",
-        type: "error"
+        type: "error",
       });
     }
   };
   const handlePlaceOrder = async () => {
     setNotification({
       message: "",
-      type: ""
-    })
-    if (!orderDetails.quantity || !orderDetails.original_location || !orderDetails.destination || !orderDetails.transport_method) {
+      type: "",
+    });
+    if (
+      !orderDetails.quantity ||
+      !orderDetails.original_location ||
+      !orderDetails.destination ||
+      !orderDetails.transport_method
+    ) {
       setNotification({
-        message: 'Vui lòng điền đầy đủ thông tin đơn hàng',
-        type: 'error'
+        message: "Vui lòng điền đầy đủ thông tin đơn hàng",
+        type: "error",
       });
       return;
     }
-
-
 
     try {
       const token = localStorage.getItem("token");
@@ -117,25 +151,19 @@ const Order = () => {
 
       const data = await response.json();
       console.log("Order placed successfully:", data);
+      setOrderId(data.id);
 
-      const orderId = data.id;
-      const paymentResponse = await fetch(`http://103.67.197.66:8080/api/payment/generate-qrcode/${orderId}`, {
-        method: "GET",
-        headers: {
-          accept: "*/*",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const paymentData = await paymentResponse.text();
-      console.log("Payment QR code:", paymentData);
-      window.open(paymentData, '_blank');
-
-
+      if (response.ok) {
+        setIsFishSubmitted(false);
+        setNotification({
+          message: "Fish details submitted successfully",
+          type: "success",
+        });
+      }
     } catch (error) {
       setNotification({
-        message: 'Đã có lỗi xảy ra khi đặt hàng',
-        type: 'error'
+        message: "Đã có lỗi xảy ra khi đặt hàng",
+        type: "error",
       });
       console.error("Error placing order:", error);
     }
@@ -169,15 +197,36 @@ const Order = () => {
               <input
                 type="text"
                 placeholder="Fish Name"
-                onChange={(e) => setFishDetails(prev => ({ ...prev, name: e.target.value }))}
+                onChange={(e) =>
+                  setFishDetails((prev) => ({ ...prev, name: e.target.value }))
+                }
                 className="w-full p-2 border rounded mb-4"
               />
               <input
                 type="number"
                 placeholder="Fish Weight"
-                onChange={(e) => setFishDetails(prev => ({ ...prev, fish_weight: Number(e.target.value) }))}
+                onChange={(e) =>
+                  setFishDetails((prev) => ({
+                    ...prev,
+                    fish_weight: Number(e.target.value),
+                  }))
+                }
                 className="w-full p-2 border rounded mb-4"
               />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="w-full p-2 border rounded mb-4"
+              />
+              {/* Preview image if needed */}
+              {fishImage && (
+                <img
+                  src={URL.createObjectURL(fishImage)}
+                  alt="Fish preview"
+                  className="w-40 h-40 object-cover rounded"
+                />
+              )}
               <button
                 onClick={handleFishSubmit}
                 className="w-full bg-blue-500 text-white p-2 rounded"
@@ -198,7 +247,7 @@ const Order = () => {
                 className="w-full p-2 border rounded"
               />
 
-              <input
+              {/* <input
                 type="text"
                 name="original_location"
                 placeholder="Enter origin location"
@@ -211,7 +260,8 @@ const Order = () => {
                 placeholder="Enter destination"
                 onChange={handleInputChange}
                 className="w-full p-2 border rounded"
-              />
+              /> */}
+
               <div className="relative">
                 <div
                   className="w-full p-2 border rounded min-h-[42px] cursor-pointer flex flex-wrap gap-2"
@@ -273,10 +323,12 @@ const Order = () => {
                 <option value="Ground">Ground</option>
               </select>
               {notification.message && (
-                <div className={`p-4 rounded-md ${notification.type === 'success'
-                  ? 'bg-green-100 text-green-700 border border-green-400'
-                  : 'bg-red-100 text-red-700 border border-red-400'
-                  }`}>
+                <div
+                  className={`p-4 rounded-md ${notification.type === "success"
+                      ? "bg-green-100 text-green-700 border border-green-400"
+                      : "bg-red-100 text-red-700 border border-red-400"
+                    }`}
+                >
                   {notification.message}
                 </div>
               )}
@@ -289,6 +341,7 @@ const Order = () => {
                   />
                 </div>
               )}
+              <MapComponent />
               <button
                 onClick={handlePlaceOrder}
                 className="w-full bg-blue-500 text-white p-2 rounded"
@@ -298,7 +351,6 @@ const Order = () => {
             </div>
           </div>
         )}
-
       </main>
       <Footer />
     </div>

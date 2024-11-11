@@ -46,7 +46,7 @@ const Sidebar: React.FC = () => {
         return "3";
       case "/delivery":
         return "4";
-      case "/verify-identity":
+      case "/koifish":
         return "5";
       case "/settings":
         return "6";
@@ -67,14 +67,12 @@ const Sidebar: React.FC = () => {
         <Menu.Item key="2" icon={<UserOutlined />}>
           <Link to="/users">Users</Link>
         </Menu.Item>
-        <Menu.Item key="3" icon={<MessageOutlined />}>
-          <Link to="/messages">Messages</Link>
-        </Menu.Item>
+ 
         <Menu.Item key="4" icon={<DeliveredProcedureOutlined />}>
           <Link to="/delivery">Delivery</Link>
         </Menu.Item>
         <Menu.Item key="5" icon={<IdcardOutlined />}>
-          <Link to="/verify-identity">Verify Identity</Link>
+          <Link to="/koifish">Koi Fish</Link>
         </Menu.Item>
         <div className="sidebar-footer">
           <Menu.Item key="6" icon={<SettingOutlined />}>

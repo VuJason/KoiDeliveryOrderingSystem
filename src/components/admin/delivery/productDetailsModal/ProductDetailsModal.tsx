@@ -3,9 +3,10 @@ import { FaStar, FaTimes } from 'react-icons/fa';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ORDER_STATUS, STATUS_COLORS } from '../../../../constants/orderStatus';
+import { OrderStatus } from '../../../../types/order';
 
 interface ProductDetail {
-  id: string;
+  id: number;
   name: string;
   price: string;
   image: string;
@@ -24,8 +25,8 @@ interface ProductDetail {
 interface ProductDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  deliveryId: string | null;
-  updateStatus: (id: string, newStatus: string) => void;
+  deliveryId: number | null;
+  updateStatus: (id: number, newStatus: OrderStatus) => void;
 }
 
 const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({ 

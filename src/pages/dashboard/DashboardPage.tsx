@@ -1,4 +1,4 @@
-import React, {useState, useMemo} from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Card from "../../components/admin/card/Card";
 import DeliveryList from "../../components/admin/delivery/list/DeliveryList";
 import DeliveryPagination from "../../components/admin/delivery/pagination/DeliveryPagination";
@@ -16,6 +16,8 @@ import { faBox, faClock, faDollarSign, faChartLine } from '@fortawesome/free-sol
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import StatCard from "../../components/admin/card/StatCard";
 import Sidebar from "../../components/admin/sidebar/Sidebar";
+import { getStatusColor } from "../../utils/statusColors";
+import axios from "axios";
 
 const DashboardPage: React.FC = () => {
   const {
@@ -35,18 +37,28 @@ const DashboardPage: React.FC = () => {
     resetFilters,
     getCurrentPageData
   } = useOrderManagement({
-    fetchOrdersFn: orderApi.getDashboardOrders,
+    fetchOrdersFn: orderApi.getNewOrders,
     initialFilters: {
       type: true,
-      dashboard: true
     }
   });
 
   const chartData = useMemo(() => getChartData(), [orders]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = localStorage.getItem("token")
+      const response = await axios.get("http://103.67.197.66:8080/api/revenue", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+      console.log(response.data)
+    }
+    fetchData()
+  }, [])
   return (
-    <div className="admin-layout">
-      <Sidebar />
       <div className="main-content">
         <div className="container mx-auto px-4 py-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-8">Dashboard</h1>
@@ -114,23 +126,23 @@ const DashboardPage: React.FC = () => {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {getCurrentPageData().map((order) => (
-                    <tr key={order.id}>
+                    <tr key={order.orderId}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {order.id}
+                        {order.orderId}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {order.customer}
+                        {order.customerName}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {order.type}
+                        {order.transport_method}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(order.status)}`}>
-                          {order.status}
+                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(order.orderStatus)}`}>
+                          {order.orderStatus}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {new Date(order.date).toLocaleDateString()}
+                        {new Date(order.order_date).toLocaleDateString()}
                       </td>
                     </tr>
                   ))}
@@ -144,13 +156,12 @@ const DashboardPage: React.FC = () => {
             <DeliveryPagination
               current={currentPage}
               onChange={setCurrentPage}
-              total={getFilteredData().length}
+              total={orders.length}
               pageSize={5}
             />
           </div>
         </div>
       </div>
-    </div>
   );
 };
 

@@ -20,15 +20,13 @@ api.interceptors.request.use((config) => {
 
 export const orderApi = {
   getNewOrders: async (): Promise<Order[]> => {
-    const response = await api.get<OrderResponse>('/api/order/staff/viewOrder');
-    return response.data.data;
+    const response = await api.get<Order[]>('/api/order/staff/viewOrder');
+    return response.data;
   },
 
   getDeliveryOrders: async (): Promise<Order[]> => {
-    const response = await api.get<OrderResponse>('/api/order/staff/viewOrder', {
-      params: { status: 'DELIVERING' }
-    });
-    return response.data.data;
+    const response = await api.get<Order[]>('/api/order/staff/viewOrder');
+    return response.data;
   },
 
   getCustomerOrders: async (): Promise<Order[]> => {

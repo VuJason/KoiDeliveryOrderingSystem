@@ -14,11 +14,11 @@ interface FormData {
 const Account = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<FormData>({
-    fullName: "John Doe",
-    email: "john@example.com",
-    phone: "+1234567890",
-    address: "123 Main St",
-    city: "New York",
+    fullName: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
   });
   const navigate = useNavigate();
 
@@ -28,7 +28,33 @@ const Account = () => {
       navigate("/login");
     }
   }, [navigate]);
-
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch("http://103.67.197.66:8080/api/currentUser/detail", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          setFormData({
+            fullName: data.username,
+            email: data.email,
+            phone: data.phone,
+            address: "", // You can add these fields to your API response if needed
+            city: "",    // You can add these fields to your API response if needed
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+  
+    fetchUserData();
+  }, []);
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData((prev) => ({
       ...prev,

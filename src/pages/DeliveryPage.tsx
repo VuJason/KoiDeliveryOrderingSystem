@@ -6,6 +6,8 @@ import { useOrderManagement } from "../hooks/useOrderManagement";
 import ProductDetailsModal from "../components/admin/delivery/productDetailsModal/ProductDetailsModal";
 import Header from "../components/admin/header/Header";
 import { orderApi } from '../services/orderApi';
+import { getStatusColor } from "../utils/statusColors";
+import Footer from "../components/Footer";
 
 function DeliveryPage() {
   const {
@@ -55,26 +57,12 @@ function DeliveryPage() {
     return <div>No orders found</div>;
   }
 
-  const getStatusColor = (status) => {
-    switch (status.toLowerCase()) {
-      case "confirmed":
-        return "text-green-500 bg-green-100";
-      case "in transit":
-        return "text-yellow-500 bg-yellow-100";
-      case "delivered":
-        return "text-blue-500 bg-blue-100";
-      case "canceled":
-        return "text-red-500 bg-red-100";
-      default:
-        return "text-gray-500 bg-gray-100";
-    }
-  };
+
 
   return (
-    <div className="w-screen overflow-x-hidden bg-light-blue">
-      <Header currentPage={undefined} />
-      
-      <section className="mt-12 px-6 mb-20">
+    <div className="main-content">
+       <div className="container mx-auto px-4 py-8">
+       <section className="px-6 mb-20">
         <h2 className="text-2xl font-semibold text-gray-800 mb-6">Delivery Management</h2>
         
         {/* Filter Section */}
@@ -148,7 +136,8 @@ function DeliveryPage() {
                   <tr className="bg-gray-50">
                     <th className="py-2 px-4 text-left font-medium text-gray-600">ID</th>
                     <th className="py-2 px-4 text-left font-medium text-gray-600">RIDER</th>
-                    <th className="py-2 px-4 text-left font-medium text-gray-600">ADDRESS</th>
+                    <th className="py-2 px-4 text-left font-medium text-gray-600">ORIGINAL LOCATION</th>
+                    <th className="py-2 px-4 text-left font-medium text-gray-600">DESTINATION</th>
                     <th className="py-2 px-4 text-left font-medium text-gray-600">DATE</th>
                     <th className="py-2 px-4 text-left font-medium text-gray-600">TYPE</th>
                     <th className="py-2 px-4 text-left font-medium text-gray-600">STATUS</th>
@@ -157,18 +146,19 @@ function DeliveryPage() {
                 </thead>
                 <tbody>
                   {getCurrentPageData().map((order) => (
-                    <tr key={order.id} className="border-b">
-                      <td className="py-3 px-4 text-sm text-gray-700">{order.id}</td>
-                      <td className="py-3 px-4 text-sm text-gray-700">{order.rider}</td>
-                      <td className="py-3 px-4 text-sm text-gray-700">{order.address}</td>
-                      <td className="py-3 px-4 text-sm text-gray-700">{order.date}</td>
-                      <td className="py-3 px-4 text-sm text-gray-700">{order.type}</td>
-                      <td className={`py-3 px-4 text-sm ${getStatusColor(order.status)}`}>
-                        {order.status}
+                    <tr key={order.orderId} className="border-b">
+                      <td className="py-3 px-4 text-sm text-gray-700">{order.orderId}</td>
+                      <td className="py-3 px-4 text-sm text-gray-700">API CHƯA CÓ</td>
+                      <td className="py-3 px-4 text-sm text-gray-700">{order.original_location}</td>
+                      <td className="py-3 px-4 text-sm text-gray-700">{order.destination}</td>
+                      <td className="py-3 px-4 text-sm text-gray-700">{order.order_date}</td>
+                      <td className="py-3 px-4 text-sm text-gray-700">{order.transport_method}</td>
+                      <td className={`py-3 px-4 text-sm ${getStatusColor(order.orderStatus)}`}>
+                        {order.orderStatus}
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-700">
                         <button
-                          onClick={() => handleViewDetails(order.id)}
+                          onClick={() => handleViewDetails(order.orderId)}
                           className="text-blue-600 hover:underline"
                         >
                           View Details
@@ -183,7 +173,7 @@ function DeliveryPage() {
                 <DeliveryPagination
                   current={currentPage}
                   onChange={setCurrentPage}
-                  total={getCurrentPageData().length}
+                  total={orders.length}
                   pageSize={5}
                 />
               </div>
@@ -201,8 +191,10 @@ function DeliveryPage() {
         />
       )}
 
-      <Footer />
+       </div>
+
     </div>
+  
   );
 }
 
