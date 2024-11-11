@@ -5,6 +5,7 @@ import com.example.koiorderingdeliverysystem.dto.OrderDto;
 import com.example.koiorderingdeliverysystem.dto.OrderHistory;
 import com.example.koiorderingdeliverysystem.dto.UpdateProfile;
 import com.example.koiorderingdeliverysystem.dto.request.RegistrationDto;
+import com.example.koiorderingdeliverysystem.dto.response.AdminResponse;
 import com.example.koiorderingdeliverysystem.dto.response.RegistrationResponse;
 import com.example.koiorderingdeliverysystem.dto.response.UpdateResponse;
 import com.example.koiorderingdeliverysystem.dto.response.UserResponse;
@@ -65,8 +66,8 @@ public class AdminController {
     }
 
     @GetMapping("/user")
-    public List<Users> getAllUsers() {
-        return userService.getAllUser();
+    public List<AdminResponse> getAllUsers() {
+        return adminService.getAllUserByAdmin();
     }
 
     @GetMapping("/order")

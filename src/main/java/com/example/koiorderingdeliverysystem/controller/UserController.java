@@ -37,7 +37,6 @@ public class UserController {
 
     }
 
-
     @PostMapping("/login")
     public ResponseEntity<UserResponse> login(@Valid @RequestBody LoginDto login) {
         UserResponse checkuser = userService.login(login);
@@ -51,7 +50,7 @@ public class UserController {
     }
 
     @GetMapping("/user")
-    public List<Users> getAllUsers() {
+    public List<UserResponse> getAllUsers() {
         return userService.getAllUser();
     }
 
@@ -65,6 +64,12 @@ public class UserController {
     public ResponseEntity deleteUser(@PathVariable("userId") int userId) {
         Users deletedUsers = userService.delete(userId);
         return ResponseEntity.ok(deletedUsers);
+    }
+
+    @GetMapping("/currentUser/detail")
+    public ResponseEntity<UserResponse> getCurrentUser() {
+        UserResponse userResponse = userService.getCurrentUserInfo();
+        return ResponseEntity.ok(userResponse);
     }
 
 

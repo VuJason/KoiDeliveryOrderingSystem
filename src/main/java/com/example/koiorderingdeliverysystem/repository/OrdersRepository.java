@@ -13,6 +13,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Integer> {
     Orders findOrdersById(int id);
     List<Orders> findAllByCustomerAndStatusNot(Users customer, String status);
     List<Orders> findAllByStatus(String status);// To find orders by status
+    List<Orders> findAllByStatusNot(String status);
     Orders findOrdersByCustomerAndStatus(Users customer, String status);
     Page<Orders> findAll(Pageable pageable);
 }

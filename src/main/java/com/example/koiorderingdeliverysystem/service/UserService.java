@@ -26,6 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.sql.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -110,8 +111,16 @@ public class UserService implements UserDetailsService {
 
     }
 
-    public List<Users> getAllUser() {
-        return userRepository.findUsersByStatusTrue();
+    public List<UserResponse> getAllUser() {
+        List<Users> userResponse = userRepository.findUsersByStatusTrue();
+        return userResponse.stream().map(user -> {
+            UserResponse users = new UserResponse();
+            users.setId(user.getId());
+            users.setUsername(user.getUsername());
+            users.setEmail(user.getEmail());
+            users.setPhone(user.getPhone());
+            return users;
+        }).collect(Collectors.toList());
     }
 
     public UpdateResponse updateCustomerProfile(UpdateProfile updateProfile) {
@@ -152,6 +161,13 @@ public class UserService implements UserDetailsService {
         return userRepository.findUsersByEmail(email);
     }
 
+    public UserResponse getCurrentUserInfo() {
+        Users currentUser = getCurrentAccount();
+        if(currentUser == null) {
+            throw new EntityNotFoundException("User not found!");
+        }
+        return modelMapper.map(currentUser, UserResponse.class);
+    }
 
 }
 

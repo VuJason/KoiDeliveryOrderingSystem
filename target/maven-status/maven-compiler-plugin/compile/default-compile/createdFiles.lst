@@ -31,7 +31,6 @@ com\example\koiorderingdeliverysystem\repository\UserRepository.class
 com\example\koiorderingdeliverysystem\service\OrderService.class
 com\example\koiorderingdeliverysystem\controller\DistanceController.class
 com\example\koiorderingdeliverysystem\controller\AdminController.class
-com\example\koiorderingdeliverysystem\dto\response\OSRMResponse$Route.class
 com\example\koiorderingdeliverysystem\entity\KoiFish.class
 com\example\koiorderingdeliverysystem\entity\Users.class
 com\example\koiorderingdeliverysystem\controller\UserController.class
@@ -51,11 +50,10 @@ com\example\koiorderingdeliverysystem\controller\OrderController.class
 com\example\koiorderingdeliverysystem\entity\Deliveries.class
 com\example\koiorderingdeliverysystem\dto\response\RegistrationResponse.class
 com\example\koiorderingdeliverysystem\service\VnpayService.class
+com\example\koiorderingdeliverysystem\dto\response\KoiFishResponse.class
 com\example\koiorderingdeliverysystem\entity\FeedBack.class
 com\example\koiorderingdeliverysystem\service\BlogPostService.class
 com\example\koiorderingdeliverysystem\service\DistanceService.class
-com\example\koiorderingdeliverysystem\dto\response\NominatimResponse.class
-com\example\koiorderingdeliverysystem\dto\response\OSRMResponse.class
 com\example\koiorderingdeliverysystem\service\UserService.class
 com\example\koiorderingdeliverysystem\entity\Pricing.class
 com\example\koiorderingdeliverysystem\exception\AccessDeniedException.class

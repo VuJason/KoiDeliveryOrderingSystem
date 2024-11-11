@@ -34,7 +34,7 @@ public class Orders {
     private int quantity;
     private double total;
     private Date paymentDeadline; // Thời gian thanh toán
-    private boolean isPaid = true;
+    private boolean isPaid;
 
 
     @ManyToOne
@@ -48,7 +48,7 @@ public class Orders {
     @OneToMany(mappedBy = "orders")
     private List<OrderServices> orderServices;
 
-//
-//    @OneToMany(mappedBy = "order")
-//    private List<KoiFish> koiFish;
+
+    @OneToMany(mappedBy = "order")
+    private List<KoiFish> koiFish;
 }

@@ -1,6 +1,6 @@
 package com.example.koiorderingdeliverysystem.dto;
 
-import com.example.koiorderingdeliverysystem.entity.Users;
+
 
 import java.util.Date;
 
@@ -12,6 +12,16 @@ public class OrderDto {
     private String original_location;
     private String destination;
     private String transport_method;
+    private double price;
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
     private Integer assignedTo;
 
     public OrderDto() {

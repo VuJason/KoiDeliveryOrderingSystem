@@ -1,15 +1,20 @@
 package com.example.koiorderingdeliverysystem.service;
 
 
+import com.example.koiorderingdeliverysystem.dto.response.AdminResponse;
+import com.example.koiorderingdeliverysystem.dto.response.UserResponse;
 import com.example.koiorderingdeliverysystem.entity.Roles;
+import com.example.koiorderingdeliverysystem.entity.Users;
 import com.example.koiorderingdeliverysystem.repository.OrdersRepository;
 import com.example.koiorderingdeliverysystem.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class AdminService {
@@ -41,6 +46,19 @@ public class AdminService {
 
 
 
+    }
+
+    public List<AdminResponse> getAllUserByAdmin() {
+        List<Users> userResponse = userRepository.findUsersByStatusTrue();
+        return userResponse.stream().map(user -> {
+            AdminResponse users = new AdminResponse();
+            users.setId(user.getId());
+            users.setUsername(user.getUsername());
+            users.setEmail(user.getEmail());
+            users.setPhone(user.getPhone());
+            users.setRole(String.valueOf(user.getRoles()));
+            return users;
+        }).collect(Collectors.toList());
     }
 
 

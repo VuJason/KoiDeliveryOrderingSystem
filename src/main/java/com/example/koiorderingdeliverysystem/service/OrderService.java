@@ -166,7 +166,11 @@ public class OrderService {
 
     }
     public List<OrderDto> getOrders() {
-        List<Orders> orders = ordersRepository.findAll();
+        List<Orders> orders = ordersRepository.findAllByStatusNot( String.valueOf(OrderStatus.CANCELED));
+        if(orders.isEmpty()) {
+            throw new EntityNotFoundException("No orders found ! ");
+        };
+
         return orders.stream().map(order -> {
             OrderDto dto = new OrderDto();
             dto.setOrderId(order.getId());
@@ -174,6 +178,7 @@ public class OrderService {
             dto.setOrder_date(order.getOrder_date());
             dto.setDestination(order.getDestination());
             dto.setOriginal_location(order.getOriginal_location());
+            dto.setPrice(order.getTotal());
             dto.setTransport_method(order.getTransport_method());
             dto.setOrderStatus(order.getStatus());
             return dto;
@@ -204,7 +209,7 @@ public class OrderService {
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
         // Kiểm tra trạng thái của đơn hàng
-        if (!"Approved".equals(order.getStatus())) {
+        if (!OrderStatus.APPROVED.equals(order.getStatus())) {
             throw new IllegalArgumentException("Order must be approved to assign delivery staff.");
         }
 
@@ -249,6 +254,20 @@ public class OrderService {
 
     public Optional<Orders> getOrderById(int orderId) {
         return ordersRepository.findById(orderId);
+    }
+
+    public Orders getCurrentOrder() {
+        // Lấy thông tin người dùng đang đăng nhập
+        Users currentUser = userService.getCurrentAccount();
+
+        // Tìm đơn hàng PENDING của người dùng
+        Orders currentOrder = ordersRepository.findOrdersByCustomerAndStatus(currentUser, OrderStatus.PENDING.toString());
+        if(currentOrder == null) {
+            throw new EntityNotFoundException("No pending order found. Please place an order first.");
+        }
+
+        // Chuyển đổi sang DTO
+        return currentOrder;
     }
 
 }
