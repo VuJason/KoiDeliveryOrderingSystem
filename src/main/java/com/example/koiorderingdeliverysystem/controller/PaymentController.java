@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/payment")
@@ -52,6 +53,11 @@ public class PaymentController {
             e.printStackTrace();
             return ResponseEntity.status(500).build();
         }
+    }
+    @GetMapping("/callback")
+    public String vnpayCallback(@RequestParam Map<String, String> vnpParams) {
+        // Gọi qua instance được inject
+        return vnPayService.handleVnpayCallback(vnpParams);
     }
 }
 

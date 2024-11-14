@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
@@ -111,6 +112,23 @@ public class VnpayService {
 
         Path path = FileSystems.getDefault().getPath(filePath);
         MatrixToImageWriter.writeToPath(bitMatrix, "PNG", path);
+    }
+
+    public String handleVnpayCallback(Map<String, String> vnpParams) {
+
+
+        // Kiểm tra trạng thái giao dịch
+        String transactionStatus = vnpParams.get("vnp_TransactionStatus");
+        if ("00".equals(transactionStatus)) { // "00" nghĩa là thanh toán thành công
+            String orderId = vnpParams.get("vnp_TxnRef");
+            double amount = Double.parseDouble(vnpParams.get("vnp_Amount")) / 100; // Đổi về VND
+
+            // Cập nhật trạng thái đơn hàng
+
+            return "Payment successful";
+        } else {
+            return "Payment failed";
+        }
     }
 }
 
