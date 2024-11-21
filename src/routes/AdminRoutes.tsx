@@ -4,7 +4,8 @@ import DashboardPage from "../pages/dashboard/DashboardPage";
 import SettingsPage from "../pages/setting/SettingsPage";
 import DeliveryPage from "../pages/DeliveryPage"; // Import trang Delivery
 import AdminUserPage from "../pages/AdminUserPage";
-
+import AdminKoiFishPage from "../pages/AdminKoiFishPage";
+import AdminFeedbackPage from "../pages/AdminFeedbackPage";
 
 // Define routes with the AdminLayout wrapping them
 export const adminRoutes = [
@@ -17,7 +18,8 @@ export const adminRoutes = [
       { path: "users", element: <AdminUserPage /> },
       { path: "settings", element: <SettingsPage /> },
       { path: "delivery", element: <DeliveryPage /> }, // Thêm route cho trang Delivery
-
+      { path: "koifish", element: <AdminKoiFishPage /> }, // Thêm route cho trang Delivery
+      { path: "feedback", element: <AdminFeedbackPage /> }, // Thêm route cho trang Delivery
     ],
   },
 ];

@@ -16,6 +16,7 @@ import VerifyOTPPage from "./pages/VerifyOTPPage.tsx";
 import { adminRoutes } from "./routes/AdminRoutes.tsx";
 import SignupPage from "./pages/SignupPage.tsx";
 import PaymentResult from "./pages/ResultPage.tsx";
+import StaffServicePage from "./pages/StaffServicePage.tsx";
 const router = createBrowserRouter([
   {
     path: "/result",
@@ -54,7 +55,6 @@ const router = createBrowserRouter([
     element: <App />,
   },
   {
-
     path: "/history",
     element: <DeliveryHistory />,
   },
@@ -66,13 +66,17 @@ const router = createBrowserRouter([
     path: "/account",
     element: <Account />,
   },
-  {  
+  {
     path: "/browser-track",
     element: <BrowserTrack />,
   },
   {
     path: "/delivery-track",
-    element: <DeliveryTrackPage />
+    element: <DeliveryTrackPage />,
+  },
+  {
+    path: "/service",
+    element: <StaffServicePage />,
   },
   ...adminRoutes,
 ]);

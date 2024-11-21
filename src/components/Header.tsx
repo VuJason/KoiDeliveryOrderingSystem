@@ -7,12 +7,15 @@ const Header = () => {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
     if (storedUser && token) {
       setUser(JSON.parse(storedUser));
+      setRole(role);
     }
   }, []);
 
@@ -131,24 +134,40 @@ const Header = () => {
                   Home
                 </Link>
               </li>
-              <li>
-                <Link
-                  to="#"
-                  className="hover:text-yellow-300 transition duration-300"
-                  aria-label="About"
-                >
-                  Services
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/history"
-                  className="hover:text-yellow-300 transition duration-300"
-                  aria-label="Destinations"
-                >
-                  Track
-                </Link>
-              </li>
+              {role && role === "staff" && (
+                <li>
+                  <Link
+                    to="/service"
+                    className="hover:text-yellow-300 transition duration-300"
+                    aria-label="About"
+                  >
+                    Services
+                  </Link>
+                </li>
+              )}
+              {role && role === "customer" && (
+                <li>
+                  <Link
+                    to="/history"
+                    className="hover:text-yellow-300 transition duration-300"
+                    aria-label="Destinations"
+                  >
+                    History
+                  </Link>
+                </li>
+              )}
+              {role && role !== "customer" && (
+                <li>
+                  <Link
+                    to={role === "staff" ? "/browser-track" : "/delivery-track"}
+                    className="hover:text-yellow-300 transition duration-300"
+                    aria-label="Destinations"
+                  >
+                    Track
+                  </Link>
+                </li>
+              )}
+
               <li>
                 <a
                   href="/account"

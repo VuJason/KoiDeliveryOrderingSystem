@@ -4,6 +4,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ORDER_STATUS, STATUS_COLORS } from '../../../../constants/orderStatus';
 import { OrderStatus } from '../../../../types/order';
+import ShowMap from '../../../ShowMap';
 
 interface ProductDetail {
   id: number;
@@ -29,9 +30,9 @@ interface ProductDetailsModalProps {
   updateStatus: (id: number, newStatus: OrderStatus) => void;
 }
 
-const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({ 
-  isOpen, 
-  onClose, 
+const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
+  isOpen,
+  onClose,
   deliveryId,
   updateStatus
 }) => {
@@ -131,9 +132,8 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                   <button
                     key={idx}
                     onClick={() => setActiveImage(img)}
-                    className={`border-2 rounded-md overflow-hidden ${
-                      activeImage === img ? 'border-blue-500' : 'border-gray-200'
-                    }`}
+                    className={`border-2 rounded-md overflow-hidden ${activeImage === img ? 'border-blue-500' : 'border-gray-200'
+                      }`}
                   >
                     <img src={img} alt="" className="w-full h-full object-cover" />
                   </button>
@@ -153,11 +153,10 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                   {[...Array(5)].map((_, i) => (
                     <FaStar
                       key={i}
-                      className={`w-5 h-5 ${
-                        i < Math.floor(productDetails.rating)
-                          ? 'text-yellow-400'
-                          : 'text-gray-300'
-                      }`}
+                      className={`w-5 h-5 ${i < Math.floor(productDetails.rating)
+                        ? 'text-yellow-400'
+                        : 'text-gray-300'
+                        }`}
                     />
                   ))}
                 </div>
@@ -183,24 +182,36 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                   <span className="font-semibold">Color:</span> {productDetails.color}
                 </p>
               </div>
-
+              <div className="mb-4">
+                <label className="block text-gray-700 font-semibold mb-2">
+                  Assign Delivery Dtaff
+                </label>
+                <select
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">Select a delivery staff</option>
+                  <option value="1">John</option>
+                  <option value="2">Sarah</option>
+                  <option value="3">Mike</option>
+                </select>
+              </div>
               {/* Action Buttons - Chỉ hiển thị nếu đơn hàng chưa được xử lý */}
-              {!isOrderProcessed && (
-                <div className="flex space-x-4">
-                  <button 
-                    onClick={handleConfirm}
-                    className="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors"
-                  >
-                    Confirm Order
-                  </button>
-                  <button 
-                    onClick={handleReject}
-                    className="flex-1 bg-red-600 text-white py-3 px-6 rounded-lg hover:bg-red-700 transition-colors"
-                  >
-                    Reject Order
-                  </button>
-                </div>
-              )}
+
+              <div className="flex space-x-4">
+                <button
+                  onClick={handleConfirm}
+                  className="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  Confirm Order
+                </button>
+                <button
+                  onClick={handleReject}
+                  className="flex-1 bg-red-600 text-white py-3 px-6 rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  Reject Order
+                </button>
+              </div>
+
             </div>
           </div>
 
@@ -208,17 +219,15 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
           <div className="mt-6">
             <ul className="flex space-x-4">
               <li
-                className={`${
-                  selectedTab === 'description' ? 'bg-gray-100' : 'bg-white'
-                } py-2 px-4 rounded-lg cursor-pointer`}
+                className={`${selectedTab === 'description' ? 'bg-gray-100' : 'bg-white'
+                  } py-2 px-4 rounded-lg cursor-pointer`}
                 onClick={() => setSelectedTab('description')}
               >
                 Description
               </li>
               <li
-                className={`${
-                  selectedTab === 'reviews' ? 'bg-gray-100' : 'bg-white'
-                } py-2 px-4 rounded-lg cursor-pointer`}
+                className={`${selectedTab === 'reviews' ? 'bg-gray-100' : 'bg-white'
+                  } py-2 px-4 rounded-lg cursor-pointer`}
                 onClick={() => setSelectedTab('reviews')}
               >
                 Reviews
@@ -231,6 +240,13 @@ const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                 <p>No reviews yet.</p>
               )}
             </div>
+          </div>
+
+          <div className="mt-6">
+            <ShowMap
+              origin="227 Nguyễn Văn Cừ, Quận 5, TP.HCM"
+              destination="Đại học Bách Khoa, Quận 10, TP.HCM"
+            />
           </div>
         </div>
       </div>

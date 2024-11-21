@@ -34,22 +34,28 @@ const LoginPage = () => {
       if (response.ok) {
         // Handle successful login
         const user = {
-          ...data
-          
-        }
+          ...data,
+        };
         console.log("Login successful:", data);
         localStorage.setItem("user", JSON.stringify(user));
         localStorage.setItem("token", data.token);
 
         // Kiểm tra token để điều hướng
-        const decodedToken = JSON.parse(atob(data.token.split('.')[1]));
-        if (decodedToken.sub === "35") { // Kiểm tra ID admin
+        const decodedToken = JSON.parse(atob(data.token.split(".")[1]));
+        if (data.id === 16) {
+          // Kiểm tra ID admin
+          localStorage.setItem("role", "admin");
           navigate("/dashboard"); // Điều hướng đến dashboard
-        } else if (decodedToken.sub === "36") { // Kiểm tra ID staff
+        } else if (data.id === 4) {
+          // Kiểm tra ID staff
+          localStorage.setItem("role", "staff");
           navigate("/browser-track"); // Điều hướng đến BrowserTrack
-        } else if (decodedToken.sub === "38") { // Kiểm tra ID delivery
+        } else if (data.id === 2) {
+          // Kiểm tra ID delivery
+          localStorage.setItem("role", "delivery");
           navigate("/delivery-track"); // Điều hướng đến Delivery
         } else {
+          localStorage.setItem("role", "customer");
           navigate("/"); // Điều hướng đến trang chính
         }
       } else {
@@ -70,9 +76,14 @@ const LoginPage = () => {
     <div className="flex min-h-screen bg-gray-100">
       <div className="w-full lg:w-[65%] flex flex-col justify-center px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
         <div className="flex justify-evenly flex-col flex-1">
-         <div className="flex-shrink-0">
-        <img src="/koilogo.png" alt="Icon Background" width="100" height="29" />
-      </div>
+          <div className="flex-shrink-0">
+            <img
+              src="/koilogo.png"
+              alt="Icon Background"
+              width="100"
+              height="29"
+            />
+          </div>
 
           <div className="w-full">
             <div className="space-y-2">

@@ -42,7 +42,9 @@
     .userInfo {
       display: flex;
       align-items: center;
-
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.04);
+      }
       .userAvatar {
         margin-right: 10px;
       }

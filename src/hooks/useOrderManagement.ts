@@ -1,7 +1,7 @@
-import { useState, useEffect, useMemo } from 'react';
-import { Order, OrderStatus } from '../types/order';
-import { orderApi } from '../services/orderApi';
-import { ORDER_STATUS } from '../constants/orderStatus';
+import { useState, useEffect, useMemo } from "react";
+import { Order, OrderStatus } from "../types/order";
+import { orderApi } from "../services/orderApi";
+import { ORDER_STATUS } from "../constants/orderStatus";
 
 interface UseOrderManagementProps {
   pageSize?: number;
@@ -18,7 +18,7 @@ interface UseOrderManagementProps {
 
 export const useOrderManagement = ({
   fetchOrdersFn,
-  initialFilters
+  initialFilters,
 }: {
   fetchOrdersFn: () => Promise<any>;
   initialFilters: {
@@ -29,17 +29,7 @@ export const useOrderManagement = ({
     product: boolean;
   };
 }) => {
-  const [orders, setOrders] = useState<Order[]>([
-    {
-      id: '1',
-      product: 'Koi Fish A',
-      address: '123 Street',
-      price: '$100',
-      customer: 'John Doe',
-      status: 'pending'
-    },
-    // Thêm dữ liệu mẫu khác...
-  ]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -55,17 +45,17 @@ export const useOrderManagement = ({
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [sortField, setSortField] = useState<string>("");
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [pageSize] = useState(5);
 
   const handlePriceFilter = (price: string, filter: string) => {
     const numPrice = parseFloat(price);
     switch (filter) {
-      case 'low':
+      case "low":
         return numPrice <= 50;
-      case 'medium':
+      case "medium":
         return numPrice > 50 && numPrice <= 100;
-      case 'high':
+      case "high":
         return numPrice > 100;
       default:
         return true;
@@ -79,14 +69,14 @@ export const useOrderManagement = ({
       const aValue = a[sortField as keyof Order];
       const bValue = b[sortField as keyof Order];
 
-      if (typeof aValue === 'string' && typeof bValue === 'string') {
-        return sortDirection === 'asc'
+      if (typeof aValue === "string" && typeof bValue === "string") {
+        return sortDirection === "asc"
           ? aValue.localeCompare(bValue)
           : bValue.localeCompare(aValue);
       }
 
-      if (typeof aValue === 'number' && typeof bValue === 'number') {
-        return sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
+      if (typeof aValue === "number" && typeof bValue === "number") {
+        return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
       }
 
       return 0;
@@ -101,14 +91,24 @@ export const useOrderManagement = ({
     const filtered = orders.filter((order) => {
       const conditions = [
         orderNumber === "" || order.id.toString().includes(orderNumber),
-        !initialFilters.type || filterType === "" || order.type?.toLowerCase().includes(filterType.toLowerCase()),
-        !initialFilters.status || filterStatus === "" || order.status.toLowerCase() === filterStatus.toLowerCase(),
-        !initialFilters.product || filterProduct === "" || order.product?.toLowerCase().includes(filterProduct.toLowerCase()),
-        !initialFilters.date || filterDate === "" || order.date?.includes(filterDate),
-        !initialFilters.price || filterPrice === "" || handlePriceFilter(order.price, filterPrice)
+        !initialFilters.type ||
+          filterType === "" ||
+          order.type?.toLowerCase().includes(filterType.toLowerCase()),
+        !initialFilters.status ||
+          filterStatus === "" ||
+          order.orderStatus.toLowerCase() === filterStatus.toLowerCase(),
+        !initialFilters.product ||
+          filterProduct === "" ||
+          order.product?.toLowerCase().includes(filterProduct.toLowerCase()),
+        !initialFilters.date ||
+          filterDate === "" ||
+          order.order_date?.includes(filterDate),
+        !initialFilters.price ||
+          filterPrice === "" ||
+          handlePriceFilter(order.price, filterPrice),
       ];
 
-      return conditions.every(condition => condition);
+      return conditions.every((condition) => condition);
     });
 
     return getSortedData(filtered);
@@ -118,33 +118,48 @@ export const useOrderManagement = ({
     if (!initialFilters.dashboard) return null;
 
     const filteredOrders = getFilteredData();
+    console.log(filteredOrders);
     return {
       totalOrders: filteredOrders.length,
-      pendingOrders: filteredOrders.filter(order => order.status === ORDER_STATUS.PENDING).length,
-      deliveredOrders: filteredOrders.filter(order => order.status === ORDER_STATUS.DELIVERED).length,
-      canceledOrders: filteredOrders.filter(order => order.status === ORDER_STATUS.CANCELED).length,
-      totalRevenue: filteredOrders.reduce((sum, order) => sum + parseFloat(order.price || "0"), 0),
-      averageOrderValue: filteredOrders.length ?
-        filteredOrders.reduce((sum, order) => sum + parseFloat(order.price || "0"), 0) / filteredOrders.length :
+      pendingOrders: filteredOrders.filter(
+        (order) => order.status === ORDER_STATUS.PENDING
+      ).length,
+      deliveredOrders: filteredOrders.filter(
+        (order) => order.status === ORDER_STATUS.DELIVERED
+      ).length,
+      canceledOrders: filteredOrders.filter(
+        (order) => order.status === ORDER_STATUS.CANCELED
+      ).length,
+      totalRevenue: filteredOrders.reduce(
+        (sum, order) => sum + parseFloat(order.price || "0"),
         0
+      ),
+      averageOrderValue: filteredOrders.length
+        ? filteredOrders.reduce(
+            (sum, order) => sum + parseFloat(order.price || "0"),
+            0
+          ) / filteredOrders.length
+        : 0,
     };
   }, [orders, filterType, filterStatus, filterDate]);
 
   const getChartData = () => {
     if (!initialFilters.dashboard) return null;
 
-    const last30Days = [...Array(30)].map((_, i) => {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      return d.toISOString().split('T')[0];
-    }).reverse();
+    const last30Days = [...Array(30)]
+      .map((_, i) => {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        return d.toISOString().split("T")[0];
+      })
+      .reverse();
 
-    return last30Days.map(date => ({
+    return last30Days.map((date) => ({
       date,
-      orders: orders.filter(order => order.date?.includes(date)).length,
+      orders: orders.filter((order) => order.date?.includes(date)).length,
       revenue: orders
-        .filter(order => order.date?.includes(date))
-        .reduce((sum, order) => sum + parseFloat(order.price || "0"), 0)
+        .filter((order) => order.date?.includes(date))
+        .reduce((sum, order) => sum + parseFloat(order.price || "0"), 0),
     }));
   };
 
@@ -155,7 +170,7 @@ export const useOrderManagement = ({
       setOrders(data);
       setError(null);
     } catch (err) {
-      setError('Failed to fetch orders');
+      setError("Failed to fetch orders");
       setOrders([]);
     } finally {
       setIsLoading(false);
@@ -166,7 +181,7 @@ export const useOrderManagement = ({
     const fetchInitialOrders = async () => {
       await fetchOrders();
     };
-  
+
     fetchInitialOrders();
   }, [fetchOrdersFn]);
 
@@ -178,9 +193,10 @@ export const useOrderManagement = ({
     setSearchError("");
     setOrderNumber(searchInput);
 
-    const results = orders.filter(order =>
-      order.orderId.toString().includes(searchInput) ||
-      order.customerName?.toLowerCase().includes(searchInput.toLowerCase())
+    const results = orders.filter(
+      (order) =>
+        order.orderId.toString().includes(searchInput) ||
+        order.customerName?.toLowerCase().includes(searchInput.toLowerCase())
     );
     setSearchResults(results);
     setCurrentPage(1);
@@ -200,7 +216,8 @@ export const useOrderManagement = ({
   };
 
   const getCurrentPageData = () => {
-    const dataToUse = searchResults.length > 0 ? searchResults : getFilteredData();
+    const dataToUse =
+      searchResults.length > 0 ? searchResults : getFilteredData();
     const startIndex = (currentPage - 1) * pageSize;
     const endIndex = startIndex + pageSize;
     return dataToUse.slice(startIndex, endIndex);
@@ -209,18 +226,22 @@ export const useOrderManagement = ({
   const handleViewDetails = (id: number) => {
     setSelectedOrderId(id);
     setIsModalOpen(true);
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedOrderId(null);
-    document.body.style.overflow = 'unset';
+    document.body.style.overflow = "unset";
   };
 
-  const handleDeleteOrder = (id: number ) => {
-    setOrders(prevOrders => prevOrders.filter(order => order.orderId !== id));
-    setSearchResults(prevResults => prevResults.filter(order => order.orderId !== id));
+  const handleDeleteOrder = (id: number) => {
+    setOrders((prevOrders) =>
+      prevOrders.filter((order) => order.orderId !== id)
+    );
+    setSearchResults((prevResults) =>
+      prevResults.filter((order) => order.orderId !== id)
+    );
   };
 
   const updateOrderStatus = async (id: number, newStatus: OrderStatus) => {
@@ -228,7 +249,7 @@ export const useOrderManagement = ({
       await orderApi.updateOrderStatus(id, newStatus);
       await fetchOrders();
     } catch (err) {
-      setError('Failed to update order status');
+      setError("Failed to update order status");
     }
   };
 
@@ -271,6 +292,6 @@ export const useOrderManagement = ({
     handlePriceFilter,
     dashboardStats,
     getChartData,
-    pageSize
+    pageSize,
   };
 };

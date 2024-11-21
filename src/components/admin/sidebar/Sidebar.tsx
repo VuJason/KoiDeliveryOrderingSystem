@@ -48,8 +48,10 @@ const Sidebar: React.FC = () => {
         return "4";
       case "/koifish":
         return "5";
-      case "/settings":
+      case "/feedback":
         return "6";
+      case "/settings":
+        return "7";
       default:
         return "1";
     }
@@ -67,15 +69,18 @@ const Sidebar: React.FC = () => {
         <Menu.Item key="2" icon={<UserOutlined />}>
           <Link to="/users">Users</Link>
         </Menu.Item>
- 
+
         <Menu.Item key="4" icon={<DeliveredProcedureOutlined />}>
           <Link to="/delivery">Delivery</Link>
         </Menu.Item>
         <Menu.Item key="5" icon={<IdcardOutlined />}>
           <Link to="/koifish">Koi Fish</Link>
         </Menu.Item>
+        <Menu.Item key="6" icon={<IdcardOutlined />}>
+          <Link to="/feedback">Feedback</Link>
+        </Menu.Item>
         <div className="sidebar-footer">
-          <Menu.Item key="6" icon={<SettingOutlined />}>
+          <Menu.Item key="7" icon={<SettingOutlined />}>
             <Link to="/settings">Settings</Link>
           </Menu.Item>
           <Menu.Item
