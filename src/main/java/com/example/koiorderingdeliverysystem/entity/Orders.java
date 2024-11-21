@@ -22,7 +22,6 @@ public class Orders {
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
-    @JsonIgnore
     private Users customer;
 
     private Date order_date;
@@ -39,6 +38,7 @@ public class Orders {
 
     @ManyToOne
     @JoinColumn(name = "approved_by")
+    @JsonIgnore
     private Users approvedBy;
 
     @ManyToOne
@@ -51,4 +51,6 @@ public class Orders {
 
     @OneToMany(mappedBy = "order")
     private List<KoiFish> koiFish;
+
+    private Integer warehouseId;
 }

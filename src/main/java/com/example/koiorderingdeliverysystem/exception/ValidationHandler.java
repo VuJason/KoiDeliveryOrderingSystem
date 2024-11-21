@@ -44,4 +44,9 @@ public class ValidationHandler {
         return new ResponseEntity(new AccessDeniedException(), HttpStatus.FORBIDDEN);
     }
 
+    @ExceptionHandler(StatusException.class)
+    public ResponseEntity handleValidation(StatusException exception) {
+        return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
 }

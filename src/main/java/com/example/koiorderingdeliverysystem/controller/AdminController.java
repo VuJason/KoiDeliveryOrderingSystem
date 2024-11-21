@@ -9,6 +9,7 @@ import com.example.koiorderingdeliverysystem.dto.response.AdminResponse;
 import com.example.koiorderingdeliverysystem.dto.response.RegistrationResponse;
 import com.example.koiorderingdeliverysystem.dto.response.UpdateResponse;
 import com.example.koiorderingdeliverysystem.dto.response.UserResponse;
+import com.example.koiorderingdeliverysystem.entity.Orders;
 import com.example.koiorderingdeliverysystem.entity.Users;
 import com.example.koiorderingdeliverysystem.service.AdminService;
 import com.example.koiorderingdeliverysystem.service.OrderService;
@@ -71,7 +72,7 @@ public class AdminController {
     }
 
     @GetMapping("/order")
-    public List<OrderDto> getAllOrders() {
+    public List<Orders> getAllOrders() {
         return orderService.getOrders();
 
     }

@@ -1,6 +1,7 @@
 package com.example.koiorderingdeliverysystem.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
@@ -40,6 +41,7 @@ public class KoiService {
     private double price;
 
     @OneToMany(mappedBy = "services")
+    @JsonIgnore
     private List<OrderServices> servicesOrder;
 
     // Default constructor

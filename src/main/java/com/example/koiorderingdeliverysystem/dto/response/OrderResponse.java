@@ -12,4 +12,5 @@ public class OrderResponse {
     private String destination;
     private String transport_method;
     private double totalCost;
+    private String status;
 }

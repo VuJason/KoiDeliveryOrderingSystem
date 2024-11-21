@@ -5,6 +5,8 @@ import lombok.Data;
 @Data
 public class KoiFishResponse {
     private int id;
-    private String name;
+    private String koi_name;
     private double fish_weight;
+    private String status;
+
 }

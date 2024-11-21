@@ -3,7 +3,10 @@ package com.example.koiorderingdeliverysystem.service;
 
 
 import com.example.koiorderingdeliverysystem.entity.Orders;
+import com.example.koiorderingdeliverysystem.entity.Transactions;
+import com.example.koiorderingdeliverysystem.entity.Users;
 import com.example.koiorderingdeliverysystem.repository.OrdersRepository;
+import com.example.koiorderingdeliverysystem.repository.TransactionsRepository;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
@@ -30,6 +33,9 @@ public class VnpayService {
 
     @Autowired
     OrdersRepository ordersRepository;
+
+    @Autowired
+    TransactionsRepository transactionsRepository;
 
     public String generatePaymentQR(int orderId, double totalAmount, HttpServletRequest request) {
         try {
@@ -146,6 +152,25 @@ public class VnpayService {
         } else {
             System.out.println("Order not found with ID: " + orderId);
         }
+    }
+
+    private void createTransaction(String transactionID, int orderId, double amount, String paymentMethod) {
+        Orders order = ordersRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+        Users customer = order.getCustomer();
+        if (customer == null) {
+            throw new RuntimeException("Customer not found for the order");
+        }
+
+        Transactions transaction = new Transactions();
+        transaction.setId(transactionID);
+        transaction.setOrders(order);
+        transaction.setCustomerTrans(customer);
+        transaction.setAmount(amount);
+        transaction.setPaymentMethod(paymentMethod);
+        transaction.setTransactionDate(new Date());
+
+        transactionsRepository.save(transaction);
     }
 
 }

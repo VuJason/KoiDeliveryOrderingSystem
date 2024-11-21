@@ -3,6 +3,7 @@ package com.example.koiorderingdeliverysystem.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -13,8 +14,9 @@ public class KoiFish {
     private int id;
     private String koi_name;
     private double fish_weight;
-//    @ElementCollection
-//    private List<String> imagePaths;
+
+    private String imagePath;
+    private String status;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
@@ -23,4 +25,6 @@ public class KoiFish {
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Orders order;
+
+
 }

@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -42,9 +43,14 @@ public class OrderController {
 
 
     @GetMapping("/order/staff/viewOrder")
-    public List<OrderDto> getOrder() {
-
+    public List<Orders> getOrder() {
         return orderService.getOrders();
+
+    }
+
+    @GetMapping("/order/deliveryStaff/{deliveryStaffId}")
+    public List<OrderDto> getDeliveryStaffOrder(@PathVariable int deliveryStaffId) {
+        return orderService.getOrdersByDeliveryStaffId(deliveryStaffId);
     }
 
     @PutMapping("/order/staff/{orderId}/status")
@@ -62,8 +68,8 @@ public class OrderController {
 
     @PutMapping("/order/staff/{orderId}/assign")
     public ResponseEntity<OrderDto> assignDeliveryStaff(
-            @PathVariable Integer orderId,
-            @RequestParam Integer deliveryStaffId) {
+            @PathVariable int orderId,
+            @RequestParam int deliveryStaffId) {
 
         OrderDto updatedOrder = orderService.assignDeliveryStaff(orderId, deliveryStaffId);
         return ResponseEntity.ok(updatedOrder);
@@ -84,6 +90,12 @@ public class OrderController {
         return ResponseEntity.ok("Expired orders have been cancelled.");
     }
 
+    @DeleteMapping("/cancel/{orderId}/staff")
+    public ResponseEntity cancelOrder(@PathVariable int orderId) {
+        Orders deletedOrders = orderService.cancelOrder(orderId);
+        return ResponseEntity.ok(deletedOrders);
+
+    }
     @PutMapping("/order/staff/{orderId}/approve")
     @PreAuthorize("hasAuthority('STAFF')")
     public ResponseEntity<OrderDto> approveOrder(
@@ -92,4 +104,14 @@ public class OrderController {
         Orders approvedOrder = orderService.approveOrder(orderId, staffId);
         return ResponseEntity.ok(modelMapper.map(approvedOrder, OrderDto.class));
     }
+
+    @PutMapping("/payment/{orderId}")
+    public ResponseEntity<OrderResponse> updatePaymentStatus(@PathVariable int orderId) {
+
+            OrderResponse response = orderService.updatePaymentStatus(orderId);
+            return ResponseEntity.ok(response);
+
+    }
+
+
 }

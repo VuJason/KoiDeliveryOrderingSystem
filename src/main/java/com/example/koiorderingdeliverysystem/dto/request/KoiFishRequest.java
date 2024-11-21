@@ -2,6 +2,7 @@ package com.example.koiorderingdeliverysystem.dto.request;
 
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -10,5 +11,7 @@ import java.util.List;
 public class KoiFishRequest {
     private String name;
     private double fish_weight;
+    private List<MultipartFile> images;
+    private String status;
 
 }

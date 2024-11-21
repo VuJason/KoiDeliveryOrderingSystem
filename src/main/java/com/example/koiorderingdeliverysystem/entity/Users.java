@@ -36,18 +36,17 @@ public class Users implements UserDetails {
     private String email;
     private String address;
     private Date registration_date;
+    private String deliveryStaff_status;
 
 
-    @ManyToOne
-    @JoinColumn(name = "delivery_id")
-    @JsonIgnore
-    private Deliveries deliveries;
+
 
     @Enumerated(EnumType.STRING)
     private Roles roles;
 
-    @JsonIgnore
+
     @OneToMany(mappedBy = "customer")
+    @JsonIgnore
     List<Orders> orders;
 
     @OneToMany(mappedBy = "approvedBy")
@@ -68,6 +67,10 @@ public class Users implements UserDetails {
 
     @OneToMany(mappedBy = "customer_koi")
     List<KoiFish> koiFishList;
+
+    @OneToMany(mappedBy = "customerTrans", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
+    private List<Transactions> transactions;
 
 
     @Override

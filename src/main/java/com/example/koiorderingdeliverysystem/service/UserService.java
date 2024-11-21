@@ -2,11 +2,14 @@ package com.example.koiorderingdeliverysystem.service;
 
 import com.example.koiorderingdeliverysystem.dto.*;
 //import com.example.koiorderingdeliverysystem.entity.Customers;
+import com.example.koiorderingdeliverysystem.dto.request.ForgotPasswordRequest;
 import com.example.koiorderingdeliverysystem.dto.request.LoginDto;
 import com.example.koiorderingdeliverysystem.dto.request.RegistrationDto;
+import com.example.koiorderingdeliverysystem.dto.response.DeliveryStaffResponse;
 import com.example.koiorderingdeliverysystem.dto.response.RegistrationResponse;
 import com.example.koiorderingdeliverysystem.dto.response.UpdateResponse;
 import com.example.koiorderingdeliverysystem.dto.response.UserResponse;
+import com.example.koiorderingdeliverysystem.entity.DeliveryStaffStatus;
 import com.example.koiorderingdeliverysystem.entity.Roles;
 import com.example.koiorderingdeliverysystem.entity.Users;
 //import com.example.koiorderingdeliverysystem.repository.CustomerRepository;
@@ -47,6 +50,8 @@ public class UserService implements UserDetailsService {
     TokenService tokenService;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private OrderService orderService;
 
     public RegistrationResponse register(RegistrationDto register) {
 
@@ -73,6 +78,10 @@ public class UserService implements UserDetailsService {
                 }
             }
 
+            if (user.getRoles().equals(Roles.DELIVERY_STAFF)) {
+                user.setDeliveryStaff_status(DeliveryStaffStatus.FREE.toString());
+            }
+
             Users newUser = userRepository.save(user);
 
             //gửi email về người dùng
@@ -80,7 +89,7 @@ public class UserService implements UserDetailsService {
             emailDetail.setReceiver(newUser);
             emailDetail.setSubject("welcome to koi delivery");
             emailDetail.setLink("https://www.google.com/");
-            emailService.sendEmail(emailDetail);
+            emailService.sendEmail(emailDetail, "registration");
 
             return modelMapper.map(newUser, RegistrationResponse.class);
         } catch (Exception e) {
@@ -123,6 +132,43 @@ public class UserService implements UserDetailsService {
         }).collect(Collectors.toList());
     }
 
+    public List<DeliveryStaffResponse> getDeliveryStaffUsers() {
+        List<Users> deliveryStaffUsers = userRepository.findUsersByRolesAndStatusTrue(Roles.DELIVERY_STAFF);
+
+        return deliveryStaffUsers.stream().map(user -> {
+            DeliveryStaffResponse userResponse = new DeliveryStaffResponse();
+            userResponse.setId(user.getId());
+            userResponse.setFullName(user.getFullname());
+            userResponse.setEmail(user.getEmail());
+            userResponse.setPhone(user.getPhone());
+            int orderCount = orderService.getOrderCountByDeliveryStaffId(user.getId());
+            if(orderCount >= 5) {
+               user.setDeliveryStaff_status(DeliveryStaffStatus.FULL.toString());
+            }else {
+                user.setDeliveryStaff_status(DeliveryStaffStatus.FREE.toString());
+            }
+            userRepository.save(user);
+            userResponse.setOrderCount(orderCount);
+            userResponse.setDeliveryStaffStatus(user.getDeliveryStaff_status());
+            return userResponse;
+        }).collect(Collectors.toList());
+    }
+
+    public DeliveryStaffResponse updateDeliveryStaffStatus(int deliveryStaffId, String status) {
+        if (deliveryStaffId < 0) {
+            throw new IllegalArgumentException("Delivery staff ID cannot be negative.");
+        }
+        Users deliveryStaff = userRepository.findUsersById(deliveryStaffId);
+        if (deliveryStaff == null) {
+            throw new EntityNotFoundException("Delivery staff with ID " + deliveryStaffId + " not found.");
+        }
+        deliveryStaff.setDeliveryStaff_status(status.toUpperCase().replace(" ", "_"));
+        deliveryStaff = userRepository.save(deliveryStaff);
+        DeliveryStaffResponse deliveryStaffResponse = modelMapper.map(deliveryStaff, DeliveryStaffResponse.class);
+        return deliveryStaffResponse;
+
+    }
+
     public UpdateResponse updateCustomerProfile(UpdateProfile updateProfile) {
         Users currentUser = getCurrentAccount();
         if(currentUser == null) {
@@ -156,6 +202,20 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
+    public void forgotPassword(ForgotPasswordRequest forgotPasswordRequest) {
+        Users users = userRepository.findUsersByEmail(forgotPasswordRequest.getEmail());
+        if(users == null) {
+            throw new EntityNotFoundException("User not found!");
+        }else {
+            EmailDetail emailDetail = new EmailDetail();
+            emailDetail.setReceiver(users);
+            emailDetail.setSubject("welcome to koi delivery");
+            emailDetail.setLink("https://www.google.com/" + tokenService.generateToken(users));
+            emailService.sendEmail(emailDetail, "registration");
+
+        }
+    }
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findUsersByEmail(email);
@@ -168,6 +228,8 @@ public class UserService implements UserDetailsService {
         }
         return modelMapper.map(currentUser, UserResponse.class);
     }
+
+
 
 }
 

@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface OrdersRepository extends JpaRepository<Orders, Integer> {
@@ -16,5 +17,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Integer> {
     List<Orders> findAllByStatusNot(String status);
     Orders findOrdersByCustomerAndStatus(Users customer, String status);
     Page<Orders> findAll(Pageable pageable);
+    int countByAssignedToId(int deliveryStaffId);
+    List<Orders> findAllByAssignedToId(int deliveryStaffId);
 }
 
