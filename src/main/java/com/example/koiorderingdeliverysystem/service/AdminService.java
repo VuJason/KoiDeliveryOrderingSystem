@@ -6,6 +6,7 @@ import com.example.koiorderingdeliverysystem.dto.response.UserResponse;
 import com.example.koiorderingdeliverysystem.entity.Roles;
 import com.example.koiorderingdeliverysystem.entity.Users;
 import com.example.koiorderingdeliverysystem.repository.OrdersRepository;
+import com.example.koiorderingdeliverysystem.repository.TransactionsRepository;
 import com.example.koiorderingdeliverysystem.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,9 @@ public class AdminService {
     @Autowired
     OrdersRepository ordersRepository;
 
+    @Autowired
+    TransactionsRepository transactionsRepository;
+
 
     public Map<String, Object> getDashboardStats() {
         Map<String, Object> stats = new HashMap<>();
@@ -39,6 +43,16 @@ public class AdminService {
         // số lượng staff
         long staffCount =  userRepository.countByRole(Roles.STAFF);
         stats.put("staffCount", staffCount);
+
+
+        List<Object[]> monthlyRevenue = transactionsRepository.findMonthlyRevenue();
+        Map<Integer, Double> revenueMap = new HashMap<>();
+        for (Object[] row : monthlyRevenue) {
+            int month = (Integer) row[0];
+            double totalRevenue = (Double) row[1];
+            revenueMap.put(month, totalRevenue);
+        }
+        stats.put("monthlyRevenue", revenueMap);
 
         return stats;
         //doanh thu từng tháng
