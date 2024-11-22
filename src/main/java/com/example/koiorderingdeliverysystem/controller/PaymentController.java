@@ -38,9 +38,8 @@ public class PaymentController {
     }
 
     @GetMapping("/callback")
-    public String vnpayCallback(@RequestParam Map<String, String> vnpParams) {
-        // Gọi qua instance được inject
-        return vnPayService.handleVnpayCallback(vnpParams);
+    public String vnpayCallback(@RequestParam(required = false) String url) {
+        return vnPayService.handleVnpayCallback(url);
     }
 
 }

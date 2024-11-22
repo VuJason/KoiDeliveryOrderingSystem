@@ -72,7 +72,7 @@ public class AdminController {
     }
 
     @GetMapping("/order")
-    public List<Orders> getAllOrders() {
+    public List<OrderDto> getAllOrders() {
         return orderService.getOrders();
 
     }

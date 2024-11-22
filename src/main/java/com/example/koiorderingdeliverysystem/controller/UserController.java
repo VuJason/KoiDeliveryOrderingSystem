@@ -79,8 +79,8 @@ public class UserController {
     }
 
     @GetMapping("/currentUser/detail")
-    public ResponseEntity<UserResponse> getCurrentUser() {
-        UserResponse userResponse = userService.getCurrentUserInfo();
+    public ResponseEntity<UpdateResponse> getCurrentUser() {
+        UpdateResponse userResponse = userService.getCurrentUserInfo();
         return ResponseEntity.ok(userResponse);
     }
 

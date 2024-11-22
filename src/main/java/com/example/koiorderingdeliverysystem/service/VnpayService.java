@@ -7,24 +7,19 @@ import com.example.koiorderingdeliverysystem.entity.Transactions;
 import com.example.koiorderingdeliverysystem.entity.Users;
 import com.example.koiorderingdeliverysystem.repository.OrdersRepository;
 import com.example.koiorderingdeliverysystem.repository.TransactionsRepository;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.WriterException;
-import com.google.zxing.client.j2se.MatrixToImageWriter;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.QRCodeWriter;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
+
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class VnpayService {
@@ -35,7 +30,7 @@ public class VnpayService {
     OrdersRepository ordersRepository;
 
     @Autowired
-    TransactionsRepository transactionsRepository;
+    private TransactionsRepository transactionsRepository;
 
     public String generatePaymentQR(int orderId, double totalAmount, HttpServletRequest request) {
         try {
@@ -67,7 +62,6 @@ public class VnpayService {
             String signed = generateHMAC(VNP_HASH_SECRET, signData);
 
             vnpParams.put("vnp_SecureHash", signed);
-
             StringBuilder urlBuilder = new StringBuilder(VNPAY_URL);
             urlBuilder.append("?");
             for (Map.Entry<String, String> entry : vnpParams.entrySet()) {
@@ -118,42 +112,38 @@ public class VnpayService {
         return hexString.toString();
     }
 
-    public void generateQRCodeImage(String text, int width, int height, String filePath) throws WriterException, IOException {
-        QRCodeWriter qrCodeWriter = new QRCodeWriter();
-        BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
+    public String handleVnpayCallback(String url) {
+        try {
+            Map<String, String> vnpParams = UriComponentsBuilder.fromUriString(url)
+                    .build()
+                    .getQueryParams()
+                    .entrySet()
+                    .stream()
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            e -> e.getValue().get(0)
+                    ));
 
-        Path path = FileSystems.getDefault().getPath(filePath);
-        MatrixToImageWriter.writeToPath(bitMatrix, "PNG", path);
-    }
-
-    public String handleVnpayCallback(Map<String, String> vnpParams) {
-        String transactionStatus = vnpParams.get("vnp_TransactionStatus");
-        if ("00".equals(transactionStatus)) { // "00" nghĩa là thanh toán thành công
+            String transactionStatus = vnpParams.get("vnp_TransactionStatus");
+            String transactionID = vnpParams.get("vnp_TransactionNo");
             String orderID = vnpParams.get("vnp_TxnRef");
+            double amount = Double.parseDouble(vnpParams.get("vnp_Amount")) / 100.0;
+
             int orderId = Integer.parseInt(orderID);
-            double amount = Double.parseDouble(vnpParams.get("vnp_Amount")) / 100; // Đổi về VND
 
-            // Cập nhật trạng thái đơn hàng
-            updateOrderStatus(orderId, "PAID");
-            return "Payment successful";
-        } else {
-            return "Payment failed";
+            if ("00".equals(transactionStatus)) {
+                createTransaction(transactionID, orderId, amount, "VNPAY");
+                updateOrderStatus(orderId);
+                return "SUCCESS";
+            } else {
+                createTransaction(transactionID, orderId, amount, "VNPAY");
+                return "FAILED";
+            }
+        } catch (Exception e) {
+            // Log the error
+            return "ERROR";
         }
     }
-
-    private void updateOrderStatus(int orderId, String status) {
-        // Lấy thông tin đơn hàng từ cơ sở dữ liệu dựa trên orderId
-        Orders order = ordersRepository.findById(orderId).orElse(null);
-        if (order != null) {
-            order.setStatus(status);
-            order.setPaid(true); // Đặt isPaid thành true khi đơn hàng đã thanh toán
-            order.setPaymentDeadline(new Date()); // Lưu thời gian thanh toán
-            ordersRepository.save(order); // Lưu thay đổi vào cơ sở dữ liệu
-        } else {
-            System.out.println("Order not found with ID: " + orderId);
-        }
-    }
-
     private void createTransaction(String transactionID, int orderId, double amount, String paymentMethod) {
         Orders order = ordersRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
@@ -165,7 +155,7 @@ public class VnpayService {
         Transactions transaction = new Transactions();
         transaction.setId(transactionID);
         transaction.setOrders(order);
-        transaction.setCustomerTrans(customer);
+        transaction.setCustomer(customer);
         transaction.setAmount(amount);
         transaction.setPaymentMethod(paymentMethod);
         transaction.setTransactionDate(new Date());
@@ -173,4 +163,14 @@ public class VnpayService {
         transactionsRepository.save(transaction);
     }
 
+    private void updateOrderStatus(int orderId) {
+        Orders order = ordersRepository.findById(orderId).orElse(null);
+        if (order != null) {
+            order.setPaid(true);
+            order.setPaymentDeadline(new Date());
+            ordersRepository.save(order);
+        } else {
+            System.out.println("Order not found with ID: " + orderId);
+        }
+    }
 }

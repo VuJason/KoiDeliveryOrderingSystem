@@ -2,8 +2,6 @@ package com.example.koiorderingdeliverysystem.dto;
 
 
 
-import com.example.koiorderingdeliverysystem.entity.OrderStatus;
-
 import java.util.Date;
 
 public class OrderDto {
@@ -26,7 +24,7 @@ public class OrderDto {
 
     private Integer assignedTo;
 
-    public OrderDto(String transportMethod, String destination, String originalLocation, Date orderDate, OrderStatus status, String fullname, int id, int deliveryStaffId) {
+    public OrderDto() {
     }
 
     public OrderDto(String orderStatus, int orderId) {

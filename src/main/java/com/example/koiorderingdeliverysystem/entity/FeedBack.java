@@ -3,6 +3,7 @@ package com.example.koiorderingdeliverysystem.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -18,6 +19,9 @@ public class FeedBack {
     @ManyToOne
     @JoinColumn(name = "customer_id")
     Users customer;
+
+
+
 
 
 }

@@ -88,7 +88,7 @@ public class UserService implements UserDetailsService {
             EmailDetail emailDetail = new EmailDetail();
             emailDetail.setReceiver(newUser);
             emailDetail.setSubject("welcome to koi delivery");
-            emailDetail.setLink("https://www.google.com/");
+            emailDetail.setLink("http://localhost:51");
             emailService.sendEmail(emailDetail, "registration");
 
             return modelMapper.map(newUser, RegistrationResponse.class);
@@ -221,14 +221,13 @@ public class UserService implements UserDetailsService {
         return userRepository.findUsersByEmail(email);
     }
 
-    public UserResponse getCurrentUserInfo() {
+    public UpdateResponse getCurrentUserInfo() {
         Users currentUser = getCurrentAccount();
         if(currentUser == null) {
             throw new EntityNotFoundException("User not found!");
         }
-        return modelMapper.map(currentUser, UserResponse.class);
+        return modelMapper.map(currentUser, UpdateResponse.class);
     }
-
 
 
 }

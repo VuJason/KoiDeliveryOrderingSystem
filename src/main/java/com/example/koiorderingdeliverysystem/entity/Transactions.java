@@ -16,7 +16,7 @@ public class Transactions {
     Date transactionDate;
     @ManyToOne
     @JoinColumn(name = "customer_id")
-    private Users customerTrans;
+    private Users customer;
     @ManyToOne
     Orders orders;
 }

@@ -1,6 +1,7 @@
 package com.example.koiorderingdeliverysystem.controller;
 
 import com.example.koiorderingdeliverysystem.dto.*;
+import com.example.koiorderingdeliverysystem.dto.request.OrderDetailDto;
 import com.example.koiorderingdeliverysystem.dto.request.OrderRequestDto;
 import com.example.koiorderingdeliverysystem.dto.response.OrderResponse;
 import com.example.koiorderingdeliverysystem.entity.Orders;
@@ -43,7 +44,7 @@ public class OrderController {
 
 
     @GetMapping("/order/staff/viewOrder")
-    public List<Orders> getOrder() {
+    public List<OrderDto> getOrder() {
         return orderService.getOrders();
 
     }
@@ -111,6 +112,12 @@ public class OrderController {
             OrderResponse response = orderService.updatePaymentStatus(orderId);
             return ResponseEntity.ok(response);
 
+    }
+
+    @GetMapping("/order/{orderId}/detail")
+    public ResponseEntity<OrderDetailDto> viewOrderDetail(@PathVariable int orderId) {
+        OrderDetailDto orderDetail = orderService.viewOrderDetail(orderId);
+        return ResponseEntity.ok(orderDetail);
     }
 
 

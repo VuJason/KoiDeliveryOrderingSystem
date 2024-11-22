@@ -44,7 +44,7 @@ public class AdminService {
         long staffCount =  userRepository.countByRole(Roles.STAFF);
         stats.put("staffCount", staffCount);
 
-
+        // lấy doanh thu từng tháng
         List<Object[]> monthlyRevenue = transactionsRepository.findMonthlyRevenue();
         Map<Integer, Double> revenueMap = new HashMap<>();
         for (Object[] row : monthlyRevenue) {
@@ -55,7 +55,7 @@ public class AdminService {
         stats.put("monthlyRevenue", revenueMap);
 
         return stats;
-        //doanh thu từng tháng
+
 
 
 

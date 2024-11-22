@@ -1,6 +1,7 @@
 package com.example.koiorderingdeliverysystem.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -13,8 +14,8 @@ public class KoiFish {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String koi_name;
+    @Positive(message = "weight must be positive")
     private double fish_weight;
-
     private String imagePath;
     private String status;
 

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -38,6 +39,7 @@ public class KoiService {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
+    @Positive(message = "price must be positive!!")
     private double price;
 
     @OneToMany(mappedBy = "services")

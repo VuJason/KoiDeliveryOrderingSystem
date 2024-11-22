@@ -51,14 +51,14 @@ public class WarehouseService {
 
 
     public Orders assignOrderToNearestWarehouse(Integer orderId) {
-        // Retrieve the order by ID
+
         Orders order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new EntityNotFoundException("Order not found"));
 
-        // Get the original location from the order
+
         String originalLocation = order.getOriginal_location();
 
-        // Find the nearest warehouse
+
         Warehouse nearestWarehouse = warehouseRepository.findAll().stream()
                 .min(Comparator.comparingDouble(warehouse -> {
                     String distanceResult = distanceService.getDistance(originalLocation, warehouse.getAddress());
@@ -71,11 +71,11 @@ public class WarehouseService {
                 .orElse(null);
 
         if (nearestWarehouse != null) {
-            // Assign the order to the nearest warehouse
+
             order.setWarehouseId(nearestWarehouse.getId());
             nearestWarehouse.getOrderIds().add(orderId);
 
-            // Save the updated order and warehouse
+
             orderRepository.save(order);
             warehouseRepository.save(nearestWarehouse);
         }

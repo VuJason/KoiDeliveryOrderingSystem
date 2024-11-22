@@ -68,7 +68,7 @@ public class Users implements UserDetails {
     @OneToMany(mappedBy = "customer_koi")
     List<KoiFish> koiFishList;
 
-    @OneToMany(mappedBy = "customerTrans", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
     private List<Transactions> transactions;
 
